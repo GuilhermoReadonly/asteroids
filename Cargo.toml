@@ -6,3 +6,5 @@ edition = "2018"
 
 [dependencies]
 sdl2 = "0.32.0"
+log = "0.4.6"
+log4rs = "0.8.1"
