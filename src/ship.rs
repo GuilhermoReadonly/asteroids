@@ -15,7 +15,7 @@ pub struct Ship {
 }
 
 impl Drawable for Ship {
-    fn draw(&self, canvas: & mut WindowCanvas) -> () {
+    fn draw(&self, canvas: &mut WindowCanvas) -> () {
         info!("Draw : {:?}", self);
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         let rect = Rect::new(self.position.x as i32, self.position.y as i32, 10, 10);
@@ -34,16 +34,16 @@ impl Ship {
         }
     }
 
-    pub fn move_up(& mut self) -> () {
-        self.position.y += 1.0;
-    }
-    pub fn move_down(& mut self) -> () {
+    pub fn move_up(&mut self) -> () {
         self.position.y -= 1.0;
     }
-    pub fn move_right(& mut self) -> () {
+    pub fn move_down(&mut self) -> () {
+        self.position.y += 1.0;
+    }
+    pub fn move_right(&mut self) -> () {
         self.position.x += 1.0;
     }
-    pub fn move_left(& mut self) -> () {
+    pub fn move_left(&mut self) -> () {
         self.position.x -= 1.0;
     }
 }
