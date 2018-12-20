@@ -1,3 +1,8 @@
+mod ship;
+mod drawable;
+mod math;
+mod constants;
+
 #[macro_use]
 extern crate log;
 
@@ -7,16 +12,15 @@ use std::time::Duration;
 
 use sdl2::Sdl;
 use sdl2::pixels::Color;
-use sdl2::event::Event;
 use sdl2::EventPump;
+use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+//use sdl2::keyboard::Scancode;
 use sdl2::render::WindowCanvas;
 
 use crate::ship::Ship;
 use crate::drawable::Drawable;
-
-mod ship;
-mod drawable;
+use crate::constants::{HEIGHT, WIDTH};
 
 pub fn main() {
 
@@ -60,21 +64,29 @@ pub fn main() {
 
 fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut Ship){
     for event in event_pump.poll_iter() {
+        info!("Event : {:#?}", event);
         match event {
             Event::Quit {..} |
             Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {// time to say good bye
                 *infernal_loop = false;
             },
-            Event::KeyDown { keycode: Some(Keycode::Z), .. } => {//up
+            _ => {}
+        }
+    }
+
+    for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
+        info!("Key pressed : {:#?}", pressed);
+        match pressed {
+            Keycode::Z => {//up
                 ship.move_up();
             },
-            Event::KeyDown { keycode: Some(Keycode::S), .. } => {//down
+            Keycode::S => {//down
                 ship.move_down();
             },
-            Event::KeyDown { keycode: Some(Keycode::Q), .. } => {//Left
+            Keycode::Q => {//Left
                 ship.move_left();
             },
-            Event::KeyDown { keycode: Some(Keycode::D), .. } => {//Right
+            Keycode::D => {//Right
                 ship.move_right();
             },
             _ => {}
@@ -99,7 +111,7 @@ fn draw_background(canvas: & mut WindowCanvas){
 pub fn init_sdl() -> Result<(WindowCanvas, Sdl), String> {
     let sdl_context = sdl2::init()?;
     let video_subsystem = sdl_context.video()?;
-    let window = match video_subsystem.window("asteroids", 800, 600).position_centered().build(){
+    let window = match video_subsystem.window("asteroids", WIDTH as u32, HEIGHT as u32).position_centered().build(){
         Ok(f) => Ok(f),
         Err(error) => {
             Err(format!("An error occured while building the window: {:?}", error))
