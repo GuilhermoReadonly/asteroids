@@ -56,6 +56,7 @@ pub fn main() {
     while infernal_loop {
         treat_events(&mut infernal_loop, &mut event_pump, &mut ship);
         draw_all(&mut canvas, &mut ship);
+        thread::sleep(Duration::from_millis(100));
     }
 
     info!("Good bye my dude !");
@@ -64,7 +65,7 @@ pub fn main() {
 
 fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut Ship){
     for event in event_pump.poll_iter() {
-        info!("Event : {:#?}", event);
+        debug!("Event : {:#?}", event);
         match event {
             Event::Quit {..} |
             Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {// time to say good bye
@@ -75,7 +76,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
     }
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
-        info!("Key pressed : {:#?}", pressed);
+        info!("Movement : {:#?}", pressed);
         match pressed {
             Keycode::Z => {//up
                 ship.move_up();

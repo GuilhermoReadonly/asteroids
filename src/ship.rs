@@ -32,12 +32,14 @@ impl Drawable for Ship {
 
 impl Ship {
     pub fn new() -> Ship {
+        let xc = WIDTH/2 as i32;
+        let yc = HEIGHT/2 as i32;
         Ship {
-            position: Point::new(WIDTH/2 as i32 , HEIGHT/2 as i32),
+            position: Point::new(xc , yc),
             direction: 0.0,
-            point1: Point::new(HEIGHT/2 as i32 - DIMENSION , WIDTH/2 as i32 + DIMENSION),
-            point2: Point::new(HEIGHT/2 as i32 + DIMENSION , WIDTH/2 as i32 + DIMENSION),
-            point3: Point::new(HEIGHT/2 as i32 , WIDTH/2 as i32 - DIMENSION),
+            point1: Point::new(xc - DIMENSION ,yc + DIMENSION),
+            point2: Point::new(xc + DIMENSION , yc + DIMENSION),
+            point3: Point::new(xc , yc - DIMENSION),
         }
     }
 
@@ -56,17 +58,33 @@ impl Ship {
         self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
     }
     pub fn move_right(&mut self) -> () {
-        self.direction -= 0.1 % (2.0 * PI);
+        self.direction += 0.2; //PI/32.0;
 
-        self.point1 = rotate(&self.point1, &self.position, &-0.1);
-        self.point2 = rotate(&self.point2, &self.position, &-0.1);
-        self.point3 = rotate(&self.point3, &self.position, &-0.1);
+        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
+
+        self.rotate_all();
     }
     pub fn move_left(&mut self) -> () {
-        self.direction += 0.1 % (2.0 * PI);
+        self.direction -= 0.2; //PI/32.0;
 
-        self.point1 = rotate(&self.point1, &self.position, &0.1);
-        self.point2 = rotate(&self.point2, &self.position, &0.1);
-        self.point3 = rotate(&self.point3, &self.position, &0.1);
+        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
+
+        self.rotate_all();
+    }
+
+    pub fn rotate_all(&mut self) -> () {
+        self.point1 = rotate(&self.point1, &self.position, &self.direction);
+        self.point2 = rotate(&self.point2, &self.position, &self.direction);
+        self.point3 = rotate(&self.point3, &self.position, &self.direction);
+    }
+
+    pub fn translate_all(&mut self) -> () {
+        self.point1 = rotate(&self.point1, &self.position, &self.direction);
+        self.point2 = rotate(&self.point2, &self.position, &self.direction);
+        self.point3 = rotate(&self.point3, &self.position, &self.direction);
     }
 }
