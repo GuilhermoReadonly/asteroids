@@ -45,35 +45,19 @@ impl Ship {
 
     pub fn move_up(&mut self) -> () {
         self.position.y -= 1;
-
-        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
+        self.compute_movements();
     }
     pub fn move_down(&mut self) -> () {
         self.position.y += 1;
-
-        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
+        self.compute_movements();
     }
     pub fn move_right(&mut self) -> () {
-        self.direction += 0.2; //PI/32.0;
-
-        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
-
-        self.rotate_all();
+        self.direction += 0.1; //PI/32.0;
+        self.compute_movements();
     }
     pub fn move_left(&mut self) -> () {
-        self.direction -= 0.2; //PI/32.0;
-
-        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
-        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
-
-        self.rotate_all();
+        self.direction -= 0.1; //PI/32.0;
+        self.compute_movements();
     }
 
     pub fn rotate_all(&mut self) -> () {
@@ -83,8 +67,13 @@ impl Ship {
     }
 
     pub fn translate_all(&mut self) -> () {
-        self.point1 = rotate(&self.point1, &self.position, &self.direction);
-        self.point2 = rotate(&self.point2, &self.position, &self.direction);
-        self.point3 = rotate(&self.point3, &self.position, &self.direction);
+        self.point1 = Point::new(self.position.x as i32 - DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point2 = Point::new(self.position.x as i32 + DIMENSION , self.position.y as i32 + DIMENSION);
+        self.point3 = Point::new(self.position.x as i32 , self.position.y as i32 - DIMENSION);
+    }
+
+    pub fn compute_movements(&mut self) -> () {
+        self.translate_all();
+        self.rotate_all();
     }
 }

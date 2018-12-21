@@ -56,7 +56,6 @@ pub fn main() {
     while infernal_loop {
         treat_events(&mut infernal_loop, &mut event_pump, &mut ship);
         draw_all(&mut canvas, &mut ship);
-        thread::sleep(Duration::from_millis(100));
     }
 
     info!("Good bye my dude !");
