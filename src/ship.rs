@@ -1,12 +1,13 @@
-use crate::drawable::Drawable;
-use crate::constants::{HEIGHT, WIDTH};
-use crate::math::rotate;
-use crate::math::translate;
+use std::f64::consts::PI;
 
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
+use crate::drawable::Drawable;
+use crate::constants::{HEIGHT, WIDTH};
+use crate::math::rotate;
+use crate::math::translate;
 
 pub const DIMENSION: i32 = 10;
 
@@ -27,7 +28,7 @@ pub struct PointExact {
 
 impl Drawable for Ship {
     fn draw(&self, canvas: &mut WindowCanvas) -> () {
-        debug!("Draw : {:#?}", self);
+        debug!("Draw ship: {:#?}", self);
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         canvas.draw_line(self.point1, self.point2).unwrap();
         canvas.draw_line(self.point1, self.point3).unwrap();
@@ -57,11 +58,17 @@ impl Ship {
         self.compute_movements();
     }
     pub fn turn_right(&mut self) -> () {
-        self.angle -= 0.1; //PI/32.0;
+        self.angle -= 0.1;
+        if self.angle < -PI {
+            self.angle = PI;
+        }
         self.compute_movements();
     }
     pub fn turn_left(&mut self) -> () {
-        self.angle += 0.1; //PI/32.0;
+        self.angle += 0.1;
+        if self.angle > PI {
+            self.angle = -PI;
+        }
         self.compute_movements();
     }
 

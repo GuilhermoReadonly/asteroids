@@ -64,10 +64,10 @@ pub fn main() {
 
 fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut Ship){
     for event in event_pump.poll_iter() {
-        debug!("Event : {:#?}", event);
         match event {
             Event::Quit {..} |
             Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {// time to say good bye
+                info!("Event: {:#?}", event);
                 *infernal_loop = false;
             },
             _ => {}
@@ -75,8 +75,8 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
     }
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
-        info!("Key pressed : {:#?}", pressed);
-        info!("Ship state : {:#?}", ship);
+        info!("Key pressed: {:#?}", pressed);
+        info!("Ship state before: {:#?}", ship);
         match pressed {
             Keycode::Z => {//up
                 ship.move_up();
@@ -92,6 +92,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
             },
             _ => {}
         }
+        info!("Ship state after: {:#?}", ship);
     }
 }
 
@@ -104,8 +105,14 @@ fn draw_all(canvas: &mut WindowCanvas, ship: &mut Ship){
 
 fn draw_background(canvas: & mut WindowCanvas){
     canvas.set_draw_color(Color::RGB(0, 0, 0));
-    let result = canvas.fill_rect(Option::None);
-    debug!("result : {:?}", result);
+
+    match canvas.fill_rect(Option::None){
+        Err(error) => {
+            error!("Something bad happened during background drawing: {}", error);
+        },
+        _ => {},
+    };
+
 }
 
 
