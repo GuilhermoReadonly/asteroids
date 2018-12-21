@@ -75,7 +75,8 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
     }
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
-        info!("Movement : {:#?}", pressed);
+        info!("Key pressed : {:#?}", pressed);
+        info!("Ship state : {:#?}", ship);
         match pressed {
             Keycode::Z => {//up
                 ship.move_up();
@@ -84,10 +85,10 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
                 ship.move_down();
             },
             Keycode::Q => {//Left
-                ship.move_left();
+                ship.turn_left();
             },
             Keycode::D => {//Right
-                ship.move_right();
+                ship.turn_right();
             },
             _ => {}
         }
