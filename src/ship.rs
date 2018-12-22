@@ -9,7 +9,7 @@ use crate::constants::{HEIGHT, WIDTH};
 use crate::math::rotate;
 use crate::math::translate;
 
-pub const DIMENSION: i32 = 7;
+pub const DIMENSION: i32 = 8;
 
 #[derive(Debug, PartialEq)]
 pub struct Ship {
@@ -59,6 +59,7 @@ impl Ship {
 
         let points = vec![
             PointWithOffset::new(Point::new(xc-DIMENSION ,yc+DIMENSION), -DIMENSION, DIMENSION),
+            PointWithOffset::new(Point::new(xc ,yc+DIMENSION/2), 0, DIMENSION/2),
             PointWithOffset::new(Point::new(xc+DIMENSION ,yc+DIMENSION), DIMENSION, DIMENSION),
             PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION)];
         Ship {
