@@ -9,15 +9,13 @@ use crate::constants::{HEIGHT, WIDTH};
 use crate::math::rotate;
 use crate::math::translate;
 
-pub const DIMENSION: i32 = 10;
+pub const DIMENSION: i32 = 7;
 
 #[derive(Debug, PartialEq)]
 pub struct Ship {
     pub position: PointExact,
     pub angle: f64,
-    pub point1: Point,
-    pub point2: Point,
-    pub point3: Point,
+    pub points: Vec<PointWithOffset>,
 }
 
 #[derive(Debug, PartialEq)]
@@ -26,13 +24,31 @@ pub struct PointExact {
     pub y: f64,
 }
 
+#[derive(Debug, PartialEq)]
+pub struct PointWithOffset {
+    pub point: Point,
+    pub x_offset: i32,
+    pub y_offset: i32,
+}
+
+impl PointWithOffset {
+    pub fn new(point: Point, x_offset: i32, y_offset: i32) -> PointWithOffset {
+        PointWithOffset{
+            point,
+            x_offset,
+            y_offset
+        }
+    }
+}
+
 impl Drawable for Ship {
     fn draw(&self, canvas: &mut WindowCanvas) -> () {
         debug!("Draw ship: {:#?}", self);
         canvas.set_draw_color(Color::RGB(255, 255, 255));
-        canvas.draw_line(self.point1, self.point2).unwrap();
-        canvas.draw_line(self.point1, self.point3).unwrap();
-        canvas.draw_line(self.point2, self.point3).unwrap();
+        for i in 0..self.points.len(){
+            let next_index = (i+1) % self.points.len();
+            canvas.draw_line(*self.points.get(i).unwrap().point, *self.points.get(next_index).unwrap().point).unwrap();
+        }
     }
 }
 
@@ -40,12 +56,15 @@ impl Ship {
     pub fn new() -> Ship {
         let xc = WIDTH/2;
         let yc = HEIGHT/2;
+
+        let points = vec![
+            PointWithOffset::new(Point::new(xc-DIMENSION ,yc+DIMENSION), -DIMENSION, DIMENSION),
+            PointWithOffset::new(Point::new(xc+DIMENSION ,yc+DIMENSION), DIMENSION, DIMENSION),
+            PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION)];
         Ship {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: 0.0,
-            point1: Point::new(xc - DIMENSION ,yc + DIMENSION),
-            point2: Point::new(xc + DIMENSION , yc + DIMENSION),
-            point3: Point::new(xc , yc - DIMENSION),
+            points: points,
         }
     }
 
@@ -73,15 +92,15 @@ impl Ship {
     }
 
     fn rotate_all(&mut self) -> () {
-        self.point1 = rotate(&self.point1, &self.position, &self.angle);
-        self.point2 = rotate(&self.point2, &self.position, &self.angle);
-        self.point3 = rotate(&self.point3, &self.position, &self.angle);
+        for i in 0..self.points.len(){
+            self.points[i].point = rotate(&self.points[i].point, &self.position, &self.angle);
+        }
     }
 
     fn create_all(&mut self) -> () {
-        self.point1 = Point::new(self.position.x.round() as i32 - DIMENSION , self.position.y.round()  as i32 + DIMENSION);
-        self.point2 = Point::new(self.position.x.round()  as i32 + DIMENSION , self.position.y.round()  as i32 + DIMENSION);
-        self.point3 = Point::new(self.position.x.round()  as i32 , self.position.y.round()  as i32 - DIMENSION);
+        for i in 0..self.points.len(){
+            self.points[i].point = Point::new(self.position.x.round() as i32 + self.points[i].x_offset , self.position.y.round()  as i32 + self.points[i].y_offset);
+        }
     }
 
     fn compute_movements(&mut self) -> () {
