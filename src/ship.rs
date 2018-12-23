@@ -9,7 +9,11 @@ use crate::constants::{HEIGHT, WIDTH};
 use crate::math::rotate;
 use crate::math::translate;
 
-pub const DIMENSION: i32 = 8;
+pub const DIMENSION: i32 = 10;
+pub const PI_2: f64 = 2.0 * PI;
+pub const STEP_ROTATE: f64 = PI/32.0;
+pub const STEP_FORWARD: f64 = 3.0;
+pub const STEP_BACKWARD: f64 = -1.0;
 
 #[derive(Debug, PartialEq)]
 pub struct Ship {
@@ -70,25 +74,19 @@ impl Ship {
     }
 
     pub fn move_up(&mut self) -> () {
-        self.position = translate(&self.position, &3.0, &self.angle);
+        self.position = translate(&self.position, &STEP_FORWARD, &self.angle);
         self.compute_movements();
     }
     pub fn move_down(&mut self) -> () {
-        self.position = translate(&self.position, &-1.0, &self.angle);
+        self.position = translate(&self.position, &STEP_BACKWARD, &self.angle);
         self.compute_movements();
     }
     pub fn turn_right(&mut self) -> () {
-        self.angle -= 0.1;
-        if self.angle < -PI {
-            self.angle = PI;
-        }
+        self.angle = (self.angle - STEP_ROTATE) % PI_2;
         self.compute_movements();
     }
     pub fn turn_left(&mut self) -> () {
-        self.angle += 0.1;
-        if self.angle > PI {
-            self.angle = -PI;
-        }
+        self.angle = (self.angle + STEP_ROTATE) % PI_2;
         self.compute_movements();
     }
 
@@ -108,4 +106,30 @@ impl Ship {
         self.create_all();
         self.rotate_all();
     }
+}
+
+#[test]
+fn turn_right_test(){
+    let mut ship = Ship::new();
+
+    ship.turn_right();
+    assert_eq!(ship.angle, -STEP_ROTATE);
+
+    for _i in 0..64{
+        ship.turn_right();
+    }
+    assert!(ship.angle - STEP_ROTATE < std::f64::EPSILON);
+}
+
+#[test]
+fn turn_left_test(){
+    let mut ship = Ship::new();
+
+    ship.turn_left();
+    assert_eq!(ship.angle, STEP_ROTATE);
+
+    for _i in 0..64{
+        ship.turn_left();
+    }
+    assert!(ship.angle - STEP_ROTATE < std::f64::EPSILON);
 }
