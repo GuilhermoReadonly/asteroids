@@ -2,7 +2,7 @@ use sdl2::render::WindowCanvas;
 
 use crate::objects::ship::Ship;
 use crate::objects::asteroid::Asteroid;
-use crate::drawable::Drawable;
+use crate::traits::Drawable;
 
 #[derive(Debug, PartialEq)]
 pub struct Universe {

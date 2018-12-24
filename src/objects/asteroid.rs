@@ -2,10 +2,9 @@ use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
-use crate::drawable::Drawable;
+use crate::traits::Drawable;
+use crate::traits::Moveable;
 use crate::constants::*;
-use crate::math::rotate;
-use crate::math::translate;
 use crate::points::PointExact;
 use crate::points::PointWithOffset;
 
@@ -27,6 +26,30 @@ impl Drawable for Asteroid {
     }
 }
 
+impl Moveable for Asteroid {
+    fn set_position(&mut self, position: PointExact) -> (){
+        self.position = position;
+    }
+    fn get_position(&self) -> &PointExact{
+        &self.position
+    }
+    fn set_angle(&mut self, angle: f64) -> (){
+        self.angle = angle;
+    }
+    fn get_angle(&self) -> &f64{
+        &self.angle
+    }
+    fn set_points(&mut self, points: Vec<PointWithOffset>) -> (){
+        self.points = points;
+    }
+    fn get_points(&self) -> &Vec<PointWithOffset>{
+        &self.points
+    }
+    fn get_points_mut(&mut self) -> &mut Vec<PointWithOffset>{
+        &mut self.points
+    }
+}
+
 impl Asteroid {
     pub fn new() -> Asteroid {
         let xc = WIDTH/4;
@@ -45,37 +68,4 @@ impl Asteroid {
         }
     }
 
-    pub fn move_up(&mut self) -> () {
-        self.position = translate(&self.position, &STEP_FORWARD, &self.angle);
-        self.compute_movements();
-    }
-    pub fn move_down(&mut self) -> () {
-        self.position = translate(&self.position, &STEP_BACKWARD, &self.angle);
-        self.compute_movements();
-    }
-    pub fn turn_right(&mut self) -> () {
-        self.angle = (self.angle - STEP_ROTATE) % PI_2;
-        self.compute_movements();
-    }
-    pub fn turn_left(&mut self) -> () {
-        self.angle = (self.angle + STEP_ROTATE) % PI_2;
-        self.compute_movements();
-    }
-
-    fn rotate_all(&mut self) -> () {
-        for i in 0..self.points.len(){
-            self.points[i].point = rotate(&self.points[i].point, &self.position, &self.angle);
-        }
-    }
-
-    fn create_all(&mut self) -> () {
-        for i in 0..self.points.len(){
-            self.points[i].point = Point::new(self.position.x.round() as i32 + self.points[i].x_offset , self.position.y.round()  as i32 + self.points[i].y_offset);
-        }
-    }
-
-    fn compute_movements(&mut self) -> () {
-        self.create_all();
-        self.rotate_all();
-    }
 }

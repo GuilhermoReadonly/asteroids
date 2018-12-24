@@ -1,4 +1,4 @@
-mod drawable;
+mod traits;
 mod objects;
 mod math;
 mod points;
@@ -16,12 +16,12 @@ use sdl2::pixels::Color;
 use sdl2::EventPump;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
-//use sdl2::keyboard::Scancode;
 use sdl2::render::WindowCanvas;
 
 use crate::objects::universe::Universe;
 use crate::constants::{HEIGHT, WIDTH};
-use crate::drawable::Drawable;
+use crate::traits::Drawable;
+use crate::traits::Moveable;
 
 pub fn main() {
 
