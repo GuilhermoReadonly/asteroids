@@ -1,13 +1,12 @@
 use sdl2::render::WindowCanvas;
 
-use crate::objects::ship::Ship;
-use crate::objects::asteroid::Asteroid;
+use crate::objects::SpaceObject;
 use crate::traits::Drawable;
 
 #[derive(Debug, PartialEq)]
 pub struct Universe {
-    pub player: Ship,
-    pub asteroids: Vec<Asteroid>,
+    pub player: SpaceObject,
+    pub asteroids: Vec<SpaceObject>,
 }
 
 impl Drawable for Universe {
@@ -22,10 +21,10 @@ impl Drawable for Universe {
 
 impl Universe {
     pub fn new() -> Universe {
-        let asteroids = vec![Asteroid::new()];
+        let asteroids = vec![SpaceObject::new_asteroid()];
 
         Universe{
-            player: Ship::new(),
+            player: SpaceObject::new_ship(),
             asteroids: asteroids,
         }
     }
