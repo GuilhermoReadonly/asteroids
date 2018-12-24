@@ -1,6 +1,6 @@
 use sdl2::rect::Point;
 use std::f64;
-use crate::ship::PointExact;
+use crate::points::PointExact;
 
 pub fn rotate(point_to_rotate: &Point, point_of_rotation: &PointExact, angle: &f64) -> Point{
 

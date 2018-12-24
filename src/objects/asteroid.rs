@@ -1,53 +1,24 @@
-use std::f64::consts::PI;
-
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
 use sdl2::rect::Point;
 
 use crate::drawable::Drawable;
-use crate::constants::{HEIGHT, WIDTH};
+use crate::constants::*;
 use crate::math::rotate;
 use crate::math::translate;
-
-pub const DIMENSION: i32 = 10;
-pub const PI_2: f64 = 2.0 * PI;
-pub const STEP_ROTATE: f64 = PI/32.0;
-pub const STEP_FORWARD: f64 = 3.0;
-pub const STEP_BACKWARD: f64 = -1.0;
+use crate::points::PointExact;
+use crate::points::PointWithOffset;
 
 #[derive(Debug, PartialEq)]
-pub struct Ship {
+pub struct Asteroid {
     pub position: PointExact,
     pub angle: f64,
     pub points: Vec<PointWithOffset>,
 }
 
-#[derive(Debug, PartialEq)]
-pub struct PointExact {
-    pub x: f64,
-    pub y: f64,
-}
-
-#[derive(Debug, PartialEq)]
-pub struct PointWithOffset {
-    pub point: Point,
-    pub x_offset: i32,
-    pub y_offset: i32,
-}
-
-impl PointWithOffset {
-    pub fn new(point: Point, x_offset: i32, y_offset: i32) -> PointWithOffset {
-        PointWithOffset{
-            point,
-            x_offset,
-            y_offset
-        }
-    }
-}
-
-impl Drawable for Ship {
+impl Drawable for Asteroid {
     fn draw(&self, canvas: &mut WindowCanvas) -> () {
-        debug!("Draw ship: {:#?}", self);
+        debug!("Draw asteroid: {:#?}", self);
         canvas.set_draw_color(Color::RGB(255, 255, 255));
         for i in 0..self.points.len(){
             let next_index = (i+1) % self.points.len();
@@ -56,17 +27,18 @@ impl Drawable for Ship {
     }
 }
 
-impl Ship {
-    pub fn new() -> Ship {
-        let xc = WIDTH/2;
-        let yc = HEIGHT/2;
+impl Asteroid {
+    pub fn new() -> Asteroid {
+        let xc = WIDTH/4;
+        let yc = HEIGHT/4;
 
         let points = vec![
             PointWithOffset::new(Point::new(xc-DIMENSION ,yc+DIMENSION), -DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc+DIMENSION/2), 0, DIMENSION/2),
             PointWithOffset::new(Point::new(xc+DIMENSION ,yc+DIMENSION), DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION)];
-        Ship {
+            PointWithOffset::new(Point::new(xc+DIMENSION/2 ,yc), DIMENSION/2, 0),
+            PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION),
+            PointWithOffset::new(Point::new(xc-DIMENSION/2 ,yc), -DIMENSION/2, 0)];
+        Asteroid {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: 0.0,
             points: points,
@@ -106,30 +78,4 @@ impl Ship {
         self.create_all();
         self.rotate_all();
     }
-}
-
-#[test]
-fn turn_right_test(){
-    let mut ship = Ship::new();
-
-    ship.turn_right();
-    assert_eq!(ship.angle, -STEP_ROTATE);
-
-    for _i in 0..64{
-        ship.turn_right();
-    }
-    assert!(ship.angle - STEP_ROTATE < std::f64::EPSILON);
-}
-
-#[test]
-fn turn_left_test(){
-    let mut ship = Ship::new();
-
-    ship.turn_left();
-    assert_eq!(ship.angle, STEP_ROTATE);
-
-    for _i in 0..64{
-        ship.turn_left();
-    }
-    assert!(ship.angle - STEP_ROTATE < std::f64::EPSILON);
 }

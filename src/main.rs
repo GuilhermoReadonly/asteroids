@@ -1,6 +1,7 @@
-mod ship;
 mod drawable;
+mod objects;
 mod math;
+mod points;
 mod constants;
 
 #[macro_use]
@@ -18,9 +19,9 @@ use sdl2::keyboard::Keycode;
 //use sdl2::keyboard::Scancode;
 use sdl2::render::WindowCanvas;
 
-use crate::ship::Ship;
-use crate::drawable::Drawable;
+use crate::objects::universe::Universe;
 use crate::constants::{HEIGHT, WIDTH};
+use crate::drawable::Drawable;
 
 pub fn main() {
 
@@ -49,20 +50,20 @@ pub fn main() {
         },
     };
 
-    let mut ship = Ship::new();
+    let mut universe = Universe::new();
 
     info!("Let's start the infernal loop !");
     let mut infernal_loop = true;
     while infernal_loop {
-        treat_events(&mut infernal_loop, &mut event_pump, &mut ship);
-        draw_all(&mut canvas, &mut ship);
+        treat_events(&mut infernal_loop, &mut event_pump, &mut universe);
+        draw_all(&mut canvas, &mut universe);
     }
 
     info!("Good bye my dude !");
     thread::sleep(Duration::from_millis(100));
 }
 
-fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut Ship){
+fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: &mut Universe){
     for event in event_pump.poll_iter() {
         match event {
             Event::Quit {..} |
@@ -76,30 +77,30 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, ship: &mut
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
         info!("Key pressed: {:#?}", pressed);
-        info!("Ship state before: {:#?}", ship);
+        info!("Universe state before: {:#?}", universe);
         match pressed {
             Keycode::Z => {//up
-                ship.move_up();
+                universe.player.move_up();
             },
             Keycode::S => {//down
-                ship.move_down();
+                universe.player.move_down();
             },
             Keycode::Q => {//Left
-                ship.turn_left();
+                universe.player.turn_left();
             },
             Keycode::D => {//Right
-                ship.turn_right();
+                universe.player.turn_right();
             },
             _ => {}
         }
-        info!("Ship state after: {:#?}", ship);
+        info!("Universe state after: {:#?}", universe);
     }
 }
 
-fn draw_all(canvas: &mut WindowCanvas, ship: &mut Ship){
+fn draw_all(canvas: &mut WindowCanvas, universe: &mut Universe){
     canvas.clear();
     draw_background(canvas);
-    ship.draw(canvas);
+    universe.draw(canvas);
     canvas.present();
 }
 
