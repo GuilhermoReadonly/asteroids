@@ -19,16 +19,26 @@ pub trait Moveable {
     fn set_angle(&mut self, angle: f64) -> ();
     fn get_angle(&self) -> &f64;
 
+    fn set_speed(&mut self, angle: f64) -> ();
+    fn get_speed(&self) -> &f64;
+
     fn set_points(&mut self, points: Vec<PointWithOffset>) -> ();
     fn get_points(&self) -> &Vec<PointWithOffset>;
     fn get_points_mut(&mut self) -> &mut Vec<PointWithOffset>;
 
+    fn do_nothing(&mut self) -> () {
+        self.set_position(translate(&self.get_position(), self.get_speed(), &self.get_angle()));
+        self.compute_movements();
+    }
+
     fn move_up(&mut self) -> () {
-        self.set_position(translate(self.get_position(), &STEP_FORWARD, self.get_angle()));
+        self.set_speed(self.get_speed() + &SPEED_STEP);
+        self.set_position(translate(self.get_position(), self.get_speed(), self.get_angle()));
         self.compute_movements();
     }
     fn move_down(&mut self) -> () {
-        self.set_position(translate(&self.get_position(), &STEP_BACKWARD, &self.get_angle()));
+        self.set_speed(self.get_speed() - &SPEED_STEP);
+        self.set_position(translate(&self.get_position(), self.get_speed(), &self.get_angle()));
         self.compute_movements();
     }
     fn turn_right(&mut self) -> () {

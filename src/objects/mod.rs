@@ -14,6 +14,7 @@ use crate::math::rotate_point_with_offset;
 pub struct SpaceObject {
     pub position: PointExact,
     pub angle: f64,
+    pub speed: f64,
     pub points: Vec<PointWithOffset>,
 }
 
@@ -30,7 +31,16 @@ impl Drawable for SpaceObject {
 
 impl Moveable for SpaceObject {
     fn set_position(&mut self, position: PointExact) -> (){
-        self.position = position;
+        let x = if position.x > WIDTH as f64{0.0}
+        else if position.x < 0.0 {WIDTH as f64}
+        else {position.x};
+
+        let y = if position.y > HEIGHT as f64 {0.0}
+        else if position.y < 0.0 {HEIGHT as f64}
+        else {position.y};
+
+        let new_position = PointExact::new(x, y);
+        self.position = new_position;
     }
     fn get_position(&self) -> &PointExact{
         &self.position
@@ -40,6 +50,12 @@ impl Moveable for SpaceObject {
     }
     fn get_angle(&self) -> &f64{
         &self.angle
+    }
+    fn set_speed(&mut self, speed: f64) -> (){
+        self.speed = speed.min(SPEED_MAX).max(SPEED_MIN);
+    }
+    fn get_speed(&self) -> &f64{
+        &self.speed
     }
     fn set_points(&mut self, points: Vec<PointWithOffset>) -> (){
         self.points = points;
@@ -66,6 +82,7 @@ impl SpaceObject {
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: 0.0,
+            speed: 0.0,
             points: points,
         }
     }
@@ -87,6 +104,7 @@ impl SpaceObject {
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: 0.0,
+            speed: 1.0,
             points: points,
         }
     }

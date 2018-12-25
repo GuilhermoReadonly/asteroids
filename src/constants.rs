@@ -7,3 +7,6 @@ pub const PI: f64 = std::f64::consts::PI;
 pub const STEP_ROTATE: f64 = PI/32.0;
 pub const STEP_FORWARD: f64 = 3.0;
 pub const STEP_BACKWARD: f64 = -1.0;
+pub const SPEED_MAX: f64 = 7.0;
+pub const SPEED_MIN: f64 = 0.0;
+pub const SPEED_STEP: f64 = 0.2;

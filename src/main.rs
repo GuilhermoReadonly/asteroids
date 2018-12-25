@@ -95,6 +95,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
         }
         debug!("Universe state after: {:#?}", universe);
     }
+    universe.player.do_nothing();
 }
 
 fn draw_all(canvas: &mut WindowCanvas, universe: &mut Universe){
