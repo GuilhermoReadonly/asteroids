@@ -3,6 +3,8 @@ pub mod universe;
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
 
+use rand::prelude::*;
+
 use crate::traits::Drawable;
 use crate::traits::Moveable;
 use crate::constants::*;
@@ -88,15 +90,16 @@ impl SpaceObject {
     }
 
     pub fn new_asteroid(size: u32) -> SpaceObject {
-        //TODO : randomize the coordinates
-        let xc = WIDTH/2;
-        let yc = HEIGHT/2;
-        let center_of_asteroid = PointExact::new(xc as f64, yc as f64);
-        let initial_point_to_rotate = PointWithOffset::new(xc ,yc , DIMENSION, DIMENSION);
+        let mut rng = rand::thread_rng();
+        let xc: f64 = rng.gen::<f64>() * WIDTH as f64;
+        let yc: f64 = rng.gen::<f64>() * HEIGHT as f64;
+
+        let center_of_asteroid = PointExact::new(xc, yc);
         let mut points = vec![];
         let rotation_step = PI_2/size as f64;
 
         for i in 0..size{
+            let initial_point_to_rotate = PointWithOffset::new(xc as i32 ,yc as i32 , DIMENSION + (rng.gen::<f64>() * ASTEROID_RANDOMNESS_FACTOR) as i32, DIMENSION + (rng.gen::<f64>() * ASTEROID_RANDOMNESS_FACTOR) as i32);
             let point = rotate_point_with_offset(&initial_point_to_rotate, &center_of_asteroid, &(i as f64 * rotation_step));
             points.push(point);
         }

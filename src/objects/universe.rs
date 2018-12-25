@@ -21,7 +21,14 @@ impl Drawable for Universe {
 
 impl Universe {
     pub fn new() -> Universe {
-        let asteroids = vec![SpaceObject::new_asteroid(8)];
+        let asteroids = vec![
+                        SpaceObject::new_asteroid(5),
+                        SpaceObject::new_asteroid(6),
+                        SpaceObject::new_asteroid(7),
+                        SpaceObject::new_asteroid(8),
+                        SpaceObject::new_asteroid(9),
+                        SpaceObject::new_asteroid(10),
+                        ];
 
         Universe{
             player: SpaceObject::new_ship(),
