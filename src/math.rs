@@ -1,6 +1,9 @@
-use sdl2::rect::Point;
 use std::f64;
+
+use sdl2::rect::Point;
+
 use crate::points::PointExact;
+use crate::points::PointWithOffset;
 
 pub fn rotate(point_to_rotate: &Point, point_of_rotation: &PointExact, angle: &f64) -> Point{
 
@@ -8,6 +11,15 @@ pub fn rotate(point_to_rotate: &Point, point_of_rotation: &PointExact, angle: &f
     let y: f64 = (-angle).sin() * (point_to_rotate.x() as f64 - point_of_rotation.x) + (-angle).cos() * (point_to_rotate.y() as f64 - point_of_rotation.y) + point_of_rotation.y;
 
     Point::new(x.round() as i32,y.round() as i32)
+}
+
+pub fn rotate_point_with_offset(point_to_rotate: &PointWithOffset, point_of_rotation: &PointExact, angle: &f64) -> PointWithOffset{
+
+    let x: f64 = (-angle).cos() * (point_to_rotate.point.x() as f64 - point_of_rotation.x) - (-angle).sin() * (point_to_rotate.point.y() as f64 - point_of_rotation.y) + point_of_rotation.x;
+    let y: f64 = (-angle).sin() * (point_to_rotate.point.x() as f64 - point_of_rotation.x) + (-angle).cos() * (point_to_rotate.point.y() as f64 - point_of_rotation.y) + point_of_rotation.y;
+    let x_offset = x as i32 - point_to_rotate.get_x_center();
+    let y_offset = y as i32 - point_to_rotate.get_y_center();
+    PointWithOffset::new(x.round() as i32,y.round() as i32, x_offset, y_offset)
 }
 
 pub fn translate(point_to_translate: &PointExact, step: &f64, angle: &f64) -> PointExact{

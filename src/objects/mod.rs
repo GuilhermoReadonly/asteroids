@@ -2,13 +2,13 @@ pub mod universe;
 
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
-use sdl2::rect::Point;
 
 use crate::traits::Drawable;
 use crate::traits::Moveable;
 use crate::constants::*;
 use crate::points::PointExact;
 use crate::points::PointWithOffset;
+use crate::math::rotate_point_with_offset;
 
 #[derive(Debug, PartialEq)]
 pub struct SpaceObject {
@@ -58,10 +58,10 @@ impl SpaceObject {
         let yc = HEIGHT/2;
 
         let points = vec![
-            PointWithOffset::new(Point::new(xc-DIMENSION ,yc+DIMENSION), -DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc+DIMENSION/2), 0, DIMENSION/2),
-            PointWithOffset::new(Point::new(xc+DIMENSION ,yc+DIMENSION), DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION)];
+            PointWithOffset::new(xc ,yc , -DIMENSION, DIMENSION),
+            PointWithOffset::new(xc ,yc, 0, DIMENSION/2),
+            PointWithOffset::new(xc ,yc, DIMENSION, DIMENSION),
+            PointWithOffset::new(xc ,yc, 0, -DIMENSION)];
 
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
@@ -70,15 +70,19 @@ impl SpaceObject {
         }
     }
 
-    pub fn new_asteroid() -> SpaceObject {
+    pub fn new_asteroid(size: u32) -> SpaceObject {
+        //TODO : randomize the coordinates
         let xc = WIDTH/2;
         let yc = HEIGHT/2;
+        let center_of_asteroid = PointExact::new(xc as f64, yc as f64);
+        let initial_point_to_rotate = PointWithOffset::new(xc ,yc , DIMENSION, DIMENSION);
+        let mut points = vec![];
+        let rotation_step = PI_2/size as f64;
 
-        let points = vec![
-            PointWithOffset::new(Point::new(xc-DIMENSION ,yc+DIMENSION), -DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc+DIMENSION/2), 0, DIMENSION/2),
-            PointWithOffset::new(Point::new(xc+DIMENSION ,yc+DIMENSION), DIMENSION, DIMENSION),
-            PointWithOffset::new(Point::new(xc ,yc-DIMENSION), 0, -DIMENSION)];
+        for i in 0..size{
+            let point = rotate_point_with_offset(&initial_point_to_rotate, &center_of_asteroid, &(i as f64 * rotation_step));
+            points.push(point);
+        }
 
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},

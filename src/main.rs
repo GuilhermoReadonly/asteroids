@@ -77,7 +77,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
         info!("Key pressed: {:#?}", pressed);
-        info!("Universe state before: {:#?}", universe);
+        debug!("Universe state before: {:#?}", universe);
         match pressed {
             Keycode::Z => {//up
                 universe.player.move_up();
@@ -93,7 +93,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
             },
             _ => {}
         }
-        info!("Universe state after: {:#?}", universe);
+        debug!("Universe state after: {:#?}", universe);
     }
 }
 
