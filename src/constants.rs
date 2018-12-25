@@ -11,3 +11,4 @@ pub const SPEED_MAX: f64 = 7.0;
 pub const SPEED_MIN: f64 = 0.0;
 pub const SPEED_STEP: f64 = 0.2;
 pub const ASTEROID_RANDOMNESS_FACTOR: f64 = 7.0;
+pub const ASTEROID_INIT_SIZE: u32 = 12;

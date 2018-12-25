@@ -50,7 +50,7 @@ pub fn main() {
         },
     };
 
-    let mut universe = Universe::new();
+    let mut universe = Universe::new(6);
 
     info!("Let's start the infernal loop !");
     let mut infernal_loop = true;
@@ -114,9 +114,7 @@ fn draw_background(canvas: & mut WindowCanvas){
         },
         _ => {},
     };
-
 }
-
 
 pub fn init_sdl() -> Result<(WindowCanvas, Sdl), String> {
     let sdl_context = sdl2::init()?;

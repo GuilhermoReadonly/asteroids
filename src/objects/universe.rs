@@ -2,6 +2,7 @@ use sdl2::render::WindowCanvas;
 
 use crate::objects::SpaceObject;
 use crate::traits::Drawable;
+use crate::constants::*;
 
 #[derive(Debug, PartialEq)]
 pub struct Universe {
@@ -20,15 +21,12 @@ impl Drawable for Universe {
 }
 
 impl Universe {
-    pub fn new() -> Universe {
-        let asteroids = vec![
-                        SpaceObject::new_asteroid(5),
-                        SpaceObject::new_asteroid(6),
-                        SpaceObject::new_asteroid(7),
-                        SpaceObject::new_asteroid(8),
-                        SpaceObject::new_asteroid(9),
-                        SpaceObject::new_asteroid(10),
-                        ];
+    pub fn new(asteroid_number: u32) -> Universe {
+        let mut asteroids = vec![];
+
+        for _i in 0..asteroid_number{
+            asteroids.push(SpaceObject::new_asteroid(ASTEROID_INIT_SIZE));
+        }
 
         Universe{
             player: SpaceObject::new_ship(),
