@@ -95,10 +95,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
         }
         debug!("Universe state after: {:#?}", universe);
     }
-    universe.player.do_nothing();
-    for i in 0..universe.asteroids.len(){
-        universe.asteroids[i].do_nothing();
-    }
+    universe.compute_positions();
 }
 
 fn draw_all(canvas: &mut WindowCanvas, universe: &mut Universe){

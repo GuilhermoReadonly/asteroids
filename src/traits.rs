@@ -26,28 +26,17 @@ pub trait Moveable {
     fn get_points(&self) -> &Vec<PointWithOffset>;
     fn get_points_mut(&mut self) -> &mut Vec<PointWithOffset>;
 
-    fn do_nothing(&mut self) -> () {
-        self.set_position(translate(&self.get_position(), self.get_speed(), &self.get_angle()));
-        self.compute_movements();
-    }
-
     fn move_up(&mut self) -> () {
         self.set_speed(self.get_speed() + &SPEED_STEP);
-        self.set_position(translate(self.get_position(), self.get_speed(), self.get_angle()));
-        self.compute_movements();
     }
     fn move_down(&mut self) -> () {
         self.set_speed(self.get_speed() - &SPEED_STEP);
-        self.set_position(translate(&self.get_position(), self.get_speed(), &self.get_angle()));
-        self.compute_movements();
     }
     fn turn_right(&mut self) -> () {
         self.set_angle((self.get_angle() - STEP_ROTATE) % PI_2);
-        self.compute_movements();
     }
     fn turn_left(&mut self) -> () {
         self.set_angle((self.get_angle() + STEP_ROTATE) % PI_2);
-        self.compute_movements();
     }
 
     fn rotate_all(&mut self) -> () {
@@ -65,5 +54,10 @@ pub trait Moveable {
     fn compute_movements(&mut self) -> () {
         self.create_all();
         self.rotate_all();
+    }
+
+    fn compute_position(&mut self) -> () {
+        self.set_position(translate(&self.get_position(), self.get_speed(), &self.get_angle()));
+        self.compute_movements();
     }
 }

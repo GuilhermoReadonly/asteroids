@@ -2,6 +2,7 @@ use sdl2::render::WindowCanvas;
 use rand::Rng;
 
 use crate::objects::SpaceObject;
+use crate::traits::Moveable;
 use crate::traits::Drawable;
 use crate::constants::*;
 
@@ -35,9 +36,18 @@ impl Universe {
 
         let x: f64 = rng.gen::<f64>() * WIDTH as f64;
         let y: f64 = rng.gen::<f64>() * HEIGHT as f64;
+        let angle: f64 = rng.gen::<f64>() * PI_2;
         Universe{
-            player: SpaceObject::new_ship(x, y),
+            player: SpaceObject::new_ship(x, y, angle),
             asteroids: asteroids,
         }
     }
+
+    pub fn compute_positions(&mut self) -> () {
+        self.player.compute_position();
+        for i in 0..self.asteroids.len(){
+            self.asteroids[i].compute_position();
+        }
+    }
+
 }

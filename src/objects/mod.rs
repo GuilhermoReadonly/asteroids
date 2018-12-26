@@ -71,7 +71,7 @@ impl Moveable for SpaceObject {
 }
 
 impl SpaceObject {
-    pub fn new_ship(x: f64, y: f64) -> SpaceObject {
+    pub fn new_ship(x: f64, y: f64, angle: f64) -> SpaceObject {
         let xc = x as i32;
         let yc =y as i32;
 
@@ -83,7 +83,7 @@ impl SpaceObject {
 
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
-            angle: 0.0,
+            angle: angle,
             speed: 0.0,
             radius: DIMENSION as f64,
             points: points,
@@ -132,13 +132,13 @@ impl SpaceObject {
 #[test]
 fn is_colision_happened_test(){
     //almost don't collide
-    let ship = SpaceObject::new_ship(0.0, 0.0);
+    let ship = SpaceObject::new_ship(0.0, 0.0, 0.0);
     let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0 - 1.0, 0.0, 12);
     let result = ship.has_collided_with(&asteroid);
     assert_eq!(result, true);
 
     //almost collide
-    let ship = SpaceObject::new_ship(0.0, 0.0);
+    let ship = SpaceObject::new_ship(0.0, 0.0, 0.0);
     let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0, 0.0, 12);
     let result = ship.has_collided_with(&asteroid);
     assert_eq!(result, false);
@@ -146,7 +146,7 @@ fn is_colision_happened_test(){
 
 #[test]
 fn turn_right_test(){
-    let mut object = SpaceObject::new_ship(0.0, 0.0);
+    let mut object = SpaceObject::new_ship(0.0, 0.0, 0.0);
 
     object.turn_right();
     assert_eq!(object.angle, -STEP_ROTATE);
@@ -159,7 +159,7 @@ fn turn_right_test(){
 
 #[test]
 fn turn_left_test(){
-    let mut object = SpaceObject::new_ship(0.0, 0.0);
+    let mut object = SpaceObject::new_ship(0.0, 0.0, 0.0);
 
     object.turn_left();
     assert_eq!(object.angle, STEP_ROTATE);
