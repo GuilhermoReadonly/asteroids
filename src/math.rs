@@ -32,7 +32,7 @@ pub fn translate(point_to_translate: &PointExact, step: &f64, angle: &f64) -> Po
 
 #[test]
 fn translate_test(){
-    use std::f64::consts::PI;
+    use crate::constants::PI;
     let angle = 0.0;
     let point_origin = PointExact{x: 3.0, y: 5.0,};
     let step = 1.0;

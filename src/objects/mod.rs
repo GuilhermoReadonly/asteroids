@@ -2,8 +2,7 @@ pub mod universe;
 
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
-
-use rand::prelude::*;
+use rand::Rng;
 
 use crate::traits::Drawable;
 use crate::traits::Moveable;
@@ -17,13 +16,14 @@ pub struct SpaceObject {
     pub position: PointExact,
     pub angle: f64,
     pub speed: f64,
+    pub radius: f64,
     pub points: Vec<PointWithOffset>,
 }
 
 impl Drawable for SpaceObject {
     fn draw(&self, canvas: &mut WindowCanvas) -> () {
         debug!("Draw SpaceObject: {:#?}", self);
-        canvas.set_draw_color(Color::RGB(255, 255, 255));
+        canvas.set_draw_color(Color::RGB(0, 255, 0));
         for i in 0..self.points.len(){
             let next_index = (i+1) % self.points.len();
             canvas.draw_line(*self.points.get(i).unwrap().point, *self.points.get(next_index).unwrap().point).unwrap();
@@ -71,9 +71,9 @@ impl Moveable for SpaceObject {
 }
 
 impl SpaceObject {
-    pub fn new_ship() -> SpaceObject {
-        let xc = WIDTH/2;
-        let yc = HEIGHT/2;
+    pub fn new_ship(x: f64, y: f64) -> SpaceObject {
+        let xc = x as i32;
+        let yc =y as i32;
 
         let points = vec![
             PointWithOffset::new(xc ,yc , -DIMENSION, DIMENSION),
@@ -85,14 +85,15 @@ impl SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: 0.0,
             speed: 0.0,
+            radius: DIMENSION as f64,
             points: points,
         }
     }
 
-    pub fn new_asteroid(size: u32) -> SpaceObject {
+    pub fn new_asteroid(x: f64, y: f64, size: u32) -> SpaceObject {
         let mut rng = rand::thread_rng();
-        let xc: f64 = rng.gen::<f64>() * WIDTH as f64;
-        let yc: f64 = rng.gen::<f64>() * HEIGHT as f64;
+        let xc: f64 = x;
+        let yc: f64 = y;
 
         let center_of_asteroid = PointExact::new(xc, yc);
         let mut points = vec![];
@@ -106,16 +107,46 @@ impl SpaceObject {
 
         SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
-            angle: 0.0,
-            speed: 1.0,
+            angle: rng.gen::<f64>() * PI_2,
+            speed: ASTEROID_INIT_SPEED,
+            radius: DIMENSION as f64,
             points: points,
         }
     }
+
+    pub fn distance_to(&self, other_object: &SpaceObject) -> f64{
+        ((self.position.x - other_object.position.x).powi(2) + (self.position.y - other_object.position.y).powi(2)).sqrt()
+    }
+
+    pub fn has_collided_with(&self, other_object: &SpaceObject) -> bool{
+        let mut result = false;
+        if self.distance_to(other_object) < self.radius + other_object.radius{
+            result = true;
+        }
+        result
+    }
+}
+
+
+
+#[test]
+fn is_colision_happened_test(){
+    //almost don't collide
+    let ship = SpaceObject::new_ship(0.0, 0.0);
+    let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0 - 1.0, 0.0, 12);
+    let result = ship.has_collided_with(&asteroid);
+    assert_eq!(result, true);
+
+    //almost collide
+    let ship = SpaceObject::new_ship(0.0, 0.0);
+    let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0, 0.0, 12);
+    let result = ship.has_collided_with(&asteroid);
+    assert_eq!(result, false);
 }
 
 #[test]
 fn turn_right_test(){
-    let mut object = SpaceObject::new_ship();
+    let mut object = SpaceObject::new_ship(0.0, 0.0);
 
     object.turn_right();
     assert_eq!(object.angle, -STEP_ROTATE);
@@ -128,7 +159,7 @@ fn turn_right_test(){
 
 #[test]
 fn turn_left_test(){
-    let mut object = SpaceObject::new_ship();
+    let mut object = SpaceObject::new_ship(0.0, 0.0);
 
     object.turn_left();
     assert_eq!(object.angle, STEP_ROTATE);

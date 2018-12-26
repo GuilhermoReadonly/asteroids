@@ -76,7 +76,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
     }
 
     for pressed in event_pump.keyboard_state().pressed_scancodes().filter_map(Keycode::from_scancode){
-        info!("Key pressed: {:#?}", pressed);
+        debug!("Key pressed: {:#?}", pressed);
         debug!("Universe state before: {:#?}", universe);
         match pressed {
             Keycode::Z => {//up
@@ -96,6 +96,9 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
         debug!("Universe state after: {:#?}", universe);
     }
     universe.player.do_nothing();
+    for i in 0..universe.asteroids.len(){
+        universe.asteroids[i].do_nothing();
+    }
 }
 
 fn draw_all(canvas: &mut WindowCanvas, universe: &mut Universe){
