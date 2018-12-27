@@ -19,7 +19,7 @@ use sdl2::keyboard::Keycode;
 use sdl2::render::WindowCanvas;
 
 use crate::objects::universe::Universe;
-use crate::constants::{HEIGHT, WIDTH};
+use crate::constants::*;
 use crate::traits::Drawable;
 use crate::traits::Moveable;
 
@@ -50,7 +50,7 @@ pub fn main() {
         },
     };
 
-    let mut universe = Universe::new(6);
+    let mut universe = Universe::new(ASTEROID_INIT_NUMBER);
 
     info!("Let's start the infernal loop !");
     let mut infernal_loop = true;
@@ -95,6 +95,7 @@ fn treat_events(infernal_loop: &mut bool, event_pump: &mut EventPump, universe: 
         }
         debug!("Universe state after: {:#?}", universe);
     }
+    universe.compute_collisions();
     universe.compute_positions();
 }
 

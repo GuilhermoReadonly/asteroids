@@ -47,6 +47,9 @@ pub trait Moveable {
 
     fn create_all(&mut self) -> () {
         for i in 0..self.get_points().len(){
+            if self.get_position().y == std::f64::NAN{
+                debug!("self.get_position(): {:#?}", self.get_position());
+            }
             self.get_points_mut()[i].point = Point::new(self.get_position().x.round() as i32 + self.get_points()[i].x_offset , self.get_position().y.round()  as i32 + self.get_points()[i].y_offset);
         }
     }

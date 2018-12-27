@@ -13,5 +13,5 @@ root:
     - stdout
 
 loggers:
-  asteroids::ship:
-    level: info
+  asteroids::traits:
+    level: debug

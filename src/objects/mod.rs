@@ -2,6 +2,8 @@ pub mod universe;
 
 use sdl2::render::WindowCanvas;
 use sdl2::pixels::Color;
+use sdl2::gfx::primitives::DrawRenderer;
+
 use rand::Rng;
 
 use crate::traits::Drawable;
@@ -27,6 +29,10 @@ impl Drawable for SpaceObject {
         for i in 0..self.points.len(){
             let next_index = (i+1) % self.points.len();
             canvas.draw_line(*self.points.get(i).unwrap().point, *self.points.get(next_index).unwrap().point).unwrap();
+        }
+
+        if DEBUG == true {
+            canvas.circle(self.position.x as i16, self.position.y as i16, self.radius as i16, Color::RGB(0, 255, 0)).unwrap();
         }
     }
 }
@@ -109,7 +115,7 @@ impl SpaceObject {
             position: PointExact{x: xc as f64 , y: yc as f64},
             angle: rng.gen::<f64>() * PI_2,
             speed: ASTEROID_INIT_SPEED,
-            radius: DIMENSION as f64,
+            radius: (DIMENSION * 2) as f64,
             points: points,
         }
     }
@@ -130,16 +136,16 @@ impl SpaceObject {
 
 
 #[test]
-fn is_colision_happened_test(){
+fn has_collided_with_test(){
     //almost don't collide
     let ship = SpaceObject::new_ship(0.0, 0.0, 0.0);
-    let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0 - 1.0, 0.0, 12);
+    let asteroid = SpaceObject::new_asteroid(DIMENSION as f64 * 3.0 - 1.0, 0.0, 12);
     let result = ship.has_collided_with(&asteroid);
     assert_eq!(result, true);
 
     //almost collide
     let ship = SpaceObject::new_ship(0.0, 0.0, 0.0);
-    let asteroid = SpaceObject::new_asteroid(ship.radius * 2.0, 0.0, 12);
+    let asteroid = SpaceObject::new_asteroid(DIMENSION as f64 * 3.0, 0.0, 12);
     let result = ship.has_collided_with(&asteroid);
     assert_eq!(result, false);
 }

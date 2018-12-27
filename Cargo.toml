@@ -5,7 +5,11 @@ authors = ["guilhermo <guilhermo.readonly@gmail.com>"]
 edition = "2018"
 
 [dependencies]
-sdl2 = "0.32.0"
 log = "0.4.6"
 log4rs = "0.8.1"
 rand = "0.6.1"
+
+[dependencies.sdl2]
+version = "0.32"
+default-features = false
+features = ["gfx"]
