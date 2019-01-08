@@ -131,6 +131,14 @@ impl SpaceObject {
         }
         result
     }
+
+    pub fn compute_angle(&self, other_object: &SpaceObject) -> f64{
+
+        let x_delta: f64 = self.position.x - other_object.position.x;
+        let y_delta: f64 = self.position.y - other_object.position.y;
+
+        (x_delta / y_delta).atan()
+    }
 }
 
 

@@ -54,16 +54,16 @@ impl Universe {
         for i in 0..self.asteroids.len(){
             if self.player.has_collided_with(&self.asteroids[i]){
                 info!("colision with player detected !!!");
-                self.player.set_angle(self.player.get_angle() + self.asteroids[i].get_angle());
+                self.player.set_angle(PI - self.player.compute_angle(&self.asteroids[i]));
 
-                let new_angle = self.asteroids[i].get_angle() + self.asteroids[i].get_angle();
+                let new_angle = self.asteroids[i].compute_angle(&self.player);
                 self.asteroids[i].set_angle(new_angle);
             }
 
             for j in 0..self.asteroids.len(){
                 if i != j && self.asteroids[i].has_collided_with(&self.asteroids[j]){
                     info!("colision with asteroid detected !!!");
-                    let new_angle = self.asteroids[i].get_angle() + self.asteroids[j].get_angle();
+                    let new_angle = PI - self.asteroids[i].compute_angle(&self.asteroids[j]);
                     self.asteroids[i].set_angle(new_angle);
                 }
             }
