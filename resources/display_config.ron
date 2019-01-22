@@ -1,0 +1,10 @@
+(
+  title: "Asteroids Reloaded 🚀",
+  dimensions: Some((800, 800)),
+  max_dimensions: None,
+  min_dimensions: None,
+  fullscreen: false,
+  multisampling: 0,
+  visibility: true,
+  vsync: true,
+)

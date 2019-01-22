@@ -1,15 +1,8 @@
 [package]
 name = "asteroids"
 version = "0.1.0"
-authors = ["guilhermo <guilhermo.readonly@gmail.com>"]
+authors = []
 edition = "2018"
 
 [dependencies]
-log = "0.4.6"
-log4rs = "0.8.1"
-rand = "0.6.1"
-
-[dependencies.sdl2]
-version = "0.32"
-default-features = false
-features = ["gfx"]
+amethyst = "0.10.0"
