@@ -17,8 +17,10 @@ pub struct Asteroids;
 impl SimpleState for Asteroids {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
+        // Load the spritesheet necessary to render the graphics.
+        let sprite_sheet_handle = load_sprite_sheet(world);
         world.register::<Ship>();
-        initialise_ship(world);
+        initialise_ship(world, sprite_sheet_handle);
         initialise_camera(world);
     }
 }
@@ -55,7 +57,13 @@ fn initialise_camera(world: &mut World) {
         .build();
 }
 
-fn initialise_ship(world: &mut World) {
+fn initialise_ship(world: &mut World, sprite_sheet: SpriteSheetHandle) {
+    // Assign the sprites for the ship
+    let sprite_render = SpriteRender {
+        sprite_sheet: sprite_sheet.clone(),
+        sprite_number: 0, // ship is the first sprite in the sprite_sheet
+    };
+
     let mut ship_transform = Transform::default();
 
     // Correctly position the ship in the middle of the arena.
@@ -66,7 +74,35 @@ fn initialise_ship(world: &mut World) {
     // Create a ship entity.
     world
         .create_entity()
+        .with(sprite_render.clone())
         .with(Ship::new())
         .with(ship_transform)
         .build();
+}
+
+fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
+    // Load the sprite sheet necessary to render the graphics.
+    // The texture is the pixel data
+    // `texture_handle` is a cloneable reference to the texture
+    let texture_handle = {
+        let loader = world.read_resource::<Loader>();
+        let texture_storage = world.read_resource::<AssetStorage<Texture>>();
+        loader.load(
+            "texture/ship_spritesheet.png",
+            PngFormat,
+            TextureMetadata::srgb_scale(),
+            (),
+            &texture_storage,
+        )
+    };
+
+    let loader = world.read_resource::<Loader>();
+    let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
+    loader.load(
+        "texture/ship_spritesheet.ron", // Here we load the associated ron file
+        SpriteSheetFormat,
+        texture_handle, // We pass it the handle of the texture we want it to use
+        (),
+        &sprite_sheet_store,
+    )
 }
