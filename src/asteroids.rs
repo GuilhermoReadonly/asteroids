@@ -19,7 +19,6 @@ impl SimpleState for Asteroids {
         let world = data.world;
         // Load the spritesheet necessary to render the graphics.
         let sprite_sheet_handle = load_sprite_sheet(world);
-        world.register::<Ship>();
         initialise_ship(world, sprite_sheet_handle);
         initialise_camera(world);
     }
@@ -69,12 +68,14 @@ fn initialise_ship(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     // Correctly position the ship in the middle of the arena.
     let y = ARENA_HEIGHT / 2.0;
     let x = ARENA_WIDTH / 2.0;
-    ship_transform.set_xyz(x, y, 0.0);
+    ship_transform
+        .set_xyz(x, y, 0.0)
+        .set_scale(0.2,0.2,0.2);
 
     // Create a ship entity.
     world
         .create_entity()
-        .with(sprite_render.clone())
+        .with(sprite_render)
         .with(Ship::new())
         .with(ship_transform)
         .build();

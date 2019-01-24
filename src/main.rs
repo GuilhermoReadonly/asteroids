@@ -1,4 +1,5 @@
 mod asteroids;
+mod systems;
 
 use amethyst::{
         prelude::*,
@@ -7,8 +8,9 @@ use amethyst::{
         },
         utils::application_root_dir,
         core::transform::TransformBundle,
+        input::InputBundle,
     };
-    
+
 use self::asteroids::Asteroids;
 
 fn main() -> amethyst::Result<()> {
@@ -16,6 +18,10 @@ fn main() -> amethyst::Result<()> {
     amethyst::start_logger(Default::default());
     let path = format!("{}/resources/display_config.ron", application_root_dir());
     let config = DisplayConfig::load(&path);
+
+    let binding_path = format!("{}/resources/bindings_config.ron",application_root_dir());
+    let input_bundle = InputBundle::<String, String>::new().with_bindings_from_file(binding_path)?;
+
 
     let pipe = Pipeline::build()
         .with_stage(
@@ -25,14 +31,12 @@ fn main() -> amethyst::Result<()> {
         );
 
     let game_data = GameDataBuilder::default()
-    .with_bundle(
-        RenderBundle::new(pipe, Some(config))
-        .with_sprite_sheet_processor()
-    )?
-    .with_bundle(TransformBundle::new())?;
+        .with_bundle(RenderBundle::new(pipe, Some(config)).with_sprite_sheet_processor())?
+        .with_bundle(TransformBundle::new())?
+        .with_bundle(input_bundle)?
+        .with(systems::ShipSystem, "ship_system", &["input_system"]);;
 
     let mut game = Application::new("./", Asteroids, game_data)?;
-
     game.run();
 
     Ok(())
