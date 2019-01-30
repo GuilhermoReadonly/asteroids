@@ -1,13 +1,16 @@
 use amethyst::{
-        prelude::*,
-        assets::{AssetStorage, Loader},
-        core::transform::Transform,
-        ecs::prelude::{Component, DenseVecStorage},
-        renderer::{
-            Camera, PngFormat, Projection, SpriteRender, SpriteSheet,
-            SpriteSheetFormat, SpriteSheetHandle, Texture, TextureMetadata,
-        }
-    };
+    prelude::*,
+    assets::{AssetStorage, Loader},
+    core::{
+        transform::Transform,
+        nalgebra::base::Vector3,
+    },
+    ecs::prelude::{Component, DenseVecStorage},
+    renderer::{
+        Camera, PngFormat, Projection, SpriteRender, SpriteSheet,
+        SpriteSheetFormat, SpriteSheetHandle, Texture, TextureMetadata,
+    },
+};
 
 pub const ARENA_HEIGHT: f32 = 100.0;
 pub const ARENA_WIDTH: f32 = 100.0;
@@ -26,13 +29,13 @@ impl SimpleState for Asteroids {
 
 #[derive(Debug)]
 pub struct Ship {
-    pub speed: f32,
+    pub speed: Vector3<f32>,
 }
 
 impl Ship {
     fn new() -> Ship {
         Ship {
-            speed: 0.0,
+            speed: Vector3::new(0.0, 0.0, 0.0),
         }
     }
 }

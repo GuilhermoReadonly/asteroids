@@ -1,17 +1,19 @@
-use amethyst::core::Transform;
-use amethyst::ecs::{Join, Read, ReadStorage, System, WriteStorage};
-use amethyst::input::InputHandler;
+use amethyst::{
+    core::{
+        Transform,
+        nalgebra::base::Vector3,
+    },
+    ecs::{Join, Read, System, WriteStorage},
+    input::InputHandler
+};
 
 // You'll have to mark as public in pong.rs
 use crate::asteroids::{Ship, ARENA_HEIGHT, ARENA_WIDTH};
 
 pub struct ShipSystem;
 
-const AMOUNT_TRANSLATION_FACTOR: f32 = 0.8;
 const AMOUNT_ROTATION_FACTOR: f32 = 0.1;
-const AMOUNT_SPEED_FACTOR: f32 = 0.05;
-const MAX_SPEED: f32 = 1.0;
-const MIN_SPEED: f32 = 0.0;
+const AMOUNT_SPEED_FACTOR: f32 = 0.01;
 
 impl<'s> System<'s> for ShipSystem {
   type SystemData = (
@@ -25,9 +27,31 @@ impl<'s> System<'s> for ShipSystem {
         let movement_x = input.axis_value("ship_x");
         let movement_y = input.axis_value("ship_y");
 
-        ship.speed = (ship.speed + compute_movement(movement_y, AMOUNT_SPEED_FACTOR)).max(MIN_SPEED).min(MAX_SPEED);
-        transform.move_up(ship.speed * AMOUNT_TRANSLATION_FACTOR);
-        transform.roll_local(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
+        //compute rotation
+        if movement_x != Some(0.0) {
+            transform.roll_local(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
+        }
+
+        //compute translation
+        if movement_y != Some(0.0) {
+            let delta_speed_vector = Vector3::y() * compute_movement(movement_y, AMOUNT_SPEED_FACTOR);
+            ship.speed = ship.speed + (transform.isometry() * delta_speed_vector);
+        }
+
+        //move the ship on the other side of the box if it reaches one side
+        if transform.translation().x > ARENA_WIDTH {
+            transform.set_x(0.0);
+        }
+        if transform.translation().x < 0.0 {
+            transform.set_x(ARENA_WIDTH);
+        }
+        if transform.translation().y > ARENA_HEIGHT {
+            transform.set_y(0.0);
+        }
+        if transform.translation().y < 0.0 {
+            transform.set_y(ARENA_HEIGHT);
+        }
+        transform.move_global(ship.speed);
     }
   }
 }
