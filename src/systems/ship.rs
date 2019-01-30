@@ -9,20 +9,25 @@ pub struct ShipSystem;
 
 const AMOUNT_TRANSLATION_FACTOR: f32 = 0.8;
 const AMOUNT_ROTATION_FACTOR: f32 = 0.1;
+const AMOUNT_SPEED_FACTOR: f32 = 0.05;
+const MAX_SPEED: f32 = 1.0;
+const MIN_SPEED: f32 = 0.0;
 
 impl<'s> System<'s> for ShipSystem {
   type SystemData = (
     WriteStorage<'s, Transform>,
-    ReadStorage<'s, Ship>,
+    WriteStorage<'s, Ship>,
     Read<'s, InputHandler<String, String>>,
   );
 
-  fn run(&mut self, (mut transforms, ships, input): Self::SystemData) {
-    for (ship, transform) in (&ships, &mut transforms).join() {
+  fn run(&mut self, (mut transforms, mut ships, input): Self::SystemData) {
+    for (ship, transform) in (&mut ships, &mut transforms).join() {
         let movement_x = input.axis_value("ship_x");
         let movement_y = input.axis_value("ship_y");
+
+        ship.speed = (ship.speed + compute_movement(movement_y, AMOUNT_SPEED_FACTOR)).max(MIN_SPEED).min(MAX_SPEED);
+        transform.move_up(ship.speed * AMOUNT_TRANSLATION_FACTOR);
         transform.roll_local(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
-        transform.move_up(compute_movement(movement_y, AMOUNT_TRANSLATION_FACTOR));
     }
   }
 }
@@ -32,7 +37,7 @@ fn compute_movement(movement: Option<f64>, movement_factor: f32) -> f32{
     if let Some(mv_amount) = movement {
         if mv_amount != 0.0 {
             // TODO: use amethyst::core::timing::Time to get the framerate and compute the
-            // distance to move accordingly instead of using the fixed constant AMOUNT_FACTOR
+            // distance to move
             computed_move = movement_factor * mv_amount as f32;
         }
     }

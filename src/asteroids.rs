@@ -24,9 +24,9 @@ impl SimpleState for Asteroids {
     }
 }
 
-
+#[derive(Debug)]
 pub struct Ship {
-    pub speed: f64,
+    pub speed: f32,
 }
 
 impl Ship {
