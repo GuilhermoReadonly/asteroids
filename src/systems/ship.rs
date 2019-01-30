@@ -7,7 +7,8 @@ use crate::asteroids::{Ship, ARENA_HEIGHT, ARENA_WIDTH};
 
 pub struct ShipSystem;
 
-const AMOUNT_FACTOR: f32 = 0.7;
+const AMOUNT_TRANSLATION_FACTOR: f32 = 0.8;
+const AMOUNT_ROTATION_FACTOR: f32 = 0.1;
 
 impl<'s> System<'s> for ShipSystem {
   type SystemData = (
@@ -20,27 +21,19 @@ impl<'s> System<'s> for ShipSystem {
     for (ship, transform) in (&ships, &mut transforms).join() {
         let movement_x = input.axis_value("ship_x");
         let movement_y = input.axis_value("ship_y");
-        transform.set_x(
-            (transform.translation().x + compute_movement(movement_x))
-                .max(0.0)
-                .min(ARENA_HEIGHT),
-        );
-        transform.set_y(
-            (transform.translation().y + compute_movement(movement_y))
-                .max(0.0)
-                .min(ARENA_WIDTH),
-        );
+        transform.roll_local(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
+        transform.move_up(compute_movement(movement_y, AMOUNT_TRANSLATION_FACTOR));
     }
   }
 }
 
-fn compute_movement(movement: Option<f64>) -> f32{
+fn compute_movement(movement: Option<f64>, movement_factor: f32) -> f32{
     let mut computed_move = 0.0;
     if let Some(mv_amount) = movement {
         if mv_amount != 0.0 {
             // TODO: use amethyst::core::timing::Time to get the framerate and compute the
             // distance to move accordingly instead of using the fixed constant AMOUNT_FACTOR
-            computed_move = AMOUNT_FACTOR * mv_amount as f32;
+            computed_move = movement_factor * mv_amount as f32;
         }
     }
     computed_move
