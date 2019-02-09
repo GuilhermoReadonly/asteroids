@@ -4,7 +4,7 @@ mod systems;
 use amethyst::{
         prelude::*,
         renderer::{
-            DisplayConfig, DrawFlat2D, Pipeline,RenderBundle, Stage
+            DisplayConfig, DrawFlat, Pipeline,RenderBundle, Stage, PosNormTex,
         },
         utils::application_root_dir,
         core::transform::TransformBundle,
@@ -15,7 +15,9 @@ use self::asteroids::Asteroids;
 
 fn main() -> amethyst::Result<()> {
 
-    amethyst::start_logger(Default::default());
+    amethyst::Logger::from_config(Default::default())
+    .level_for("gfx_device_gl", amethyst::LogLevelFilter::Warn)
+    .start();
     let path = format!("{}/resources/display_config.ron", application_root_dir());
     let config = DisplayConfig::load(&path);
 
@@ -27,11 +29,11 @@ fn main() -> amethyst::Result<()> {
         .with_stage(
             Stage::with_backbuffer()
                 .clear_target([0.0, 0.0, 0.0, 1.0], 1.0)
-                .with_pass(DrawFlat2D::new()),
+                .with_pass(DrawFlat::<PosNormTex>::new()),
         );
 
     let game_data = GameDataBuilder::default()
-        .with_bundle(RenderBundle::new(pipe, Some(config)).with_sprite_sheet_processor())?
+        .with_bundle(RenderBundle::new(pipe, Some(config)))?
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with(systems::ShipSystem, "ship_system", &["input_system"]);;

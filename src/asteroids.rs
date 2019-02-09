@@ -1,14 +1,13 @@
 use amethyst::{
     prelude::*,
-    assets::{AssetStorage, Loader},
+    assets::{Loader, ProgressCounter},
     core::{
         transform::Transform,
         nalgebra::base::Vector3,
     },
     ecs::prelude::{Component, DenseVecStorage},
     renderer::{
-        Camera, PngFormat, Projection, SpriteRender, SpriteSheet,
-        SpriteSheetFormat, SpriteSheetHandle, Texture, TextureMetadata,
+        Camera, Projection, Material, MeshHandle, ObjFormat, MaterialDefaults,
     },
 };
 
@@ -20,9 +19,8 @@ pub struct Asteroids;
 impl SimpleState for Asteroids {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
         let world = data.world;
-        // Load the spritesheet necessary to render the graphics.
-        let sprite_sheet_handle = load_sprite_sheet(world);
-        initialise_ship(world, sprite_sheet_handle);
+        // Load the things necessary to render the graphics.
+        initialise_ship(world);
         initialise_camera(world);
     }
 }
@@ -59,12 +57,36 @@ fn initialise_camera(world: &mut World) {
         .build();
 }
 
-fn initialise_ship(world: &mut World, sprite_sheet: SpriteSheetHandle) {
-    // Assign the sprites for the ship
-    let sprite_render = SpriteRender {
-        sprite_sheet: sprite_sheet.clone(),
-        sprite_number: 0, // ship is the first sprite in the sprite_sheet
+fn initialise_ship(world: &mut World) {
+    let mut progress = ProgressCounter::default();
+    let assets = {
+        let loader = world.read_resource::<Loader>();
+        let tex_storage = world.read_resource();
+        let mesh_storage = world.read_resource();
+        let mat_defaults = world.read_resource::<MaterialDefaults>();
+
+        let color = loader.load_from_data([0.0, 1.0, 0.0, 1.0].into(), &mut progress, &tex_storage);
+        let color = Material {
+            albedo: color,
+            ..mat_defaults.0.clone()
+        };
+        let ship = loader.load(
+            "resources/ship.obj",
+            ObjFormat,
+            (),
+            &mut progress,
+            &mesh_storage,
+        );
+
+        Assets {
+            ship,
+            color,
+        }
     };
+
+    //these 2 lines are not necessary but will be useful when we'll add a loading stage
+    world.add_resource(assets);
+    let assets = world.read_resource::<Assets>().clone();
 
     let mut ship_transform = Transform::default();
 
@@ -73,40 +95,20 @@ fn initialise_ship(world: &mut World, sprite_sheet: SpriteSheetHandle) {
     let x = ARENA_WIDTH / 2.0;
     ship_transform
         .set_xyz(x, y, 0.0)
-        .set_scale(0.2,0.2,0.2);
+        .set_scale(1.0,1.0,1.0);
 
     // Create a ship entity.
     world
         .create_entity()
-        .with(sprite_render)
+        .with(assets.ship.clone())
+        .with(assets.color.clone())
         .with(Ship::new())
         .with(ship_transform)
         .build();
 }
 
-fn load_sprite_sheet(world: &mut World) -> SpriteSheetHandle {
-    // Load the sprite sheet necessary to render the graphics.
-    // The texture is the pixel data
-    // `texture_handle` is a cloneable reference to the texture
-    let texture_handle = {
-        let loader = world.read_resource::<Loader>();
-        let texture_storage = world.read_resource::<AssetStorage<Texture>>();
-        loader.load(
-            "texture/ship_spritesheet.png",
-            PngFormat,
-            TextureMetadata::srgb_scale(),
-            (),
-            &texture_storage,
-        )
-    };
-
-    let loader = world.read_resource::<Loader>();
-    let sprite_sheet_store = world.read_resource::<AssetStorage<SpriteSheet>>();
-    loader.load(
-        "texture/ship_spritesheet.ron", // Here we load the associated ron file
-        SpriteSheetFormat,
-        texture_handle, // We pass it the handle of the texture we want it to use
-        (),
-        &sprite_sheet_store,
-    )
+#[derive(Clone)]
+pub struct Assets {
+    ship: MeshHandle,
+    color: Material,
 }
