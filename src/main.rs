@@ -40,7 +40,8 @@ fn main() -> amethyst::Result<()> {
         .with_bundle(TransformBundle::new())?
         .with_bundle(input_bundle)?
         .with(systems::ShipSystem, "ship_system", &["input_system"])
-        .with(systems::ShipFireSystem, "ship_fire_system", &["input_system"]);
+        .with(systems::SpeedSystem, "speed_system", &["input_system"])
+        .with(systems::ShipFireSystem,"ship_fire_system",&["input_system"]);
 
     let mut game = Application::new("./", Asteroids, game_data)?;
     game.run();

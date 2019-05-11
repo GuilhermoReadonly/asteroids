@@ -5,17 +5,14 @@ use amethyst::{
 };
 
 use crate::asteroids::{Assets, ARENA_HEIGHT, ARENA_WIDTH};
+use crate::components::SpeedComponent;
 
 #[derive(Debug)]
-pub struct ShipComponent {
-    pub speed: Vector3<f32>,
-}
+pub struct ShipComponent {}
 
 impl ShipComponent {
     pub fn new() -> ShipComponent {
-        ShipComponent {
-            speed: Vector3::new(0.0, 0.0, 0.0),
-        }
+        ShipComponent {}
     }
 
     pub fn spawn_ship(world: &mut World) {
@@ -33,6 +30,7 @@ impl ShipComponent {
             .with(assets.ship.clone())
             .with(assets.color.clone())
             .with(ShipComponent::new())
+            .with(SpeedComponent::new(Vector3::new(0.0, 0.0, 0.0)))
             .with(ship_transform)
             .build();
     }

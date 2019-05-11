@@ -1,16 +1,11 @@
-use amethyst::{
-    core::nalgebra::base::Vector3,
-    ecs::prelude::{Component, DenseVecStorage},
-};
+use amethyst::ecs::prelude::{Component, DenseVecStorage};
 
 #[derive(Debug)]
-pub struct SimpleBulletComponent {
-    pub speed: Vector3<f32>,
-}
+pub struct SimpleBulletComponent {}
 
 impl SimpleBulletComponent {
-    pub fn new(speed: Vector3<f32>) -> SimpleBulletComponent {
-        SimpleBulletComponent { speed }
+    pub fn new() -> SimpleBulletComponent {
+        SimpleBulletComponent {}
     }
 }
 
