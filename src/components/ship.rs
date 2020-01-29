@@ -1,5 +1,5 @@
 use amethyst::{
-    core::{nalgebra::base::Vector3, transform::Transform},
+    core::{math::base::Vector3, transform::Transform},
     ecs::prelude::{Component, DenseVecStorage},
     prelude::*,
 };
@@ -22,7 +22,7 @@ impl ShipComponent {
         let y = ARENA_HEIGHT / 2.0;
         let x = ARENA_WIDTH / 2.0;
         let mut ship_transform = Transform::default();
-        ship_transform.set_xyz(x, y, 0.0).set_scale(1.0, 1.0, 1.0);
+        ship_transform.set_translation_xyz(x, y, 0.0).set_scale(Vector3::new(1.0, 1.0, 1.0));
 
         // Create a ship entity.
         world

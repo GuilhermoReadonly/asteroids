@@ -1,9 +1,12 @@
 use amethyst::{
-    assets::{Loader, ProgressCounter},
+    assets::{Loader, ProgressCounter, Handle, AssetStorage},
     core::transform::Transform,
     prelude::*,
-    renderer::{Camera, Material, MaterialDefaults, MeshHandle, ObjFormat, Projection},
+    renderer::{Camera, Material, MaterialDefaults, Mesh, camera::Projection, Texture,
+        formats::mesh::ObjFormat, types::TextureData, loaders::load_from_srgba, palette::Srgba},
+
 };
+
 
 use crate::components::ShipComponent;
 
@@ -14,7 +17,7 @@ pub struct Asteroids;
 
 impl SimpleState for Asteroids {
     fn on_start(&mut self, data: StateData<'_, GameData<'_, '_>>) {
-        let world = data.world;
+        let StateData { world, .. } = data;
         // Load the things necessary to render the graphics.
         initialise_assets(world);
         initialise_camera(world);
@@ -24,7 +27,7 @@ impl SimpleState for Asteroids {
 
 fn initialise_camera(world: &mut World) {
     let mut transform = Transform::default();
-    transform.set_z(1.0);
+    transform.set_translation_z(1.0);
     world
         .create_entity()
         .with(Camera::from(Projection::orthographic(
@@ -32,6 +35,8 @@ fn initialise_camera(world: &mut World) {
             ARENA_WIDTH,
             0.0,
             ARENA_HEIGHT,
+            0.0,
+            0.0
         )))
         .with(transform)
         .build();
@@ -41,27 +46,27 @@ fn initialise_assets(world: &mut World) {
     let mut progress = ProgressCounter::default();
     let assets = {
         let loader = world.read_resource::<Loader>();
-        let tex_storage = world.read_resource();
+        let tex_storage = world.read_resource::<AssetStorage<Texture>>();
         let mesh_storage = world.read_resource();
         let mat_defaults = world.read_resource::<MaterialDefaults>();
 
-        let color = loader.load_from_data([0.0, 1.0, 0.0, 1.0].into(), &mut progress, &tex_storage);
-        let color = Material {
-            albedo: color,
-            ..mat_defaults.0.clone()
-        };
+        let texture_builder = load_from_srgba(Srgba::new(0., 1., 0., 1.));
+        let color = loader.load_from_data(TextureData::from(texture_builder),
+            &mut progress, &tex_storage);
+        // let color = Material {
+        //     albedo: color,
+        //     ..mat_defaults.0.clone()
+        // };
         let ship = loader.load(
             "resources/ship.obj",
-            ObjFormat,
-            (),
+            ObjFormat{},
             &mut progress,
             &mesh_storage,
         );
 
         let simple_bullet = loader.load(
             "resources/simple_bullet.obj",
-            ObjFormat,
-            (),
+            ObjFormat{},
             &mut progress,
             &mesh_storage,
         );
@@ -73,12 +78,12 @@ fn initialise_assets(world: &mut World) {
         }
     };
 
-    world.add_resource(assets);
+    world.insert(assets);
 }
 
 #[derive(Clone)]
 pub struct Assets {
-    pub ship: MeshHandle,
-    pub simple_bullet: MeshHandle,
-    pub color: Material,
+    pub ship: Handle<Mesh>,
+    pub simple_bullet: Handle<Mesh>,
+    pub color: Handle<Texture>,
 }

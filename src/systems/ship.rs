@@ -1,7 +1,7 @@
 use amethyst::{
-    core::{nalgebra::base::Vector3, Transform},
+    core::{math::base::Vector3, Transform},
     ecs::{Join, Read, System, WriteStorage},
-    input::InputHandler,
+    input::{InputHandler,StringBindings,},
 };
 
 // You'll have to mark as public in pong.rs
@@ -17,7 +17,7 @@ impl<'s> System<'s> for ShipSystem {
         WriteStorage<'s, Transform>,
         WriteStorage<'s, ShipComponent>,
         WriteStorage<'s, SpeedComponent>,
-        Read<'s, InputHandler<String, String>>,
+        Read<'s, InputHandler<StringBindings>>,
     );
 
     fn run(&mut self, (mut transforms, mut ships, mut speeds, input): Self::SystemData) {
@@ -27,7 +27,7 @@ impl<'s> System<'s> for ShipSystem {
 
             //compute rotation
             if movement_x != Some(0.0) {
-                transform.roll_local(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
+                transform.append_rotation_z_axis(compute_movement(movement_x, AMOUNT_ROTATION_FACTOR));
             }
 
             //compute translation
@@ -40,13 +40,13 @@ impl<'s> System<'s> for ShipSystem {
     }
 }
 
-fn compute_movement(movement: Option<f64>, movement_factor: f32) -> f32 {
+fn compute_movement(movement: Option<f32>, movement_factor: f32) -> f32 {
     let mut computed_move = 0.0;
     if let Some(mv_amount) = movement {
         if mv_amount != 0.0 {
             // TODO: use amethyst::core::timing::Time to get the framerate and compute the
             // distance to move
-            computed_move = movement_factor * mv_amount as f32;
+            computed_move = movement_factor * mv_amount;
         }
     }
     computed_move
@@ -54,7 +54,7 @@ fn compute_movement(movement: Option<f64>, movement_factor: f32) -> f32 {
 
 pub struct ShipFireSystem;
 impl<'s> System<'s> for ShipFireSystem {
-    type SystemData = Read<'s, InputHandler<String, String>>;
+    type SystemData = Read<'s, InputHandler<StringBindings>>;
 
     fn run(&mut self, input: Self::SystemData) {
         //compute firing
