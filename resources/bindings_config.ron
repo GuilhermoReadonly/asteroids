@@ -1,9 +1,0 @@
-(
-    axes: {
-        "ship_x": Emulated(pos: Key(D), neg: Key(Q)),
-        "ship_y": Emulated(pos: Key(Z), neg: Key(S)),
-    },
-    actions: {
-        "shoot": [ [Key(Space)] ],
-    },
-)
