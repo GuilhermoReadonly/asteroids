@@ -12,8 +12,7 @@ use crate::{
 
 use ggez::{
     conf::{WindowMode, WindowSetup},
-    event::self,
-    ContextBuilder,
+    event, ContextBuilder,
 };
 
 fn main() {
@@ -38,5 +37,5 @@ fn main() {
     match event::run(&mut ctx, &mut event_loop, &mut asteroid_game) {
         Ok(_) => info!("It was freaking epic my dude, see ya around !"),
         Err(e) => error!("Oh my man, the shit has hit the fan: {}", e),
-    }
+    };
 }
