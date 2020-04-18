@@ -3,6 +3,7 @@ use log4rs;
 
 mod asteroid;
 mod constants;
+mod inputs;
 mod objects;
 
 use crate::{

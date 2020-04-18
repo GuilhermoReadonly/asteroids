@@ -1,8 +1,11 @@
 use crate::constants::SHIP_COLOR;
-use ggez::nalgebra::{Point2, Vector2};
+use ggez::{
+    graphics,
+    nalgebra::{Point2, Vector2},
+    Context, GameResult,
+};
+use log::info;
 use std::ops::{Add, Sub};
-
-use ggez::{graphics, Context, GameResult};
 pub mod ship;
 
 pub type Speed = f32;
@@ -12,6 +15,7 @@ pub type Life = f32;
 
 #[derive(Debug)]
 pub struct Object {
+    pub name: String,
     pub position: Position,
     pub perimeter: Vec<Position>,
     pub speed: Speed,
@@ -22,6 +26,7 @@ pub struct Object {
 
 impl Object {
     pub fn new(
+        name: String,
         position: Position,
         perimeter: Vec<Position>,
         speed: Speed,
@@ -30,6 +35,7 @@ impl Object {
         life: Life,
     ) -> Self {
         Self {
+            name,
             position,
             perimeter,
             speed,
@@ -55,8 +61,18 @@ impl Object {
         graphics::draw(ctx, &ship_polygon, drawparams)
     }
 
-    pub fn move_forward(&mut self, qty: f32) {
-        self.position.y = self.position.y + qty;
+    pub fn accelerate(&mut self, qty: f32) {
+        info!("Acceleration of {} my dude !", qty);
+        self.speed = self.speed + qty;
+    }
+
+    pub fn turn(&mut self, qty: f32) {
+        info!("Turn of {} my dude !", qty);
+        self.direction = self.direction + qty;
+    }
+
+    pub fn explode(&mut self) {
+        info!("KABOOOOOOM !!!!!!!");
     }
 }
 
