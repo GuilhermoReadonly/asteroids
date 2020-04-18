@@ -1,7 +1,7 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects::{ship::Ship, Object},
+    objects::{ship::Ship, Object, Point, bullet::Bullet},
 };
 use ggez::{
     event,
@@ -13,8 +13,10 @@ use ggez::{
 use log::{info, trace};
 
 pub struct AsteroidGame {
-    ship: Ship,
-    input: InputState,
+    pub ship: Ship,
+    pub bullets: Vec<Ship>,
+    pub input: InputState,
+    pub time_since_last_shoot: f32,
 }
 
 impl AsteroidGame {
@@ -22,19 +24,27 @@ impl AsteroidGame {
         // Load/create resources here: images, fonts, sounds, etc.
         AsteroidGame {
             ship: Ship::new_ship(),
+            bullets: vec![],
             input: InputState::default(),
+            time_since_last_shoot: 0.0,
         }
     }
 
     fn draw_object(&self, ctx: &mut Context, obj: &Object) -> GameResult<()> {
 
         trace!("draw my ship {:?}", ctx);
-        let points = &self.ship.perimeter;
-        let ship_polygon =
-            graphics::Mesh::new_polygon(ctx, graphics::DrawMode::stroke(SHIP_LINE_WIDTH), &points, SHIP_COLOR)?;
+        let points:&Vec<Point> = &obj.perimeter;
+        let obj_polygon =
+            graphics::Mesh::new_polygon(ctx, graphics::DrawMode::stroke(GAME_LINE_WIDTH), &points, obj.color)?;
 
-        let drawparams = graphics::DrawParam::new().dest(obj.position).rotation(obj.direction);
-        graphics::draw(ctx, &ship_polygon, drawparams)
+        let drawparams = graphics::DrawParam::new().dest(world_to_screen_coords(&obj.position)).rotation(obj.direction);
+        graphics::draw(ctx, &obj_polygon, drawparams)
+    }
+
+    pub fn shoot(&mut self) {
+        info!("Shoot the mofo !!!");
+        let bullet = Bullet::new_bullet(self.ship.position, self.ship.direction);
+        self.bullets.push(bullet);
     }
 }
 
@@ -43,7 +53,7 @@ impl EventHandler for AsteroidGame {
         while timer::check_update_time(ctx, GAME_FPS) {
             let time_elapsed = 1.0 / (GAME_FPS as f32);
 
-            // Update the player state based on the user input.
+            // Update ship
             match self.input.yaxis {
                 Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
                 Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
@@ -54,20 +64,26 @@ impl EventHandler for AsteroidGame {
                 Left => self.ship.turn(-SHIP_TURN_INCREMENT, time_elapsed),
                 _ => (),
             };
-
-            if self.input.fire {
-                self.ship.shoot();
-            };
-
-            // Finally we check for our end state.
-            // I want to have a nice death screen eventually,
-            // but for now we just quit.
             if self.ship.life <= 0.0 {
                 self.ship.explode();
                 let _ = event::quit(ctx);
             }
-
             self.ship.update_position(time_elapsed);
+
+            // Update bullets
+            for bullet in &mut self.bullets {
+                bullet.update_position(time_elapsed);
+                bullet.update_life(time_elapsed);
+            }
+            self.bullets.retain(|bullet| {
+                return bullet.life > 0.0
+            });
+            if self.input.fire && self.time_since_last_shoot >= GAME_SHOOT_TIME{
+                self.shoot();
+                self.time_since_last_shoot = 0.0;
+            }else {
+                self.time_since_last_shoot += time_elapsed;
+            };
         }
 
         Ok(())
@@ -76,8 +92,13 @@ impl EventHandler for AsteroidGame {
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, Color::new(0.0, 0.0, 0.0, 0.0));
 
-        trace!("draw my ship {:?}", ctx);
+        // Draw the ship
         self.draw_object(ctx, &self.ship)?;
+
+        // Draw all bullets
+        for bullet in &self.bullets {
+            self.draw_object(ctx, bullet)?;
+        }
 
         graphics::present(ctx)
     }
@@ -136,12 +157,12 @@ impl EventHandler for AsteroidGame {
     }
 }
 
-// /// Translates the world coordinate system, which
-// /// has Y pointing up and the origin at the center,
-// /// to the screen coordinate system, which has Y
-// /// pointing downward and the origin at the top-left,
-// fn world_to_screen_coords(point: Point2<f32>) -> Point2<f32> {
-//     let x = point.x + ARENA_WIDTH / 2.0;
-//     let y = ARENA_HEIGHT - (point.y + ARENA_HEIGHT / 2.0);
-//     Point2::new(x, y)
-// }
+/// Translates the world coordinate system, which
+/// has Y pointing up and the origin at the center,
+/// to the screen coordinate system, which has Y
+/// pointing downward and the origin at the top-left,
+fn world_to_screen_coords(point: &Point) -> Point {
+    let x = point.x + ARENA_WIDTH / 2.0;
+    let y = ARENA_HEIGHT - (point.y + ARENA_HEIGHT / 2.0);
+    Point::new(x, y)
+}

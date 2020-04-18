@@ -1,13 +1,15 @@
 use crate::constants::*;
 use ggez::{
-    graphics,
+    graphics::Color,
     nalgebra::{Point2, Vector2},
-    Context, GameResult,
 };
+
 use log::info;
+pub mod bullet;
 pub mod ship;
 
-pub type Speed = Vector2<f32>;
+pub type SpeedVector = Vector2<f32>;
+pub type Speed = f32;
 pub type Point = Point2<f32>;
 pub type Direction = f32;
 pub type DirectionVector = Vector2<f32>;
@@ -20,10 +22,12 @@ pub struct Object {
     pub name: String,
     pub position: Point,
     pub perimeter: Vec<Point>,
-    pub speed: Speed,
+    pub speed: SpeedVector,
+    pub max_speed: Speed,
     pub direction: Direction,
     pub mass: Mass,
     pub life: Life,
+    pub color: Color,
 }
 
 impl Object {
@@ -31,44 +35,52 @@ impl Object {
         name: String,
         position: Point,
         perimeter: Vec<Point>,
-        speed: Speed,
+        speed: SpeedVector,
+        max_speed: Speed,
         direction: Direction,
         mass: Mass,
         life: Life,
+        color: Color,
     ) -> Self {
         Self {
             name,
             position,
             perimeter,
             speed,
+            max_speed,
             direction,
             mass,
             life,
+            color,
         }
     }
 
     pub fn update_position(&mut self, dt: f32) {
         // Clamp the velocity to the max efficiently
         let norm_sq = self.speed.norm_squared();
-        if norm_sq > MAX_PHYSICS_VEL.powi(2) {
-            self.speed = self.speed / norm_sq.sqrt() * MAX_PHYSICS_VEL;
+        if norm_sq > SHIP_MAX_SPEED.powi(2) {
+            self.speed = self.speed / norm_sq.sqrt() * SHIP_MAX_SPEED;
         }
-  
         self.position += self.speed * (dt);
+
+        if self.position.x > GAME_MAX_WIDTH || self.position.x < -GAME_MAX_WIDTH {
+            self.position.x = -self.position.x;
+        }
+        if self.position.y > GAME_MAX_HEIGHT || self.position.y < -GAME_MAX_HEIGHT {
+            self.position.y = -self.position.y;
+        }
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
         info!("Acceleration of {} my dude !", f);
 
-        let direction_vector: DirectionVector = vec_from_angle(-self.direction);
+        let direction_vector: DirectionVector = vec_from_angle(self.direction);
         self.speed += direction_vector * f * dt * self.mass;
     }
 
     pub fn turn(&mut self, qty: f32, dt: f32) {
         info!("Turn {} my dude !", qty);
-        self.direction = self.direction + qty*dt*self.mass;
-
-        
+        self.direction = self.direction + qty * dt * self.mass;
     }
 
     pub fn explode(&mut self) {
@@ -78,7 +90,7 @@ impl Object {
 
 /// Create a unit vector representing the
 /// given angle (in radians)
-fn vec_from_angle(angle: f32) -> Vector2<f32> {
+pub fn vec_from_angle(angle: f32) -> Vector2<f32> {
     let vx = angle.sin();
     let vy = angle.cos();
     Vector2::new(vx, vy)
