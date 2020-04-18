@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{Object, Position},
+    objects::{Object, Point, Speed},
 };
 use log::info;
 
@@ -13,14 +13,14 @@ impl Ship {
 
         Self::new(
             "Ship of the Captain".to_string(),
-            Position::new(position_x, position_y),
+            Point::new(position_x, position_y),
             vec![
-                Position::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
-                Position::new(0.0, SHIP_SIZE_Y),
-                Position::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
-                Position::new(0.0, 0.0),
+                Point::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
+                Point::new(0.0, SHIP_SIZE_Y),
+                Point::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
+                Point::new(0.0, 0.0),
             ],
-            SHIP_INITIAL_SPEED,
+            Speed::new(0.0,0.0),
             SHIP_INITIAL_DIRECTION,
             SHIP_MASS,
             SHIP_LIFE,

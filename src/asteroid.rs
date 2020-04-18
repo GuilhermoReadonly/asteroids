@@ -1,7 +1,7 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects::ship::Ship,
+    objects::{ship::Ship, Object},
 };
 use ggez::{
     event,
@@ -25,22 +25,33 @@ impl AsteroidGame {
             input: InputState::default(),
         }
     }
+
+    fn draw_object(&self, ctx: &mut Context, obj: &Object) -> GameResult<()> {
+
+        trace!("draw my ship {:?}", ctx);
+        let points = &self.ship.perimeter;
+        let ship_polygon =
+            graphics::Mesh::new_polygon(ctx, graphics::DrawMode::stroke(SHIP_LINE_WIDTH), &points, SHIP_COLOR)?;
+
+        let drawparams = graphics::DrawParam::new().dest(obj.position).rotation(obj.direction);
+        graphics::draw(ctx, &ship_polygon, drawparams)
+    }
 }
 
 impl EventHandler for AsteroidGame {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         while timer::check_update_time(ctx, GAME_FPS) {
-            let _seconds = 1.0 / (GAME_FPS as f32);
+            let time_elapsed = 1.0 / (GAME_FPS as f32);
 
             // Update the player state based on the user input.
             match self.input.yaxis {
-                Forward => self.ship.accelerate(SHIP_SPEED_INCREMENT),
-                Backward => self.ship.accelerate(-SHIP_SPEED_INCREMENT),
+                Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
+                Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
                 _ => (),
             };
             match self.input.xaxis {
-                Left => self.ship.turn(SHIP_TURN_INCREMENT),
-                Right => self.ship.turn(-SHIP_TURN_INCREMENT),
+                Right => self.ship.turn(SHIP_TURN_INCREMENT, time_elapsed),
+                Left => self.ship.turn(-SHIP_TURN_INCREMENT, time_elapsed),
                 _ => (),
             };
 
@@ -55,6 +66,8 @@ impl EventHandler for AsteroidGame {
                 self.ship.explode();
                 let _ = event::quit(ctx);
             }
+
+            self.ship.update_position(time_elapsed);
         }
 
         Ok(())
@@ -64,7 +77,7 @@ impl EventHandler for AsteroidGame {
         graphics::clear(ctx, Color::new(0.0, 0.0, 0.0, 0.0));
 
         trace!("draw my ship {:?}", ctx);
-        self.ship.draw(ctx)?;
+        self.draw_object(ctx, &self.ship)?;
 
         graphics::present(ctx)
     }
