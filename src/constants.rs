@@ -38,9 +38,8 @@ pub const SHIP_TURN_INCREMENT: f32 = 0.08 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
 
 /// ## Bullet constants
-pub const BULLET_SIZE_X: f32 = 0.5;
-pub const BULLET_SIZE_Y: f32 = 3.0;
+pub const BULLET_SIZE: f32 = 60.0;
 pub const BULLET_MASS: f32 = 1.0;
-pub const BULLET_LIFE: f32 = 1.5;
+pub const BULLET_LIFE: f32 = 0.7;
 pub const BULLET_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);
-pub const BULLET_SPEED: f32 = 500.0;
+pub const BULLET_SPEED: f32 = 1000.0;

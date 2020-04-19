@@ -1,10 +1,10 @@
 use crate::constants::*;
 use ggez::{
-    graphics::Color,
+    graphics::{Color, Mesh},
     nalgebra::{Point2, Vector2},
 };
-
 use log::info;
+
 pub mod bullet;
 pub mod ship;
 
@@ -21,7 +21,7 @@ pub type Life = f32;
 pub struct Object {
     pub name: String,
     pub position: Point,
-    pub perimeter: Vec<Point>,
+    pub mesh: Mesh,
     pub speed: SpeedVector,
     pub max_speed: Speed,
     pub direction: Direction,
@@ -34,7 +34,7 @@ impl Object {
     pub fn new(
         name: String,
         position: Point,
-        perimeter: Vec<Point>,
+        mesh: Mesh,
         speed: SpeedVector,
         max_speed: Speed,
         direction: Direction,
@@ -45,7 +45,7 @@ impl Object {
         Self {
             name,
             position,
-            perimeter,
+            mesh: mesh,
             speed,
             max_speed,
             direction,
@@ -58,8 +58,8 @@ impl Object {
     pub fn update_position(&mut self, dt: f32) {
         // Clamp the velocity to the max efficiently
         let norm_sq = self.speed.norm_squared();
-        if norm_sq > SHIP_MAX_SPEED.powi(2) {
-            self.speed = self.speed / norm_sq.sqrt() * SHIP_MAX_SPEED;
+        if norm_sq > self.max_speed.powi(2) {
+            self.speed = self.speed / norm_sq.sqrt() * self.max_speed;
         }
         self.position += self.speed * (dt);
 

@@ -1,7 +1,7 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects::{ship::Ship, Object, Point, bullet::Bullet},
+    objects::{bullet::Bullet, ship::Ship, Object, Point},
 };
 use ggez::{
     event,
@@ -10,20 +10,20 @@ use ggez::{
     graphics::Color,
     timer, Context, GameResult,
 };
-use log::{info, trace};
+use log::info;
 
-pub struct AsteroidGame {
+pub struct AsteroidWorld {
     pub ship: Ship,
     pub bullets: Vec<Ship>,
     pub input: InputState,
     pub time_since_last_shoot: f32,
 }
 
-impl AsteroidGame {
-    pub fn new(_ctx: &mut Context) -> AsteroidGame {
+impl AsteroidWorld {
+    pub fn new(ctx: &mut Context) -> AsteroidWorld {
         // Load/create resources here: images, fonts, sounds, etc.
-        AsteroidGame {
-            ship: Ship::new_ship(),
+        AsteroidWorld {
+            ship: Ship::new_ship(ctx),
             bullets: vec![],
             input: InputState::default(),
             time_since_last_shoot: 0.0,
@@ -31,29 +31,35 @@ impl AsteroidGame {
     }
 
     fn draw_object(&self, ctx: &mut Context, obj: &Object) -> GameResult<()> {
+        let obj_mesh = &obj.mesh;
 
-        trace!("draw my ship {:?}", ctx);
-        let points:&Vec<Point> = &obj.perimeter;
-        let obj_polygon =
-            graphics::Mesh::new_polygon(ctx, graphics::DrawMode::stroke(GAME_LINE_WIDTH), &points, obj.color)?;
-
-        let drawparams = graphics::DrawParam::new().dest(world_to_screen_coords(&obj.position)).rotation(obj.direction);
-        graphics::draw(ctx, &obj_polygon, drawparams)
+        let drawparams = graphics::DrawParam::new()
+            .dest(world_to_screen_coords(&obj.position))
+            .rotation(obj.direction);
+        graphics::draw(ctx, obj_mesh, drawparams)
     }
 
-    pub fn shoot(&mut self) {
+    pub fn shoot(&mut self, ctx: &mut Context) {
         info!("Shoot the mofo !!!");
-        let bullet = Bullet::new_bullet(self.ship.position, self.ship.direction);
+        let bullet = Bullet::new_bullet(ctx, self.ship.position, self.ship.direction);
         self.bullets.push(bullet);
     }
 }
 
-impl EventHandler for AsteroidGame {
+impl EventHandler for AsteroidWorld {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
         while timer::check_update_time(ctx, GAME_FPS) {
             let time_elapsed = 1.0 / (GAME_FPS as f32);
 
-            // Update ship
+            // Handle shooting
+            if self.input.fire && self.time_since_last_shoot >= GAME_SHOOT_TIME {
+                self.shoot(ctx);
+                self.time_since_last_shoot = 0.0;
+            } else {
+                self.time_since_last_shoot += time_elapsed;
+            };
+
+            // Handle ship
             match self.input.yaxis {
                 Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
                 Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
@@ -70,20 +76,12 @@ impl EventHandler for AsteroidGame {
             }
             self.ship.update_position(time_elapsed);
 
-            // Update bullets
+            // Handle bullets
             for bullet in &mut self.bullets {
                 bullet.update_position(time_elapsed);
                 bullet.update_life(time_elapsed);
             }
-            self.bullets.retain(|bullet| {
-                return bullet.life > 0.0
-            });
-            if self.input.fire && self.time_since_last_shoot >= GAME_SHOOT_TIME{
-                self.shoot();
-                self.time_since_last_shoot = 0.0;
-            }else {
-                self.time_since_last_shoot += time_elapsed;
-            };
+            self.bullets.retain(|bullet| return bullet.life > 0.0);
         }
 
         Ok(())
