@@ -32,7 +32,6 @@ impl Ship {
             SHIP_INITIAL_DIRECTION,
             SHIP_MASS,
             SHIP_LIFE,
-            SHIP_COLOR,
         )
     }
 }

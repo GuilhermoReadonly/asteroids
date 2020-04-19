@@ -1,11 +1,12 @@
 use crate::constants::*;
 use ggez::{
-    graphics::{Color, Mesh},
+    graphics::Mesh,
     nalgebra::{Point2, Vector2},
 };
-use log::info;
+use log::{info, debug};
 
 pub mod bullet;
+pub mod rock;
 pub mod ship;
 
 pub type SpeedVector = Vector2<f32>;
@@ -27,7 +28,6 @@ pub struct Object {
     pub direction: Direction,
     pub mass: Mass,
     pub life: Life,
-    pub color: Color,
 }
 
 impl Object {
@@ -40,7 +40,6 @@ impl Object {
         direction: Direction,
         mass: Mass,
         life: Life,
-        color: Color,
     ) -> Self {
         Self {
             name,
@@ -51,7 +50,6 @@ impl Object {
             direction,
             mass,
             life,
-            color,
         }
     }
 
@@ -72,14 +70,14 @@ impl Object {
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
-        info!("Acceleration of {} my dude !", f);
+        debug!("Acceleration of {} my dude !", f);
 
         let direction_vector: DirectionVector = vec_from_angle(self.direction);
         self.speed += direction_vector * f * dt * self.mass;
     }
 
     pub fn turn(&mut self, qty: f32, dt: f32) {
-        info!("Turn {} my dude !", qty);
+        debug!("Turn {} my dude !", qty);
         self.direction = self.direction + qty * dt * self.mass;
     }
 

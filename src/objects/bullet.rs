@@ -27,7 +27,6 @@ impl Bullet {
             direction,
             BULLET_MASS,
             BULLET_LIFE,
-            BULLET_COLOR,
         )
     }
 

@@ -1,7 +1,7 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects::{bullet::Bullet, ship::Ship, Object, Point},
+    objects::{bullet::Bullet, rock::Rock, ship::Ship, Object, Point},
 };
 use ggez::{
     event,
@@ -14,6 +14,7 @@ use log::info;
 
 pub struct AsteroidWorld {
     pub ship: Ship,
+    pub rocks: Vec<Rock>,
     pub bullets: Vec<Ship>,
     pub input: InputState,
     pub time_since_last_shoot: f32,
@@ -24,6 +25,7 @@ impl AsteroidWorld {
         // Load/create resources here: images, fonts, sounds, etc.
         AsteroidWorld {
             ship: Ship::new_ship(ctx),
+            rocks: vec![Rock::new_rock(ctx)],
             bullets: vec![],
             input: InputState::default(),
             time_since_last_shoot: 0.0,
@@ -52,7 +54,7 @@ impl EventHandler for AsteroidWorld {
             let time_elapsed = 1.0 / (GAME_FPS as f32);
 
             // Handle shooting
-            if self.input.fire && self.time_since_last_shoot >= GAME_SHOOT_TIME {
+            if self.input.fire && self.time_since_last_shoot >= SHIP_RELOAD_TIME {
                 self.shoot(ctx);
                 self.time_since_last_shoot = 0.0;
             } else {
@@ -82,6 +84,12 @@ impl EventHandler for AsteroidWorld {
                 bullet.update_life(time_elapsed);
             }
             self.bullets.retain(|bullet| return bullet.life > 0.0);
+
+            // Handle rocks
+            for rock in &mut self.rocks {
+                rock.update_position(time_elapsed);
+            }
+            self.rocks.retain(|rock| return rock.life > 0.0);
         }
 
         Ok(())
@@ -96,6 +104,11 @@ impl EventHandler for AsteroidWorld {
         // Draw all bullets
         for bullet in &self.bullets {
             self.draw_object(ctx, bullet)?;
+        }
+
+        // Draw all rocks
+        for rock in &self.rocks {
+            self.draw_object(ctx, rock)?;
         }
 
         graphics::present(ctx)
@@ -160,7 +173,7 @@ impl EventHandler for AsteroidWorld {
 /// to the screen coordinate system, which has Y
 /// pointing downward and the origin at the top-left,
 fn world_to_screen_coords(point: &Point) -> Point {
-    let x = point.x + ARENA_WIDTH / 2.0;
-    let y = ARENA_HEIGHT - (point.y + ARENA_HEIGHT / 2.0);
+    let x = point.x + GAME_WINDOW_WIDTH / 2.0;
+    let y = GAME_WINDOW_HEIGHT - (point.y + GAME_WINDOW_HEIGHT / 2.0);
     Point::new(x, y)
 }

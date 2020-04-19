@@ -8,7 +8,7 @@ mod objects;
 
 use crate::{
     asteroid::AsteroidWorld,
-    constants::{ARENA_HEIGHT, ARENA_WIDTH, GAME_AUTHOR, GAME_NAME},
+    constants::{GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_AUTHOR, GAME_NAME},
 };
 
 use ggez::{
@@ -25,7 +25,7 @@ fn main() {
         .title(GAME_NAME)
         .samples(NumSamples::Zero)
         .vsync(true);
-    let window_mode = WindowMode::default().dimensions(ARENA_WIDTH, ARENA_HEIGHT);
+    let window_mode = WindowMode::default().dimensions(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
     let (mut ctx, mut event_loop) = ContextBuilder::new(GAME_NAME, GAME_AUTHOR)
         .window_setup(window_setup)
         .window_mode(window_mode)
