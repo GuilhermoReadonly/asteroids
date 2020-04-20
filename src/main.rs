@@ -1,5 +1,10 @@
-use log::{error, info};
+use log::{error, info, LevelFilter};
 use log4rs;
+use log4rs::{
+    append::console::ConsoleAppender,
+    config::{Appender,Config, Root},
+};
+use std::error::Error;
 
 mod asteroid;
 mod constants;
@@ -8,7 +13,7 @@ mod objects;
 
 use crate::{
     asteroid::AsteroidWorld,
-    constants::{GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH, GAME_AUTHOR, GAME_NAME},
+    constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
 };
 
 use ggez::{
@@ -16,9 +21,30 @@ use ggez::{
     event, ContextBuilder,
 };
 
-fn main() {
+fn main() -> Result<(), Box<dyn Error>> {
     // Init logger
-    log4rs::init_file("./resources/log4rs.yml", Default::default()).unwrap();
+    match log4rs::init_file("./resources/log4rs.yml", Default::default()) {
+        Err(err) => {
+            println!("For a reason, the little shit called a logger didn't init its lazy-ass from file !!! {}",err);
+            let stdout = ConsoleAppender::builder().build();
+            let root = Root::builder().appender("stdout").build(LevelFilter::Info);
+            let config = Config::builder().appender(Appender::builder().build("stdout", Box::new(stdout))).build(root).unwrap();
+            match log4rs::init_config(config) {
+                Err(err) => {
+                    println!(
+                        "The lazy-ass little shit didn't even bother init from code !!! {}",
+                        err
+                    );
+                }
+                _ => {
+                    info!("But the logger successfully init its shit from code...");
+                }
+            };
+        }
+        _ => {
+            info!("The logger successfully init its shit...");
+        }
+    };
 
     // Make a Context and an EventLoop.
     let window_setup = WindowSetup::default()
@@ -42,4 +68,5 @@ fn main() {
         Ok(_) => info!("It was freaking epic my dude, see ya around !"),
         Err(e) => error!("Oh my man, the shit has hit the fan: {}", e),
     };
+    Ok(())
 }

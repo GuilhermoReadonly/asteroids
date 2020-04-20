@@ -3,7 +3,7 @@ use ggez::{
     graphics::Mesh,
     nalgebra::{Point2, Vector2},
 };
-use log::{info, debug};
+use log::{debug, info};
 
 pub mod bullet;
 pub mod rock;

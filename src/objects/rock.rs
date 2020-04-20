@@ -5,12 +5,9 @@ use crate::{
 use ggez::{graphics, graphics::MeshBuilder, Context};
 use rand::prelude::*;
 
-
-
 pub type Rock = Object;
 
 impl Rock {
-    
     pub fn new_rock(ctx: &mut Context) -> Rock {
         let mut rng = rand::thread_rng();
 
@@ -37,9 +34,15 @@ impl Rock {
 
         Self::new(
             "A mofo asteroid".to_string(),
-            Point::new(rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH), rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT)),
+            Point::new(
+                rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
+                rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
+            ),
             mesh,
-            SpeedVector::new(rng.gen_range(0.0, ROCK_MAX_SPEED), rng.gen_range(0.0, ROCK_MAX_SPEED)),
+            SpeedVector::new(
+                rng.gen_range(0.0, ROCK_MAX_SPEED),
+                rng.gen_range(0.0, ROCK_MAX_SPEED),
+            ),
             ROCK_MAX_SPEED,
             0.0,
             ROCK_MASS,
