@@ -25,7 +25,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Init logger
     match log4rs::init_file("./resources/log4rs.yml", Default::default()) {
         Err(err) => {
-            println!("For a reason, the little shit called a logger didn't init its lazy-ass from file !!! {}",err);
+            println!("For a reason, the little shit called a logger didn't init its lazy-ass from file!!! {}",err);
             let stdout = ConsoleAppender::builder().build();
             let root = Root::builder().appender("stdout").build(LevelFilter::Info);
             let config = Config::builder()
@@ -35,7 +35,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             match log4rs::init_config(config) {
                 Err(err) => {
                     println!(
-                        "The lazy-ass little shit didn't even bother init from code !!! {}",
+                        "Who need a logger anyway? {}",
                         err
                     );
                 }
@@ -45,7 +45,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             };
         }
         _ => {
-            info!("The logger successfully init its shit...");
+            info!("The logger successfully init its stuffs...");
         }
     };
 
@@ -69,7 +69,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Run!
     match event::run(&mut ctx, &mut event_loop, &mut asteroid_game) {
         Ok(_) => info!("It was freaking epic my dude, see ya around !"),
-        Err(e) => error!("Oh my man, the shit has hit the fan: {}", e),
+        Err(e) => error!("Oh my man, the shit has severly hit the fan: {}", e),
     };
     Ok(())
 }
