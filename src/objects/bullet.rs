@@ -25,6 +25,8 @@ impl Bullet {
             vec_from_angle(direction) * BULLET_SPEED,
             BULLET_SPEED,
             direction,
+            0.0,
+            0.0,
             BULLET_MASS,
             BULLET_LIFE,
         )

@@ -30,6 +30,8 @@ impl Ship {
             SpeedVector::new(0.0, 0.0),
             SHIP_MAX_SPEED,
             SHIP_INITIAL_DIRECTION,
+            0.0,
+            SHIP_MAX_ANGLE_SPEED,
             SHIP_MASS,
             SHIP_LIFE,
         )

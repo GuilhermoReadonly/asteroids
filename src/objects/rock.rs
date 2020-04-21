@@ -40,11 +40,13 @@ impl Rock {
             ),
             mesh,
             SpeedVector::new(
-                rng.gen_range(0.0, ROCK_MAX_SPEED),
-                rng.gen_range(0.0, ROCK_MAX_SPEED),
+                rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
+                rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
             ),
             ROCK_MAX_SPEED,
             0.0,
+            rng.gen_range(-ROCK_MAX_ANGLE_SPEED, ROCK_MAX_ANGLE_SPEED),
+            ROCK_MAX_ANGLE_SPEED,
             ROCK_MASS,
             ROCK_LIFE,
         )

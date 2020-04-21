@@ -27,13 +27,14 @@ pub const GAME_LINE_WIDTH: f32 = 1.0;
 // Ship constants
 pub const SHIP_SIZE_X: f32 = 7.0;
 pub const SHIP_SIZE_Y: f32 = 7.0;
-pub const SHIP_MASS: f32 = 10.0;
+pub const SHIP_MASS: f32 = 30.0;
 pub const SHIP_LIFE: f32 = 100.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
 pub const SHIP_COLOR: Color = Color::new(0.0, 1.0, 0.0, 1.0);
-pub const SHIP_THRUST: f32 = 10.0;
-pub const SHIP_TURN_INCREMENT: f32 = 0.08 * TAU;
+pub const SHIP_THRUST: f32 = 5000.0;
+pub const SHIP_TURN_THRUST: f32 = 30.0 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
+pub const SHIP_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
 pub const SHIP_RELOAD_TIME: f32 = 0.2;
 
 // Bullet constants
@@ -51,3 +52,4 @@ pub const ROCK_MASS: f32 = 500.0;
 pub const ROCK_LIFE: f32 = 100.0;
 pub const ROCK_COLOR: Color = Color::new(0.0, 1.0, 1.0, 1.0);
 pub const ROCK_MAX_SPEED: f32 = 100.0;
+pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;

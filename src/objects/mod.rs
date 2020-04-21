@@ -11,6 +11,7 @@ pub mod ship;
 
 pub type SpeedVector = Vector2<f32>;
 pub type Speed = f32;
+pub type SpeedAngle = f32;
 pub type Point = Point2<f32>;
 pub type Direction = f32;
 pub type DirectionVector = Vector2<f32>;
@@ -26,6 +27,8 @@ pub struct Object {
     pub speed: SpeedVector,
     pub max_speed: Speed,
     pub direction: Direction,
+    pub angle_speed: SpeedAngle,
+    pub max_angle_speed: SpeedAngle,
     pub mass: Mass,
     pub life: Life,
 }
@@ -38,6 +41,8 @@ impl Object {
         speed: SpeedVector,
         max_speed: Speed,
         direction: Direction,
+        angle_speed: SpeedAngle,
+        max_angle_speed: SpeedAngle,
         mass: Mass,
         life: Life,
     ) -> Self {
@@ -48,13 +53,15 @@ impl Object {
             speed,
             max_speed,
             direction,
+            angle_speed,
+            max_angle_speed,
             mass,
             life,
         }
     }
 
     pub fn update_position(&mut self, dt: f32) {
-        // Clamp the velocity to the max efficiently
+        // speed
         let norm_sq = self.speed.norm_squared();
         if norm_sq > self.max_speed.powi(2) {
             self.speed = self.speed / norm_sq.sqrt() * self.max_speed;
@@ -67,18 +74,28 @@ impl Object {
         if self.position.y > GAME_MAX_HEIGHT || self.position.y < -GAME_MAX_HEIGHT {
             self.position.y = -self.position.y;
         }
+
+        //angular speed
+        if self.angle_speed > self.max_angle_speed {
+            self.angle_speed = self.max_angle_speed;
+        }
+        if self.angle_speed < -self.max_angle_speed {
+            self.angle_speed = -self.max_angle_speed;
+        }
+        self.direction += self.angle_speed * (dt);
+
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
         debug!("Acceleration of {} my dude !", f);
 
         let direction_vector: DirectionVector = vec_from_angle(self.direction);
-        self.speed += direction_vector * f * dt * self.mass;
+        self.speed += direction_vector * f * dt / self.mass;
     }
 
-    pub fn turn(&mut self, qty: f32, dt: f32) {
-        debug!("Turn {} my dude !", qty);
-        self.direction = self.direction + qty * dt * self.mass;
+    pub fn turn(&mut self, f: f32, dt: f32) {
+        debug!("Turn {} my dude !", f);
+        self.angle_speed += f * dt / self.mass;
     }
 
     pub fn explode(&mut self) {

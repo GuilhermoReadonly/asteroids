@@ -68,8 +68,8 @@ impl EventHandler for AsteroidWorld {
                 _ => (),
             };
             match self.input.xaxis {
-                Right => self.ship.turn(SHIP_TURN_INCREMENT, time_elapsed),
-                Left => self.ship.turn(-SHIP_TURN_INCREMENT, time_elapsed),
+                Right => self.ship.turn(SHIP_TURN_THRUST, time_elapsed),
+                Left => self.ship.turn(-SHIP_TURN_THRUST, time_elapsed),
                 _ => (),
             };
             if self.ship.life <= 0.0 {
