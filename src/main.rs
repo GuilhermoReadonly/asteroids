@@ -2,7 +2,7 @@ use log::{error, info, LevelFilter};
 use log4rs;
 use log4rs::{
     append::console::ConsoleAppender,
-    config::{Appender,Config, Root},
+    config::{Appender, Config, Root},
 };
 use std::error::Error;
 
@@ -28,7 +28,10 @@ fn main() -> Result<(), Box<dyn Error>> {
             println!("For a reason, the little shit called a logger didn't init its lazy-ass from file !!! {}",err);
             let stdout = ConsoleAppender::builder().build();
             let root = Root::builder().appender("stdout").build(LevelFilter::Info);
-            let config = Config::builder().appender(Appender::builder().build("stdout", Box::new(stdout))).build(root).unwrap();
+            let config = Config::builder()
+                .appender(Appender::builder().build("stdout", Box::new(stdout)))
+                .build(root)
+                .unwrap();
             match log4rs::init_config(config) {
                 Err(err) => {
                     println!(

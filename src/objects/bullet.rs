@@ -29,6 +29,7 @@ impl Bullet {
             0.0,
             BULLET_MASS,
             BULLET_LIFE,
+            1.0,
         )
     }
 

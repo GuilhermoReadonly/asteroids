@@ -43,6 +43,7 @@ pub const BULLET_MASS: f32 = 1.0;
 pub const BULLET_LIFE: f32 = 0.7;
 pub const BULLET_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);
 pub const BULLET_SPEED: f32 = 1000.0;
+pub const BULLET_DAMAGE: f32 = 25.0;
 
 // Rock constants
 pub const ROCK_RADIUS_MIN: f32 = 20.0;
@@ -53,3 +54,10 @@ pub const ROCK_LIFE: f32 = 100.0;
 pub const ROCK_COLOR: Color = Color::new(0.0, 1.0, 1.0, 1.0);
 pub const ROCK_MAX_SPEED: f32 = 100.0;
 pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
+pub const ROCK_DAMAGE: f32 = 20.0;
+
+// Star constants
+pub const STAR_NUMBER: usize = 100;
+pub const STAR_RADIUS_MIN: f32 = 0.5;
+pub const STAR_RADIUS_MAX: f32 = 1.5;
+pub const STAR_COLOR: Color = Color::new(1.0, 1.0, 1.0, 1.0);

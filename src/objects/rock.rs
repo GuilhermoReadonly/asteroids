@@ -49,6 +49,7 @@ impl Rock {
             ROCK_MAX_ANGLE_SPEED,
             ROCK_MASS,
             ROCK_LIFE,
+            ROCK_RADIUS_MAX,
         )
     }
 }

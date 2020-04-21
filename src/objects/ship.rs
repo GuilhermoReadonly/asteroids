@@ -34,6 +34,7 @@ impl Ship {
             SHIP_MAX_ANGLE_SPEED,
             SHIP_MASS,
             SHIP_LIFE,
+            (SHIP_SIZE_X.powi(2) + SHIP_SIZE_Y.powi(2)).sqrt(),
         )
     }
 }

@@ -8,6 +8,7 @@ use log::{debug, info};
 pub mod bullet;
 pub mod rock;
 pub mod ship;
+pub mod star;
 
 pub type SpeedVector = Vector2<f32>;
 pub type Speed = f32;
@@ -19,7 +20,7 @@ pub type Mass = f32;
 pub type Force = f32;
 pub type Life = f32;
 
-#[derive(Debug)]
+#[derive(Debug, Clone)]
 pub struct Object {
     pub name: String,
     pub position: Point,
@@ -31,6 +32,7 @@ pub struct Object {
     pub max_angle_speed: SpeedAngle,
     pub mass: Mass,
     pub life: Life,
+    radius: f32,
 }
 
 impl Object {
@@ -45,6 +47,7 @@ impl Object {
         max_angle_speed: SpeedAngle,
         mass: Mass,
         life: Life,
+        radius: f32,
     ) -> Self {
         Self {
             name,
@@ -57,6 +60,7 @@ impl Object {
             max_angle_speed,
             mass,
             life,
+            radius,
         }
     }
 
@@ -83,7 +87,6 @@ impl Object {
             self.angle_speed = -self.max_angle_speed;
         }
         self.direction += self.angle_speed * (dt);
-
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
@@ -96,6 +99,20 @@ impl Object {
     pub fn turn(&mut self, f: f32, dt: f32) {
         debug!("Turn {} my dude !", f);
         self.angle_speed += f * dt / self.mass;
+    }
+
+    pub fn distance_to(&self, other_object: &Self) -> f32 {
+        ((self.position.x - other_object.position.x).powi(2)
+            + (self.position.y - other_object.position.y).powi(2))
+        .sqrt()
+    }
+
+    pub fn has_collided_with(&self, other_object: &Self) -> bool {
+        let mut result = false;
+        if self.distance_to(other_object) < self.radius + other_object.radius {
+            result = true;
+        }
+        result
     }
 
     pub fn explode(&mut self) {
