@@ -22,15 +22,16 @@ impl Rock {
             points.push(point);
         }
 
-        let mesh = MeshBuilder::default()
+        let mut mesh = MeshBuilder::default()
             .polygon(
                 graphics::DrawMode::stroke(GAME_LINE_WIDTH),
                 &points[..],
                 ROCK_COLOR,
             )
-            .unwrap()
-            .build(ctx)
-            .unwrap();
+            .unwrap().to_owned();
+
+        mesh = Self::show_hit_box(mesh, ROCK_RADIUS_MAX);
+        let mesh = mesh.build(ctx).unwrap();
 
         Self::new(
             "A mofo asteroid".to_string(),

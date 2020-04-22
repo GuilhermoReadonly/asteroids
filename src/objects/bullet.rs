@@ -8,15 +8,16 @@ pub type Bullet = Object;
 
 impl Bullet {
     pub fn new_bullet(ctx: &mut Context, position: Point, direction: Direction) -> Bullet {
-        let mesh = MeshBuilder::default()
-            .line(
-                &[Point::new(0.0, 0.0), Point::new(0.0, -BULLET_SIZE)],
-                1.0,
-                BULLET_COLOR,
-            )
-            .unwrap()
-            .build(ctx)
-            .unwrap();
+        let mut mesh = MeshBuilder::default().line(
+            &[Point::new(0.0, 0.0), Point::new(0.0, -BULLET_SIZE)],
+            1.0,
+            BULLET_COLOR,
+        )
+        .unwrap()
+        .to_owned();
+        let radius = 1.0;
+        mesh = Self::show_hit_box(mesh, radius);
+        let mesh = mesh.build(ctx).unwrap();
 
         Self::new(
             "I'm a freaking bullet".to_string(),
@@ -29,7 +30,7 @@ impl Bullet {
             0.0,
             BULLET_MASS,
             BULLET_LIFE,
-            1.0,
+            radius,
         )
     }
 

@@ -7,7 +7,7 @@ use ggez::{
     event,
     event::{EventHandler, KeyCode, KeyMods},
     graphics,
-    graphics::Color,
+    graphics::{Text, Color},
     timer, Context, GameResult,
 };
 use log::{debug, info};
@@ -49,6 +49,16 @@ impl AsteroidWorld {
         graphics::draw(ctx, obj_mesh, drawparams)
     }
 
+    fn draw_fps(&self, ctx: &mut Context, fps: &f64) -> GameResult<()> {
+        let fps_display = Text::new(format!("FPS: {}", fps));
+        // When drawing through these calls, `DrawParam` will work as they are documented.
+        graphics::draw(
+            ctx,
+            &fps_display,
+            (Point::new(0.0, 0.0), graphics::WHITE),
+        )
+    }
+
     pub fn shoot(&mut self, ctx: &mut Context) {
         debug!("Shoot the mofo !!!");
         let bullet = Bullet::new_bullet(ctx, self.ship.position, self.ship.direction);
@@ -73,87 +83,85 @@ impl AsteroidWorld {
 
 impl EventHandler for AsteroidWorld {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        while timer::check_update_time(ctx, GAME_FPS) {
-            let time_elapsed = 1.0 / (GAME_FPS as f32);
+        let time_elapsed = timer::delta(ctx).as_secs_f32();
 
-            // Handle collisions with rocks
-            for i in 0..self.rocks.len() {
-                if self.ship.has_collided_with(&self.rocks[i]) {
-                    self.rocks[i].life = 0.0;
-                    self.ship.life -= ROCK_DAMAGE;
+        // Handle collisions with rocks
+        for i in 0..self.rocks.len() {
+            if self.ship.has_collided_with(&self.rocks[i]) {
+                self.rocks[i].life = 0.0;
+                self.ship.life -= ROCK_DAMAGE;
+                info!(
+                    "Watchout, you collided with a rock. {} life remaining",
+                    self.ship.life
+                );
+            }
+
+            for j in 0..self.rocks.len() {
+                if i != j && self.rocks[i].has_collided_with(&self.rocks[j]) {
+                    debug!("Colision between asteroid detected !!!");
+                }
+            }
+        }
+
+        // Handle collisions with pewpew
+        for i in 0..self.bullets.len() {
+            for j in 0..self.rocks.len() {
+                if self.bullets[i].has_collided_with(&self.rocks[j]) {
+                    self.rocks[j].life -= BULLET_DAMAGE;
                     info!(
-                        "Watchout, you collided with a rock. {} life remaining",
-                        self.ship.life
+                        "Niiiice man ! You just hit a nasty rock dude !!! {} life remaining",
+                        self.rocks[j].life
                     );
-                }
-
-                for j in 0..self.rocks.len() {
-                    if i != j && self.rocks[i].has_collided_with(&self.rocks[j]) {
-                        debug!("Colision between asteroid detected !!!");
-                    }
+                    self.bullets[i].life = 0.0;
                 }
             }
+        }
 
-            // Handle collisions with pewpew
-            for i in 0..self.bullets.len() {
-                for j in 0..self.rocks.len() {
-                    if i != j && self.bullets[i].has_collided_with(&self.rocks[j]) {
-                        self.rocks[j].life -= BULLET_DAMAGE;
-                        info!(
-                            "Niiiice man ! You just hit a nasty rock dude !!! {} life remaining",
-                            self.rocks[j].life
-                        );
-                        self.bullets[i].life = 0.0;
-                    }
-                }
+        // Handle shooting
+        if self.input.fire && self.time_since_last_shoot >= SHIP_RELOAD_TIME {
+            self.shoot(ctx);
+            self.time_since_last_shoot = 0.0;
+        } else {
+            self.time_since_last_shoot += time_elapsed;
+        };
+
+        // Handle ship
+        match self.input.yaxis {
+            Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
+            Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
+            _ => (),
+        };
+        match self.input.xaxis {
+            Right => self.ship.turn(SHIP_TURN_THRUST, time_elapsed),
+            Left => self.ship.turn(-SHIP_TURN_THRUST, time_elapsed),
+            _ => (),
+        };
+        self.ship.update_position(time_elapsed);
+
+        // Handle bullets
+        for bullet in &mut self.bullets {
+            bullet.update_position(time_elapsed);
+            bullet.update_life(time_elapsed);
+        }
+        self.bullets.retain(|bullet| return bullet.life > 0.0);
+
+        // Handle rocks
+        for rock in &mut self.rocks {
+            rock.update_position(time_elapsed);
+            if rock.life <= 0.0 {
+                rock.explode();
             }
+        }
+        self.rocks.retain(|rock| return rock.life > 0.0);
 
-            // Handle shooting
-            if self.input.fire && self.time_since_last_shoot >= SHIP_RELOAD_TIME {
-                self.shoot(ctx);
-                self.time_since_last_shoot = 0.0;
-            } else {
-                self.time_since_last_shoot += time_elapsed;
-            };
+        // New stage ?
+        if self.rocks.len() == 0 {
+            self.level_up(ctx);
+        }
 
-            // Handle ship
-            match self.input.yaxis {
-                Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
-                Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
-                _ => (),
-            };
-            match self.input.xaxis {
-                Right => self.ship.turn(SHIP_TURN_THRUST, time_elapsed),
-                Left => self.ship.turn(-SHIP_TURN_THRUST, time_elapsed),
-                _ => (),
-            };
-            self.ship.update_position(time_elapsed);
-
-            // Handle bullets
-            for bullet in &mut self.bullets {
-                bullet.update_position(time_elapsed);
-                bullet.update_life(time_elapsed);
-            }
-            self.bullets.retain(|bullet| return bullet.life > 0.0);
-
-            // Handle rocks
-            for rock in &mut self.rocks {
-                rock.update_position(time_elapsed);
-                if rock.life <= 0.0 {
-                    rock.explode();
-                }
-            }
-            self.rocks.retain(|rock| return rock.life > 0.0);
-
-            // New stage ?
-            if self.rocks.len() == 0 {
-                self.level_up(ctx);
-            }
-
-            // Game over ?
-            if self.ship.life <= 0.0 {
-                self.game_over(ctx)
-            }
+        // Game over ?
+        if self.ship.life <= 0.0 {
+            self.game_over(ctx)
         }
 
         Ok(())
@@ -179,6 +187,9 @@ impl EventHandler for AsteroidWorld {
 
         // Draw the ship
         self.draw_object(ctx, &self.ship)?;
+
+        
+        self.draw_fps(ctx, &timer::fps(ctx))?;
 
         graphics::present(ctx)
     }

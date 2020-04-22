@@ -34,10 +34,7 @@ fn main() -> Result<(), Box<dyn Error>> {
                 .unwrap();
             match log4rs::init_config(config) {
                 Err(err) => {
-                    println!(
-                        "Who need a logger anyway? {}",
-                        err
-                    );
+                    println!("Who need a logger anyway? {}", err);
                 }
                 _ => {
                     info!("But the logger successfully init its shit from code...");

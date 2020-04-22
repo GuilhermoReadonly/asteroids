@@ -1,6 +1,6 @@
 use crate::constants::*;
 use ggez::{
-    graphics::Mesh,
+    graphics,graphics::{Mesh,MeshBuilder},
     nalgebra::{Point2, Vector2},
 };
 use log::{debug, info};
@@ -117,6 +117,20 @@ impl Object {
 
     pub fn explode(&mut self) {
         info!("KABOOOOOOM !!!!!!!");
+    }
+
+    pub fn show_hit_box(mesh: MeshBuilder, radius: f32) -> MeshBuilder {
+        let mut mesh = mesh;
+        if GAME_SHOW_HIT_BOX {
+            mesh = mesh.circle(
+                graphics::DrawMode::stroke(GAME_LINE_WIDTH),
+                Point::new(0.0, 0.0),
+                radius,
+                1.0,
+                GAME_HIT_BOX_COLOR
+            ).to_owned();
+        }
+        mesh
     }
 }
 

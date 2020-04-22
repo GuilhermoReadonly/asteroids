@@ -7,12 +7,16 @@ use std::f32::consts::PI;
 pub const TAU: f32 = 2.0 * PI;
 
 // Game constants
+/// Show hitbox radius of objects
+pub const GAME_SHOW_HIT_BOX: bool = false;
+// The color of the hit box if activated
+pub const GAME_HIT_BOX_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);
 /// Name of the game
 pub const GAME_NAME: &str = "⭐ Asteroids 🚀";
 /// Name of the author
 pub const GAME_AUTHOR: &str = "718";
 /// Frames rate in frames.s⁻¹
-pub const GAME_FPS: u32 = 120;
+pub const _GAME_FPS: u32 = 120;
 /// Height of the window in px
 pub const GAME_WINDOW_HEIGHT: f32 = 800.0;
 /// Width of the window in px
