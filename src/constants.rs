@@ -27,6 +27,8 @@ pub const GAME_MAX_HEIGHT: f32 = GAME_WINDOW_HEIGHT / 2.0;
 pub const GAME_MAX_WIDTH: f32 = GAME_WINDOW_WIDTH / 2.0;
 /// Width of the lines of the meshes in px
 pub const GAME_LINE_WIDTH: f32 = 1.0;
+/// Y offset between each line of text diplayed
+pub const GAME_TEXT_Y_OFFSET: f32 = 15.0;
 
 // Ship constants
 pub const SHIP_SIZE_X: f32 = 7.0;

@@ -49,14 +49,19 @@ impl AsteroidWorld {
         graphics::draw(ctx, obj_mesh, drawparams)
     }
 
-    fn draw_fps(&self, ctx: &mut Context, fps: &f64) -> GameResult<()> {
-        let fps_display = Text::new(format!("FPS: {}", fps));
-        // When drawing through these calls, `DrawParam` will work as they are documented.
+    fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) -> GameResult<()> {
+        let display = Text::new(txt);
         graphics::draw(
             ctx,
-            &fps_display,
-            (Point::new(0.0, 0.0), graphics::WHITE),
+            &display,
+            (Point::new(0.0, y_offset), graphics::WHITE),
         )
+    }
+
+    fn draw_texts(&self, ctx: &mut Context) -> GameResult<()> {
+        self.draw_text(ctx, format!("Current stage: {}", self.stage), 0.0)?;
+        self.draw_text(ctx, format!("Life: {}/{}", self.ship.life, SHIP_LIFE), GAME_TEXT_Y_OFFSET)?;
+        self.draw_text(ctx, format!("FPS: {:.0}", &timer::fps(ctx)), 2.0*GAME_TEXT_Y_OFFSET)
     }
 
     pub fn shoot(&mut self, ctx: &mut Context) {
@@ -188,8 +193,7 @@ impl EventHandler for AsteroidWorld {
         // Draw the ship
         self.draw_object(ctx, &self.ship)?;
 
-        
-        self.draw_fps(ctx, &timer::fps(ctx))?;
+        self.draw_texts(ctx)?;
 
         graphics::present(ctx)
     }
