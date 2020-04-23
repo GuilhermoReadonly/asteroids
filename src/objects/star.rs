@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{Object, Point, SpeedVector},
+    objects::{hit_box::HitBox, Object, Point, SpeedVector},
 };
 use ggez::{graphics::DrawMode, graphics::MeshBuilder, Context};
 use rand::prelude::*;
@@ -36,7 +36,7 @@ impl Star {
             0.0,
             0.0,
             0.0,
-            radius,
+            HitBox::new(STAR_RADIUS_MAX, STAR_RADIUS_MAX),
         )
     }
 }

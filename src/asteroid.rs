@@ -8,7 +8,7 @@ use ggez::{
     event,
     event::{EventHandler, KeyCode, KeyMods},
     graphics,
-    graphics::{Color, Text},
+    graphics::{Color, DrawParam, MeshBuilder, Text},
     timer, Context, GameResult,
 };
 use log::{debug, info};
@@ -43,6 +43,26 @@ impl AsteroidWorld {
 
     fn draw_object(&self, ctx: &mut Context, obj: &Object) -> GameResult<()> {
         let obj_mesh = &obj.mesh;
+
+        if GAME_SHOW_HIT_BOX {
+            let hitbox = MeshBuilder::default()
+                .polygon(
+                    graphics::DrawMode::stroke(GAME_LINE_WIDTH),
+                    &[
+                        Point::new(obj.hit_box.width / 2.0, obj.hit_box.height / 2.0),
+                        Point::new(obj.hit_box.width / 2.0, -obj.hit_box.height / 2.0),
+                        Point::new(-obj.hit_box.width / 2.0, -obj.hit_box.height / 2.0),
+                        Point::new(-obj.hit_box.width / 2.0, obj.hit_box.height / 2.0),
+                    ],
+                    GAME_HIT_BOX_COLOR,
+                )
+                .unwrap()
+                .to_owned()
+                .build(ctx)
+                .unwrap();
+            let drawparams = DrawParam::new().dest(world_to_screen_coords(&obj.position));
+            graphics::draw(ctx, &hitbox, drawparams)?;
+        }
 
         let drawparams = graphics::DrawParam::new()
             .dest(world_to_screen_coords(&obj.position))
@@ -111,6 +131,7 @@ impl EventHandler for AsteroidWorld {
                     );
                 self.ship.speed = ship_speed;
                 self.rocks[i].speed = rock_speed;
+
                 info!(
                     "Watchout, you collided with a rock. {} life remaining",
                     self.ship.life

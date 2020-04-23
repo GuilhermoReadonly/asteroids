@@ -1,15 +1,15 @@
-use crate::constants::*;
-use ggez::{
-    graphics,
-    graphics::{Mesh, MeshBuilder},
-    nalgebra::{Point2, Vector2},
-};
-use log::{debug, info};
-
 pub mod bullet;
+pub mod hit_box;
 pub mod rock;
 pub mod ship;
 pub mod star;
+
+use crate::{constants::*, objects::hit_box::HitBox};
+use ggez::{
+    graphics::Mesh,
+    nalgebra::{Point2, Vector2},
+};
+use log::{debug, info};
 
 pub type SpeedVector = Vector2<f32>;
 pub type Speed = f32;
@@ -34,7 +34,7 @@ pub struct Object {
     pub max_angle_speed: SpeedAngle,
     pub mass: Mass,
     pub life: Life,
-    radius: f32,
+    pub hit_box: HitBox,
 }
 
 impl Object {
@@ -49,7 +49,7 @@ impl Object {
         max_angle_speed: SpeedAngle,
         mass: Mass,
         life: Life,
-        radius: f32,
+        hit_box: HitBox,
     ) -> Self {
         Self {
             name,
@@ -62,7 +62,7 @@ impl Object {
             max_angle_speed,
             mass,
             life,
-            radius,
+            hit_box,
         }
     }
 
@@ -77,7 +77,7 @@ impl Object {
             self.position.y = -self.position.y;
         }
 
-        //angular speed
+        // angular speed
         self.direction += self.angle_speed * (dt);
     }
 
@@ -111,18 +111,11 @@ impl Object {
         }
     }
 
-    pub fn distance_to(&self, other_object: &Self) -> f32 {
-        ((self.position.x - other_object.position.x).powi(2)
-            + (self.position.y - other_object.position.y).powi(2))
-        .sqrt()
-    }
-
-    pub fn has_collided_with(&self, other_object: &Self) -> bool {
-        let mut result = false;
-        if self.distance_to(other_object) < self.radius + other_object.radius {
-            result = true;
-        }
-        result
+    pub fn has_collided_with(&self, other: &Self) -> bool {
+        self.position.x + self.hit_box.width/2.0 > other.position.x - other.hit_box.width/2.0 &&
+        self.position.x - self.hit_box.width/2.0 < other.position.x + other.hit_box.width/2.0 &&
+        self.position.y + self.hit_box.height/2.0 > other.position.y - other.hit_box.height/2.0 &&
+        self.position.y - self.hit_box.height/2.0 < other.position.y + other.hit_box.height/2.0 
     }
 
     pub fn compute_speed_vector_after_collision(
@@ -144,22 +137,6 @@ impl Object {
 
     pub fn explode(&mut self) {
         info!("KABOOOOOOM !!!!!!!");
-    }
-
-    pub fn show_hit_box(mesh: MeshBuilder, radius: f32) -> MeshBuilder {
-        let mut mesh = mesh;
-        if GAME_SHOW_HIT_BOX {
-            mesh = mesh
-                .circle(
-                    graphics::DrawMode::stroke(GAME_LINE_WIDTH),
-                    Point::new(0.0, 0.0),
-                    radius,
-                    1.0,
-                    GAME_HIT_BOX_COLOR,
-                )
-                .to_owned();
-        }
-        mesh
     }
 }
 

@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{Object, Point, SpeedVector},
+    objects::{hit_box::HitBox, Object, Point, SpeedVector},
 };
 use ggez::{graphics, graphics::MeshBuilder, Context};
 use rand::prelude::*;
@@ -22,36 +22,37 @@ impl Rock {
             points.push(point);
         }
 
-        let mut mesh = MeshBuilder::default()
-            .polygon(
-                graphics::DrawMode::stroke(GAME_LINE_WIDTH),
-                &points[..],
-                ROCK_COLOR,
-            )
+        let mesh = MeshBuilder::default()
+            .polygon(graphics::DrawMode::fill(), &points[..], ROCK_COLOR)
             .unwrap()
-            .to_owned();
+            .to_owned()
+            .build(ctx)
+            .unwrap();
 
-        mesh = Self::show_hit_box(mesh, ROCK_RADIUS_MAX);
-        let mesh = mesh.build(ctx).unwrap();
+        let position = Point::new(
+            rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
+            rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
+        );
 
         Self::new(
             "A mofo asteroid".to_string(),
-            Point::new(
-                rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
-                rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
-            ),
+            position,
             mesh,
             SpeedVector::new(
                 rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
                 rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
             ),
+            // SpeedVector::new(0.0, 0.0),
             ROCK_MAX_SPEED,
             0.0,
             rng.gen_range(-ROCK_MAX_ANGLE_SPEED, ROCK_MAX_ANGLE_SPEED),
             ROCK_MAX_ANGLE_SPEED,
             ROCK_MASS,
             ROCK_LIFE,
-            ROCK_RADIUS_MAX,
+            HitBox::new(
+                ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
+                ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
+            ),
         )
     }
 }

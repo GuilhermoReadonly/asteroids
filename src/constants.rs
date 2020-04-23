@@ -7,7 +7,7 @@ use std::f32::consts::PI;
 pub const TAU: f32 = 2.0 * PI;
 
 // Game constants
-/// Show hitbox radius of objects
+/// Show hitbox of objects
 pub const GAME_SHOW_HIT_BOX: bool = false;
 // The color of the hit box if activated
 pub const GAME_HIT_BOX_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);

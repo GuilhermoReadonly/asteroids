@@ -1,3 +1,4 @@
+use asteroids;
 use log::{error, info, LevelFilter};
 use log4rs;
 use log4rs::{
@@ -6,14 +7,9 @@ use log4rs::{
 };
 use std::error::Error;
 
-mod asteroid;
-mod constants;
-mod inputs;
-mod objects;
-
 use crate::{
-    asteroid::AsteroidWorld,
-    constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
+    asteroids::asteroid::AsteroidWorld,
+    asteroids::constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
 };
 
 use ggez::{
@@ -23,7 +19,7 @@ use ggez::{
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Init logger
-    log4rs::init_file("./resources/log44rs.yml", Default::default())
+    log4rs::init_file("./resources/log4rs.yml", Default::default())
         .and_then(|_| Ok(info!("The logger successfully init its stuffs...")))
         .or_else(|err| {
             println!("For a reason, the little shit called a logger didn't init its lazy-ass from file!!! {}",err);

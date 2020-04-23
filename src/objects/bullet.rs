@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{vec_from_angle, Direction, Object, Point},
+    objects::{hit_box::HitBox, vec_from_angle, Direction, Object, Point},
 };
 use ggez::{graphics::MeshBuilder, Context};
 
@@ -8,17 +8,16 @@ pub type Bullet = Object;
 
 impl Bullet {
     pub fn new_bullet(ctx: &mut Context, position: Point, direction: Direction) -> Bullet {
-        let mut mesh = MeshBuilder::default()
+        let mesh = MeshBuilder::default()
             .line(
                 &[Point::new(0.0, 0.0), Point::new(0.0, -BULLET_SIZE)],
-                1.0,
+                GAME_LINE_WIDTH,
                 BULLET_COLOR,
             )
             .unwrap()
-            .to_owned();
-        let radius = 1.0;
-        mesh = Self::show_hit_box(mesh, radius);
-        let mesh = mesh.build(ctx).unwrap();
+            .to_owned()
+            .build(ctx)
+            .unwrap();
 
         Self::new(
             "I'm a freaking bullet".to_string(),
@@ -31,7 +30,7 @@ impl Bullet {
             0.0,
             BULLET_MASS,
             BULLET_LIFE,
-            radius,
+            HitBox::new(1.0, 1.0),
         )
     }
 
