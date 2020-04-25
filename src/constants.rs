@@ -38,10 +38,12 @@ pub const SHIP_LIFE: f32 = 100.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
 pub const SHIP_COLOR: Color = Color::new(0.0, 1.0, 0.0, 1.0);
 pub const SHIP_THRUST: f32 = 5000.0;
-pub const SHIP_TURN_THRUST: f32 = 30.0 * TAU;
+pub const SHIP_TURN_THRUST: f32 = 200.0 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
 pub const SHIP_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
 pub const SHIP_RELOAD_TIME: f32 = 0.2;
+pub const SHIP_DESCELERATION: f32 = 0.7;
+pub const SHIP_ANGLE_DESCELERATION: f32 = 7.0;
 
 // Bullet constants
 pub const BULLET_SIZE: f32 = 60.0;
@@ -56,7 +58,7 @@ pub const ROCK_RADIUS_MIN: f32 = 20.0;
 pub const ROCK_RADIUS_MAX: f32 = 30.0;
 pub const ROCK_NB_EDGES: u32 = 18; //3, 4, 7, 11, 18
 pub const ROCK_MASS: f32 = 500.0;
-pub const ROCK_LIFE: f32 = 100.0;
+pub const ROCK_LIFE: f32 = 25.0;
 pub const ROCK_COLOR: Color = Color::new(0.0, 1.0, 1.0, 1.0);
 pub const ROCK_MAX_SPEED: f32 = 100.0;
 pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;

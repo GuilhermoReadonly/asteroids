@@ -66,10 +66,6 @@ impl Object {
 
     pub fn update_position(&mut self, dt: f32) {
         // speed
-        let norm_sq = self.speed.norm_squared();
-        if norm_sq > self.max_speed.powi(2) {
-            self.speed = self.speed / norm_sq.sqrt() * self.max_speed;
-        }
         self.position += self.speed * (dt);
 
         if self.position.x > GAME_MAX_WIDTH || self.position.x < -GAME_MAX_WIDTH {
@@ -80,13 +76,13 @@ impl Object {
         }
 
         //angular speed
-        if self.angle_speed > self.max_angle_speed {
-            self.angle_speed = self.max_angle_speed;
-        }
-        if self.angle_speed < -self.max_angle_speed {
-            self.angle_speed = -self.max_angle_speed;
-        }
         self.direction += self.angle_speed * (dt);
+    }
+
+    pub fn update_speeds(&mut self, dt: f32) {
+        // Apply descelerations to ship
+        self.speed = self.speed -  self.speed * dt * SHIP_DESCELERATION;
+        self.angle_speed = self.angle_speed -  self.angle_speed * dt * SHIP_ANGLE_DESCELERATION;
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
@@ -94,11 +90,23 @@ impl Object {
 
         let direction_vector: DirectionVector = vec_from_angle(self.direction);
         self.speed += direction_vector * f * dt / self.mass;
+
+        let norm_sq = self.speed.norm_squared();
+        if norm_sq > self.max_speed.powi(2) {
+            self.speed = self.speed.normalize() * self.max_speed;
+        }
     }
 
     pub fn turn(&mut self, f: f32, dt: f32) {
         debug!("Turn {} my dude !", f);
         self.angle_speed += f * dt / self.mass;
+
+        if self.angle_speed > self.max_angle_speed {
+            self.angle_speed = self.max_angle_speed;
+        }
+        if self.angle_speed < -self.max_angle_speed {
+            self.angle_speed = -self.max_angle_speed;
+        }
     }
 
     pub fn distance_to(&self, other_object: &Self) -> f32 {

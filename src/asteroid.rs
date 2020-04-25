@@ -142,6 +142,7 @@ impl EventHandler for AsteroidWorld {
             _ => (),
         };
         self.ship.update_position(time_elapsed);
+        self.ship.update_speeds(time_elapsed);
 
         // Handle bullets
         for bullet in &mut self.bullets {
