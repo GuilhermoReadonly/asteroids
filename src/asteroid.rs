@@ -1,13 +1,14 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects::{bullet::Bullet, rock::Rock, ship::Ship, star::Star, Object, Point},
+    objects,
+    objects::{bullet::Bullet, rock::Rock, ship::Ship, star::Star, Object, Point, PositionVector},
 };
 use ggez::{
     event,
     event::{EventHandler, KeyCode, KeyMods},
     graphics,
-    graphics::{Text, Color},
+    graphics::{Color, Text},
     timer, Context, GameResult,
 };
 use log::{debug, info};
@@ -51,17 +52,21 @@ impl AsteroidWorld {
 
     fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) -> GameResult<()> {
         let display = Text::new(txt);
-        graphics::draw(
-            ctx,
-            &display,
-            (Point::new(0.0, y_offset), graphics::WHITE),
-        )
+        graphics::draw(ctx, &display, (Point::new(0.0, y_offset), graphics::WHITE))
     }
 
     fn draw_texts(&self, ctx: &mut Context) -> GameResult<()> {
         self.draw_text(ctx, format!("Current stage: {}", self.stage), 0.0)?;
-        self.draw_text(ctx, format!("Life: {}/{}", self.ship.life, SHIP_LIFE), GAME_TEXT_Y_OFFSET)?;
-        self.draw_text(ctx, format!("FPS: {:.0}", &timer::fps(ctx)), 2.0*GAME_TEXT_Y_OFFSET)
+        self.draw_text(
+            ctx,
+            format!("Life: {}/{}", self.ship.life, SHIP_LIFE),
+            GAME_TEXT_Y_OFFSET,
+        )?;
+        self.draw_text(
+            ctx,
+            format!("FPS: {:.0}", &timer::fps(ctx)),
+            2.0 * GAME_TEXT_Y_OFFSET,
+        )
     }
 
     pub fn shoot(&mut self, ctx: &mut Context) {
@@ -93,17 +98,40 @@ impl EventHandler for AsteroidWorld {
         // Handle collisions with rocks
         for i in 0..self.rocks.len() {
             if self.ship.has_collided_with(&self.rocks[i]) {
-                self.rocks[i].life = 0.0;
-                self.ship.life -= ROCK_DAMAGE;
+                self.rocks[i].life -= COLLISION_DAMAGE;
+                self.ship.life -= COLLISION_DAMAGE;
+                let (ship_speed, rock_speed) =
+                    objects::Object::compute_speed_vector_after_collision(
+                        self.ship.speed,
+                        self.rocks[i].speed,
+                        self.ship.mass,
+                        self.rocks[i].mass,
+                        PositionVector::new(self.ship.position.x, self.ship.position.y),
+                        PositionVector::new(self.rocks[i].position.x, self.rocks[i].position.y),
+                    );
+                self.ship.speed = ship_speed;
+                self.rocks[i].speed = rock_speed;
                 info!(
                     "Watchout, you collided with a rock. {} life remaining",
                     self.ship.life
                 );
             }
 
-            for j in 0..self.rocks.len() {
+            for j in (i + 1)..self.rocks.len() {
                 if i != j && self.rocks[i].has_collided_with(&self.rocks[j]) {
                     debug!("Colision between asteroid detected !!!");
+
+                    let (rock1_speed, rock2_speed) =
+                        objects::Object::compute_speed_vector_after_collision(
+                            self.rocks[i].speed,
+                            self.rocks[j].speed,
+                            self.rocks[i].mass,
+                            self.rocks[j].mass,
+                            PositionVector::new(self.rocks[i].position.x, self.rocks[i].position.y),
+                            PositionVector::new(self.rocks[j].position.x, self.rocks[j].position.y),
+                        );
+                    self.rocks[i].speed = rock1_speed;
+                    self.rocks[j].speed = rock2_speed;
                 }
             }
         }

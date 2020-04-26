@@ -1,6 +1,7 @@
 use crate::constants::*;
 use ggez::{
-    graphics,graphics::{Mesh,MeshBuilder},
+    graphics,
+    graphics::{Mesh, MeshBuilder},
     nalgebra::{Point2, Vector2},
 };
 use log::{debug, info};
@@ -13,6 +14,7 @@ pub mod star;
 pub type SpeedVector = Vector2<f32>;
 pub type Speed = f32;
 pub type SpeedAngle = f32;
+pub type PositionVector = Vector2<f32>;
 pub type Point = Point2<f32>;
 pub type Direction = f32;
 pub type DirectionVector = Vector2<f32>;
@@ -81,8 +83,8 @@ impl Object {
 
     pub fn update_speeds(&mut self, dt: f32) {
         // Apply descelerations to ship
-        self.speed = self.speed -  self.speed * dt * SHIP_DESCELERATION;
-        self.angle_speed = self.angle_speed -  self.angle_speed * dt * SHIP_ANGLE_DESCELERATION;
+        self.speed = self.speed - self.speed * dt * SHIP_DESCELERATION;
+        self.angle_speed = self.angle_speed - self.angle_speed * dt * SHIP_ANGLE_DESCELERATION;
     }
 
     pub fn accelerate(&mut self, f: Force, dt: f32) {
@@ -123,6 +125,23 @@ impl Object {
         result
     }
 
+    pub fn compute_speed_vector_after_collision(
+        v1: SpeedVector,
+        v2: SpeedVector,
+        m1: f32,
+        m2: f32,
+        x1: PositionVector,
+        x2: PositionVector,
+    ) -> (SpeedVector, SpeedVector) {
+        let speed1: SpeedVector = v1
+            - (2.0 * m2) / (m1 + m2) * ((v1 - v2).dot(&(x1 - x2))) / ((x1 - x2).dot(&(x1 - x2)))
+                * (x1 - x2);
+        let speed2: SpeedVector = v2
+            - (2.0 * m1) / (m2 + m1) * ((v2 - v1).dot(&(x2 - x1))) / ((x2 - x1).dot(&(x2 - x1)))
+                * (x2 - x1);
+        (speed1, speed2)
+    }
+
     pub fn explode(&mut self) {
         info!("KABOOOOOOM !!!!!!!");
     }
@@ -130,13 +149,15 @@ impl Object {
     pub fn show_hit_box(mesh: MeshBuilder, radius: f32) -> MeshBuilder {
         let mut mesh = mesh;
         if GAME_SHOW_HIT_BOX {
-            mesh = mesh.circle(
-                graphics::DrawMode::stroke(GAME_LINE_WIDTH),
-                Point::new(0.0, 0.0),
-                radius,
-                1.0,
-                GAME_HIT_BOX_COLOR
-            ).to_owned();
+            mesh = mesh
+                .circle(
+                    graphics::DrawMode::stroke(GAME_LINE_WIDTH),
+                    Point::new(0.0, 0.0),
+                    radius,
+                    1.0,
+                    GAME_HIT_BOX_COLOR,
+                )
+                .to_owned();
         }
         mesh
     }

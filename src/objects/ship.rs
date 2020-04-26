@@ -8,7 +8,6 @@ pub type Ship = Object;
 
 impl Ship {
     pub fn new_ship(ctx: &mut Context) -> Ship {
-
         let radius = (SHIP_SIZE_X.powi(2) + SHIP_SIZE_Y.powi(2)).sqrt();
         let mut mesh = MeshBuilder::default()
             .polygon(
@@ -21,7 +20,8 @@ impl Ship {
                 ],
                 SHIP_COLOR,
             )
-            .unwrap().to_owned();
+            .unwrap()
+            .to_owned();
 
         mesh = Self::show_hit_box(mesh, radius);
         let mesh = mesh.build(ctx).unwrap();

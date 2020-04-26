@@ -58,11 +58,11 @@ pub const ROCK_RADIUS_MIN: f32 = 20.0;
 pub const ROCK_RADIUS_MAX: f32 = 30.0;
 pub const ROCK_NB_EDGES: u32 = 18; //3, 4, 7, 11, 18
 pub const ROCK_MASS: f32 = 500.0;
-pub const ROCK_LIFE: f32 = 25.0;
+pub const ROCK_LIFE: f32 = 100.0;
 pub const ROCK_COLOR: Color = Color::new(0.0, 1.0, 1.0, 1.0);
 pub const ROCK_MAX_SPEED: f32 = 100.0;
 pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
-pub const ROCK_DAMAGE: f32 = 20.0;
+pub const COLLISION_DAMAGE: f32 = 20.0;
 
 // Star constants
 pub const STAR_NUMBER: usize = 100;

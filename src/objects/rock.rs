@@ -28,7 +28,8 @@ impl Rock {
                 &points[..],
                 ROCK_COLOR,
             )
-            .unwrap().to_owned();
+            .unwrap()
+            .to_owned();
 
         mesh = Self::show_hit_box(mesh, ROCK_RADIUS_MAX);
         let mesh = mesh.build(ctx).unwrap();
