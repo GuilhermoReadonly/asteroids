@@ -1,12 +1,37 @@
 # Another Asteroid Game
-This is just a pet project whose main goal is for me to learn the rust language and do a bit of game development.
+This is just a pet project whose main goal is for me to learn the rust language.  
+And also what is more fun than playing a game ? Making a game !
+
 So nothing fancy, just an old fashioned asteroid game.
 
-This is a Work In Progress.
+## Roadmap (more or less by priorities):
+* [ ] Improve hitbox
+* [x] Improve physics
+* [ ] Refactor the codebase (it is a mess)
+* [ ] Improve spawn (check if space is clear before spawning)
+* [ ] Add screens:
+  * [ ] Game over
+  * [ ] Settings:
+    * [ ] Keyboard
+    * [ ] Sounds on/off
+  * [ ] Score boards
+  * [ ] Credits
+* [ ] Sounds effects (Pewpew)
+* [ ] Animations:
+  * [ ] Bullets hits
+  * [ ] Rocks
+* [ ] Differents kind of guns
+* [ ] Add saucers
+* [ ] Increase world size and stay centred on the player ship
+* [ ] Multiplayer mode
+* [ ] WASM version playable in the browser
+
+
+# Builds and stuff
 
 ## Stuff to have installed before build
 
-### Rust
+### Rust:
 https://www.rust-lang.org/tools/install
 
 
@@ -16,17 +41,39 @@ https://www.rust-lang.org/tools/install
 cargo run --release
 ```
 
-## Cross target build
-Install the desired target (here windows with gnu tools):
+## Build
 
 ```
+cargo build --release
+```
+
+The executable file is generated in the ```./target/release/``` folder.
+
+
+## Cross compillation target build
+
+### Windows
+Prepare environment:
+```
+sudo apt install mingw-w64
 rustup target add x86_64-pc-windows-gnu
 ```
 
-Build with the desired installed target:
+Build:
 
 ```
 cargo build --release --target=x86_64-pc-windows-gnu
 ```
 
-The executable file is generated in the ```./target/release/``` folder.
+### Mac (work in progress)
+Prepare environment:
+```
+rustup target add x86_64-apple-darwin
+```
+
+Build:
+
+```
+cargo build --release --target=x86_64-apple-darwin
+```
+
