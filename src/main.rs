@@ -23,28 +23,22 @@ use ggez::{
 
 fn main() -> Result<(), Box<dyn Error>> {
     // Init logger
-    match log4rs::init_file("./resources/log4rs.yml", Default::default()) {
-        Err(err) => {
+    log4rs::init_file("./resources/log44rs.yml", Default::default())
+        .and_then(|_| Ok(info!("The logger successfully init its stuffs...")))
+        .or_else(|err| {
             println!("For a reason, the little shit called a logger didn't init its lazy-ass from file!!! {}",err);
             let stdout = ConsoleAppender::builder().build();
             let root = Root::builder().appender("stdout").build(LevelFilter::Info);
             let config = Config::builder()
                 .appender(Appender::builder().build("stdout", Box::new(stdout)))
-                .build(root)
-                .unwrap();
-            match log4rs::init_config(config) {
-                Err(err) => {
-                    println!("Who need a logger anyway? {}", err);
-                }
-                _ => {
-                    info!("But the logger successfully init its shit from code...");
-                }
-            };
-        }
-        _ => {
-            info!("The logger successfully init its stuffs...");
-        }
-    };
+                .build(root)?;
+            log4rs::init_config(config)?;
+            Ok(info!("But the logger successfully init its shit from code..."))
+        })
+        .map_err(|err: Box<dyn Error>|{
+            println!("Who need a logger anyway? {}", err);
+            err
+        })?;
 
     // Make a Context and an EventLoop.
     let window_setup = WindowSetup::default()
