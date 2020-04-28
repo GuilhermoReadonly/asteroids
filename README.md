@@ -2,7 +2,7 @@
 This is just a pet project whose main goal is for me to learn the rust language.  
 And also what is more fun than playing a game ? Making a game !
 
-So nothing fancy, just an old fashioned asteroid game.
+So nothing fancy, just an old fashioned asteroids game.
 
 ## Roadmap (more or less by priorities):
 * [ ] Improve hitbox
