@@ -6,6 +6,8 @@ So nothing fancy, just an old fashioned asteroid game.
 
 ## Roadmap (more or less by priorities):
 * [ ] Improve hitbox
+  * [ ] Part one use simple rectangles
+  * [ ] Part two use Gilbert–Johnson–Keerthi distance algorithm: https://en.wikipedia.org/wiki/Gilbert%E2%80%93Johnson%E2%80%93Keerthi_distance_algorithm
 * [x] Improve physics
 * [ ] Refactor the codebase (it is a mess)
 * [ ] Improve spawn (check if space is clear before spawning)
