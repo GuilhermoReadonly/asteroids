@@ -40,7 +40,6 @@ pub const GAME_COLOR_CYAN: Color = Color::new(0.0, 1.0, 1.0, 1.0);
 /// Color blue
 pub const GAME_COLOR_BLUE: Color = Color::new(0.0, 0.0, 1.0, 1.0);
 
-
 // Ship constants
 pub const SHIP_SIZE_X: f32 = 7.0;
 pub const SHIP_SIZE_Y: f32 = 7.0;

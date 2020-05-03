@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{hit_box::HitBox, Direction, Moveable, Object, Point},
+    objects::{hit_box::HitBox, Direction, Object, Point, Position},
 };
 use ggez::{graphics::MeshBuilder, Context};
 

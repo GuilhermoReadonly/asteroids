@@ -12,7 +12,7 @@ use ggez::{
 use log::{debug, info};
 
 pub type SpeedVector = Vector2<f32>;
-pub type Speed = f32;
+pub type SpeedScalar = f32;
 pub type SpeedAngle = f32;
 pub type PositionVector = Vector2<f32>;
 pub type Point = Point2<f32>;
@@ -22,18 +22,28 @@ pub type Mass = f32;
 pub type Force = f32;
 pub type Life = f32;
 
-pub trait Moveable {
+pub trait Position {
     fn get_position(&self) -> &Point;
     fn get_position_mut(&mut self) -> &mut Point;
     fn set_position(&mut self, position: Point);
 
-    fn get_speed(&self) -> &SpeedVector;
-    fn set_speed(&mut self, speed: SpeedVector);
-    fn get_max_speed(&self) -> &Speed;
-    fn set_max_speed(&mut self, max_speed: Speed);
-
     fn get_direction(&self) -> &Direction;
     fn set_direction(&mut self, direction: Direction);
+
+    /// Create a unit vector representing the
+    /// given angle (in radians)
+    fn vec_from_angle(angle: f32) -> Vector2<f32> {
+        let vx = angle.sin();
+        let vy = angle.cos();
+        Vector2::new(vx, vy)
+    }
+}
+
+pub trait Speed: Position {
+    fn get_speed(&self) -> &SpeedVector;
+    fn set_speed(&mut self, speed: SpeedVector);
+    fn get_max_speed(&self) -> &SpeedScalar;
+    fn set_max_speed(&mut self, max_speed: SpeedScalar);
 
     fn get_angle_speed(&self) -> &SpeedAngle;
     fn set_angle_speed(&mut self, angle_speed: SpeedAngle);
@@ -57,17 +67,9 @@ pub trait Moveable {
         // angular speed
         self.set_direction(self.get_direction() + self.get_angle_speed() * (dt));
     }
-
-    /// Create a unit vector representing the
-    /// given angle (in radians)
-    fn vec_from_angle(angle: f32) -> Vector2<f32> {
-        let vx = angle.sin();
-        let vy = angle.cos();
-        Vector2::new(vx, vy)
-    }
 }
 
-pub trait Playable: Moveable {
+pub trait Playable: Speed {
     fn update_speeds(&mut self, dt: f32) {
         // Apply descelerations to ship
         self.set_speed(self.get_speed() - self.get_speed() * dt * SHIP_DESCELERATION);
@@ -100,7 +102,7 @@ pub trait Playable: Moveable {
         }
     }
 }
-pub trait Collideable: Moveable {
+pub trait Collideable: Speed {
     fn get_hitbox(&self) -> &HitBox;
     fn set_hitbox(&mut self, hitbox: HitBox);
 
@@ -139,7 +141,7 @@ pub struct Object {
     position: Point,
     pub mesh: Mesh,
     speed: SpeedVector,
-    max_speed: Speed,
+    max_speed: SpeedScalar,
     direction: Direction,
     angle_speed: SpeedAngle,
     max_angle_speed: SpeedAngle,
@@ -154,7 +156,7 @@ impl Object {
         position: Point,
         mesh: Mesh,
         speed: SpeedVector,
-        max_speed: Speed,
+        max_speed: SpeedScalar,
         direction: Direction,
         angle_speed: SpeedAngle,
         max_angle_speed: SpeedAngle,
@@ -182,7 +184,7 @@ impl Object {
     }
 }
 
-impl Moveable for Object {
+impl Position for Object {
     fn get_position(&self) -> &Point {
         &self.position
     }
@@ -192,24 +194,29 @@ impl Moveable for Object {
     fn set_position(&mut self, position: Point) {
         self.position = position
     }
-    fn get_speed(&self) -> &SpeedVector {
-        &self.speed
-    }
-    fn set_speed(&mut self, speed: SpeedVector) {
-        self.speed = speed
-    }
-    fn get_max_speed(&self) -> &Speed {
-        &self.max_speed
-    }
-    fn set_max_speed(&mut self, max_speed: Speed) {
-        self.max_speed = max_speed
-    }
+
     fn get_direction(&self) -> &Direction {
         &self.direction
     }
     fn set_direction(&mut self, direction: Direction) {
         self.direction = direction
     }
+}
+
+impl Speed for Object {
+    fn get_speed(&self) -> &SpeedVector {
+        &self.speed
+    }
+    fn set_speed(&mut self, speed: SpeedVector) {
+        self.speed = speed
+    }
+    fn get_max_speed(&self) -> &SpeedScalar {
+        &self.max_speed
+    }
+    fn set_max_speed(&mut self, max_speed: SpeedScalar) {
+        self.max_speed = max_speed
+    }
+
     fn get_angle_speed(&self) -> &SpeedAngle {
         &self.angle_speed
     }

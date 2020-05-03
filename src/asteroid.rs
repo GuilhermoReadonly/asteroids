@@ -3,8 +3,8 @@ use crate::{
     inputs::{InputState, XDirection::*, YDirection::*},
     objects,
     objects::{
-        bullet::Bullet, rock::Rock, ship::Ship, star::Star, Collideable, Moveable, Object,
-        Playable, Point, PositionVector,
+        bullet::Bullet, rock::Rock, ship::Ship, star::Star, Collideable, Object, Playable, Point,
+        Position, PositionVector, Speed,
     },
 };
 use ggez::{
@@ -54,7 +54,10 @@ impl AsteroidWorld {
                     &[
                         Point::new(obj.get_hitbox().width / 2.0, obj.get_hitbox().height / 2.0),
                         Point::new(obj.get_hitbox().width / 2.0, -obj.get_hitbox().height / 2.0),
-                        Point::new(-obj.get_hitbox().width / 2.0, -obj.get_hitbox().height / 2.0),
+                        Point::new(
+                            -obj.get_hitbox().width / 2.0,
+                            -obj.get_hitbox().height / 2.0,
+                        ),
                         Point::new(-obj.get_hitbox().width / 2.0, obj.get_hitbox().height / 2.0),
                     ],
                     GAME_HIT_BOX_COLOR,
@@ -130,7 +133,10 @@ impl EventHandler for AsteroidWorld {
                         *self.ship.get_mass(),
                         *self.rocks[i].get_mass(),
                         PositionVector::new(self.ship.get_position().x, self.ship.get_position().y),
-                        PositionVector::new(self.rocks[i].get_position().x, self.rocks[i].get_position().y),
+                        PositionVector::new(
+                            self.rocks[i].get_position().x,
+                            self.rocks[i].get_position().y,
+                        ),
                     );
                 self.ship.set_speed(ship_speed);
                 self.rocks[i].set_speed(rock_speed);
@@ -151,8 +157,14 @@ impl EventHandler for AsteroidWorld {
                             *self.rocks[j].get_speed(),
                             *self.rocks[i].get_mass(),
                             *self.rocks[j].get_mass(),
-                            PositionVector::new(self.rocks[i].get_position().x, self.rocks[i].get_position().y),
-                            PositionVector::new(self.rocks[j].get_position().x, self.rocks[j].get_position().y),
+                            PositionVector::new(
+                                self.rocks[i].get_position().x,
+                                self.rocks[i].get_position().y,
+                            ),
+                            PositionVector::new(
+                                self.rocks[j].get_position().x,
+                                self.rocks[j].get_position().y,
+                            ),
                         );
                     self.rocks[i].set_speed(rock1_speed);
                     self.rocks[j].set_speed(rock2_speed);
