@@ -2,7 +2,10 @@ use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
     objects,
-    objects::{bullet::Bullet, rock::Rock, ship::Ship, star::Star, Object, Point, PositionVector},
+    objects::{
+        bullet::Bullet, rock::Rock, ship::Ship, star::Star, Collideable, Moveable, Object,
+        Playable, Point, PositionVector,
+    },
 };
 use ggez::{
     event,
@@ -49,10 +52,10 @@ impl AsteroidWorld {
                 .polygon(
                     graphics::DrawMode::stroke(GAME_LINE_WIDTH),
                     &[
-                        Point::new(obj.hit_box.width / 2.0, obj.hit_box.height / 2.0),
-                        Point::new(obj.hit_box.width / 2.0, -obj.hit_box.height / 2.0),
-                        Point::new(-obj.hit_box.width / 2.0, -obj.hit_box.height / 2.0),
-                        Point::new(-obj.hit_box.width / 2.0, obj.hit_box.height / 2.0),
+                        Point::new(obj.get_hitbox().width / 2.0, obj.get_hitbox().height / 2.0),
+                        Point::new(obj.get_hitbox().width / 2.0, -obj.get_hitbox().height / 2.0),
+                        Point::new(-obj.get_hitbox().width / 2.0, -obj.get_hitbox().height / 2.0),
+                        Point::new(-obj.get_hitbox().width / 2.0, obj.get_hitbox().height / 2.0),
                     ],
                     GAME_HIT_BOX_COLOR,
                 )
@@ -60,13 +63,13 @@ impl AsteroidWorld {
                 .to_owned()
                 .build(ctx)
                 .unwrap();
-            let drawparams = DrawParam::new().dest(world_to_screen_coords(&obj.position));
+            let drawparams = DrawParam::new().dest(world_to_screen_coords(&obj.get_position()));
             graphics::draw(ctx, &hitbox, drawparams)?;
         }
 
         let drawparams = graphics::DrawParam::new()
-            .dest(world_to_screen_coords(&obj.position))
-            .rotation(obj.direction);
+            .dest(world_to_screen_coords(&obj.get_position()))
+            .rotation(*obj.get_direction());
         graphics::draw(ctx, obj_mesh, drawparams)
     }
 
@@ -91,7 +94,7 @@ impl AsteroidWorld {
 
     pub fn shoot(&mut self, ctx: &mut Context) {
         debug!("Shoot the mofo !!!");
-        let bullet = Bullet::new_bullet(ctx, self.ship.position, self.ship.direction);
+        let bullet = Bullet::new_bullet(ctx, *self.ship.get_position(), *self.ship.get_direction());
         self.bullets.push(bullet);
     }
 
@@ -121,16 +124,16 @@ impl EventHandler for AsteroidWorld {
                 self.rocks[i].life -= COLLISION_DAMAGE;
                 self.ship.life -= COLLISION_DAMAGE;
                 let (ship_speed, rock_speed) =
-                    objects::Object::compute_speed_vector_after_collision(
-                        self.ship.speed,
-                        self.rocks[i].speed,
-                        self.ship.mass,
-                        self.rocks[i].mass,
-                        PositionVector::new(self.ship.position.x, self.ship.position.y),
-                        PositionVector::new(self.rocks[i].position.x, self.rocks[i].position.y),
+                    objects::Object::compute_speed_vectors_after_collision(
+                        *self.ship.get_speed(),
+                        *self.rocks[i].get_speed(),
+                        *self.ship.get_mass(),
+                        *self.rocks[i].get_mass(),
+                        PositionVector::new(self.ship.get_position().x, self.ship.get_position().y),
+                        PositionVector::new(self.rocks[i].get_position().x, self.rocks[i].get_position().y),
                     );
-                self.ship.speed = ship_speed;
-                self.rocks[i].speed = rock_speed;
+                self.ship.set_speed(ship_speed);
+                self.rocks[i].set_speed(rock_speed);
 
                 info!(
                     "Watchout, you collided with a rock. {} life remaining",
@@ -143,16 +146,16 @@ impl EventHandler for AsteroidWorld {
                     debug!("Colision between asteroid detected !!!");
 
                     let (rock1_speed, rock2_speed) =
-                        objects::Object::compute_speed_vector_after_collision(
-                            self.rocks[i].speed,
-                            self.rocks[j].speed,
-                            self.rocks[i].mass,
-                            self.rocks[j].mass,
-                            PositionVector::new(self.rocks[i].position.x, self.rocks[i].position.y),
-                            PositionVector::new(self.rocks[j].position.x, self.rocks[j].position.y),
+                        objects::Object::compute_speed_vectors_after_collision(
+                            *self.rocks[i].get_speed(),
+                            *self.rocks[j].get_speed(),
+                            *self.rocks[i].get_mass(),
+                            *self.rocks[j].get_mass(),
+                            PositionVector::new(self.rocks[i].get_position().x, self.rocks[i].get_position().y),
+                            PositionVector::new(self.rocks[j].get_position().x, self.rocks[j].get_position().y),
                         );
-                    self.rocks[i].speed = rock1_speed;
-                    self.rocks[j].speed = rock2_speed;
+                    self.rocks[i].set_speed(rock1_speed);
+                    self.rocks[j].set_speed(rock2_speed);
                 }
             }
         }

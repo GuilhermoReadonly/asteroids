@@ -1,6 +1,6 @@
 use crate::{
     constants::*,
-    objects::{hit_box::HitBox, vec_from_angle, Direction, Object, Point},
+    objects::{hit_box::HitBox, Direction, Moveable, Object, Point},
 };
 use ggez::{graphics::MeshBuilder, Context};
 
@@ -23,7 +23,7 @@ impl Bullet {
             "I'm a freaking bullet".to_string(),
             position,
             mesh,
-            vec_from_angle(direction) * BULLET_SPEED,
+            Self::vec_from_angle(direction) * BULLET_SPEED,
             BULLET_SPEED,
             direction,
             0.0,

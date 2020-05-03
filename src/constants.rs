@@ -29,6 +29,17 @@ pub const GAME_MAX_WIDTH: f32 = GAME_WINDOW_WIDTH / 2.0;
 pub const GAME_LINE_WIDTH: f32 = 1.0;
 /// Y offset between each line of text diplayed
 pub const GAME_TEXT_Y_OFFSET: f32 = 15.0;
+/// Color white
+pub const GAME_COLOR_WHITE: Color = Color::new(1.0, 1.0, 1.0, 1.0);
+/// Color green
+pub const GAME_COLOR_GREEN: Color = Color::new(0.0, 1.0, 0.0, 1.0);
+/// Color red
+pub const GAME_COLOR_RED: Color = Color::new(1.0, 0.0, 0.0, 1.0);
+/// Color cyan
+pub const GAME_COLOR_CYAN: Color = Color::new(0.0, 1.0, 1.0, 1.0);
+/// Color blue
+pub const GAME_COLOR_BLUE: Color = Color::new(0.0, 0.0, 1.0, 1.0);
+
 
 // Ship constants
 pub const SHIP_SIZE_X: f32 = 7.0;
@@ -36,20 +47,20 @@ pub const SHIP_SIZE_Y: f32 = 7.0;
 pub const SHIP_MASS: f32 = 30.0;
 pub const SHIP_LIFE: f32 = 100.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
-pub const SHIP_COLOR: Color = Color::new(0.0, 1.0, 0.0, 1.0);
+pub const SHIP_COLOR: Color = GAME_COLOR_GREEN;
 pub const SHIP_THRUST: f32 = 5000.0;
-pub const SHIP_TURN_THRUST: f32 = 200.0 * TAU;
+pub const SHIP_TURN_THRUST: f32 = 100.0 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
 pub const SHIP_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
 pub const SHIP_RELOAD_TIME: f32 = 0.2;
 pub const SHIP_DESCELERATION: f32 = 0.7;
-pub const SHIP_ANGLE_DESCELERATION: f32 = 7.0;
+pub const SHIP_ANGLE_DESCELERATION: f32 = 3.5;
 
 // Bullet constants
 pub const BULLET_SIZE: f32 = 60.0;
 pub const BULLET_MASS: f32 = 1.0;
 pub const BULLET_LIFE: f32 = 0.7;
-pub const BULLET_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);
+pub const BULLET_COLOR: Color = GAME_COLOR_RED;
 pub const BULLET_SPEED: f32 = 1000.0;
 pub const BULLET_DAMAGE: f32 = 25.0;
 
@@ -59,7 +70,7 @@ pub const ROCK_RADIUS_MAX: f32 = 30.0;
 pub const ROCK_NB_EDGES: u32 = 18; //3, 4, 7, 11, 18
 pub const ROCK_MASS: f32 = 500.0;
 pub const ROCK_LIFE: f32 = 100.0;
-pub const ROCK_COLOR: Color = Color::new(0.0, 1.0, 1.0, 1.0);
+pub const ROCK_COLOR: Color = GAME_COLOR_BLUE;
 pub const ROCK_MAX_SPEED: f32 = 100.0;
 pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
 pub const COLLISION_DAMAGE: f32 = 20.0;
@@ -68,4 +79,4 @@ pub const COLLISION_DAMAGE: f32 = 20.0;
 pub const STAR_NUMBER: usize = 100;
 pub const STAR_RADIUS_MIN: f32 = 0.5;
 pub const STAR_RADIUS_MAX: f32 = 1.5;
-pub const STAR_COLOR: Color = Color::new(1.0, 1.0, 1.0, 1.0);
+pub const STAR_COLOR: Color = GAME_COLOR_WHITE;
