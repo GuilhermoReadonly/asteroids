@@ -1,11 +1,17 @@
 use crate::{
     constants::*,
-    objects::{hit_box::HitBox, Object, Point, SpeedVector},
+    objects::*,
 };
-use ggez::{graphics::DrawMode, graphics::MeshBuilder, Context};
+use ggez::{graphics::DrawMode, graphics::{MeshBuilder,Mesh}, Context};
 use rand::prelude::*;
 
-pub type Star = Object;
+#[derive(Debug, Clone)]
+pub struct Star {
+    pub name: String,
+    position: Point,
+    direction: Direction,
+    mesh:Mesh,
+}
 
 impl Star {
     pub fn new_star(ctx: &mut Context) -> Star {
@@ -29,14 +35,51 @@ impl Star {
                 rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
             ),
             mesh,
-            SpeedVector::new(0.0, 0.0),
             0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            0.0,
-            HitBox::new(STAR_RADIUS_MAX, STAR_RADIUS_MAX),
         )
     }
+
+    pub fn new(
+        name: String,
+        position: Point,
+        mesh: Mesh,
+        direction: Direction,
+    ) -> Self {
+        Self {
+            name,
+            position,
+            mesh: mesh,
+            direction,
+        }
+    }
+
+    pub fn explode(&mut self) {
+        info!("KABOOOOOOM !!!!!!!");
+    }
 }
+
+
+impl Position for Star {
+    fn get_position(&self) -> &Point {
+        &self.position
+    }
+    fn get_position_mut(&mut self) -> &mut Point {
+        &mut self.position
+    }
+    fn set_position(&mut self, position: Point) {
+        self.position = position
+    }
+
+    fn get_direction(&self) -> &Direction {
+        &self.direction
+    }
+    fn set_direction(&mut self, direction: Direction) {
+        self.direction = direction
+    }
+}
+
+impl Drawable for Star{
+    fn get_mesh(&self) -> &Mesh { &self.mesh}
+    fn set_mesh(&mut self, mesh: Mesh) { self.mesh = mesh }
+}
+

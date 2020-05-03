@@ -106,7 +106,7 @@ pub trait Collideable: Speed {
     fn get_hitbox(&self) -> &HitBox;
     fn set_hitbox(&mut self, hitbox: HitBox);
 
-    fn has_collided_with(&self, other: &Self) -> bool {
+    fn has_collided_with(&self, other: &impl Collideable) -> bool {
         self.get_position().x + self.get_hitbox().width / 2.0
             > other.get_position().x - other.get_hitbox().width / 2.0
             && self.get_position().x - self.get_hitbox().width / 2.0
@@ -135,115 +135,15 @@ pub trait Collideable: Speed {
     }
 }
 
-#[derive(Debug, Clone)]
-pub struct Object {
-    pub name: String,
-    position: Point,
-    pub mesh: Mesh,
-    speed: SpeedVector,
-    max_speed: SpeedScalar,
-    direction: Direction,
-    angle_speed: SpeedAngle,
-    max_angle_speed: SpeedAngle,
-    mass: Mass,
-    pub life: Life,
-    hitbox: HitBox,
+pub trait Drawable: Position {
+    fn get_mesh(&self) -> &Mesh;
+    fn set_mesh(&mut self, mesh: Mesh);
 }
 
-impl Object {
-    pub fn new(
-        name: String,
-        position: Point,
-        mesh: Mesh,
-        speed: SpeedVector,
-        max_speed: SpeedScalar,
-        direction: Direction,
-        angle_speed: SpeedAngle,
-        max_angle_speed: SpeedAngle,
-        mass: Mass,
-        life: Life,
-        hitbox: HitBox,
-    ) -> Self {
-        Self {
-            name,
-            position,
-            mesh: mesh,
-            speed,
-            max_speed,
-            direction,
-            angle_speed,
-            max_angle_speed,
-            mass,
-            life,
-            hitbox,
-        }
-    }
-
-    pub fn explode(&mut self) {
-        info!("KABOOOOOOM !!!!!!!");
-    }
-}
-
-impl Position for Object {
-    fn get_position(&self) -> &Point {
-        &self.position
-    }
-    fn get_position_mut(&mut self) -> &mut Point {
-        &mut self.position
-    }
-    fn set_position(&mut self, position: Point) {
-        self.position = position
-    }
-
-    fn get_direction(&self) -> &Direction {
-        &self.direction
-    }
-    fn set_direction(&mut self, direction: Direction) {
-        self.direction = direction
-    }
-}
-
-impl Speed for Object {
-    fn get_speed(&self) -> &SpeedVector {
-        &self.speed
-    }
-    fn set_speed(&mut self, speed: SpeedVector) {
-        self.speed = speed
-    }
-    fn get_max_speed(&self) -> &SpeedScalar {
-        &self.max_speed
-    }
-    fn set_max_speed(&mut self, max_speed: SpeedScalar) {
-        self.max_speed = max_speed
-    }
-
-    fn get_angle_speed(&self) -> &SpeedAngle {
-        &self.angle_speed
-    }
-    fn set_angle_speed(&mut self, angle_speed: SpeedAngle) {
-        self.angle_speed = angle_speed
-    }
-    fn get_max_angle_speed(&self) -> &SpeedAngle {
-        &self.max_angle_speed
-    }
-    fn set_max_angle_speed(&mut self, max_angle_speed: SpeedAngle) {
-        self.max_angle_speed = max_angle_speed
-    }
-    fn get_mass(&self) -> &Mass {
-        &self.mass
-    }
-    fn set_mass(&mut self, mass: Mass) {
-        self.mass = mass
-    }
-}
-
-impl Playable for Object {}
-
-impl Collideable for Object {
-    fn get_hitbox(&self) -> &HitBox {
-        &self.hitbox
-    }
-    fn set_hitbox(&mut self, hitbox: HitBox) {
-        self.hitbox = hitbox
+pub trait Liveable {
+    fn get_life(&self) -> &Life;
+    fn set_life(&mut self, life: Life);
+    fn sub_life(&mut self, sub_life: Life) {
+        self.set_life( self.get_life() - sub_life);
     }
 }

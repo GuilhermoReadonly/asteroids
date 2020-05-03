@@ -1,11 +1,7 @@
 use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
-    objects,
-    objects::{
-        bullet::Bullet, rock::Rock, ship::Ship, star::Star, Collideable, Object, Playable, Point,
-        Position, PositionVector, Speed,
-    },
+    objects::{*,ship::*, rock::*, star::*, bullet::*},
 };
 use ggez::{
     event,
@@ -19,7 +15,7 @@ use log::{debug, info};
 pub struct AsteroidWorld {
     pub ship: Ship,
     pub rocks: Vec<Rock>,
-    pub bullets: Vec<Ship>,
+    pub bullets: Vec<Bullet>,
     pub input: InputState,
     pub time_since_last_shoot: f32,
     pub stars: Vec<Star>,
@@ -44,10 +40,16 @@ impl AsteroidWorld {
         }
     }
 
-    fn draw_object(&self, ctx: &mut Context, obj: &Object) -> GameResult<()> {
-        let obj_mesh = &obj.mesh;
+    fn draw_object(&self, ctx: &mut Context, obj: &impl Drawable) -> GameResult<()> {
+        let obj_mesh = obj.get_mesh();
+        let drawparams = graphics::DrawParam::new()
+            .dest(world_to_screen_coords(&obj.get_position()))
+            .rotation(*obj.get_direction());
+        graphics::draw(ctx, obj_mesh, drawparams)
+    }
 
-        if GAME_SHOW_HIT_BOX {
+    fn draw_hitbox(&self, ctx: &mut Context, obj: &impl Collideable) -> GameResult<()> {
+        if GAME_SHOW_HIT_BOX{
             let hitbox = MeshBuilder::default()
                 .polygon(
                     graphics::DrawMode::stroke(GAME_LINE_WIDTH),
@@ -68,12 +70,8 @@ impl AsteroidWorld {
                 .unwrap();
             let drawparams = DrawParam::new().dest(world_to_screen_coords(&obj.get_position()));
             graphics::draw(ctx, &hitbox, drawparams)?;
-        }
-
-        let drawparams = graphics::DrawParam::new()
-            .dest(world_to_screen_coords(&obj.get_position()))
-            .rotation(*obj.get_direction());
-        graphics::draw(ctx, obj_mesh, drawparams)
+        };
+        Ok(())
     }
 
     fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) -> GameResult<()> {
@@ -124,10 +122,10 @@ impl EventHandler for AsteroidWorld {
         // Handle collisions with rocks
         for i in 0..self.rocks.len() {
             if self.ship.has_collided_with(&self.rocks[i]) {
-                self.rocks[i].life -= COLLISION_DAMAGE;
+                self.rocks[i].sub_life( COLLISION_DAMAGE);
                 self.ship.life -= COLLISION_DAMAGE;
                 let (ship_speed, rock_speed) =
-                    objects::Object::compute_speed_vectors_after_collision(
+                    Ship::compute_speed_vectors_after_collision(
                         *self.ship.get_speed(),
                         *self.rocks[i].get_speed(),
                         *self.ship.get_mass(),
@@ -136,7 +134,7 @@ impl EventHandler for AsteroidWorld {
                         PositionVector::new(
                             self.rocks[i].get_position().x,
                             self.rocks[i].get_position().y,
-                        ),
+                        )
                     );
                 self.ship.set_speed(ship_speed);
                 self.rocks[i].set_speed(rock_speed);
@@ -152,7 +150,7 @@ impl EventHandler for AsteroidWorld {
                     debug!("Colision between asteroid detected !!!");
 
                     let (rock1_speed, rock2_speed) =
-                        objects::Object::compute_speed_vectors_after_collision(
+                        Rock::compute_speed_vectors_after_collision(
                             *self.rocks[i].get_speed(),
                             *self.rocks[j].get_speed(),
                             *self.rocks[i].get_mass(),
@@ -164,7 +162,7 @@ impl EventHandler for AsteroidWorld {
                             PositionVector::new(
                                 self.rocks[j].get_position().x,
                                 self.rocks[j].get_position().y,
-                            ),
+                            )
                         );
                     self.rocks[i].set_speed(rock1_speed);
                     self.rocks[j].set_speed(rock2_speed);
@@ -176,12 +174,12 @@ impl EventHandler for AsteroidWorld {
         for i in 0..self.bullets.len() {
             for j in 0..self.rocks.len() {
                 if self.bullets[i].has_collided_with(&self.rocks[j]) {
-                    self.rocks[j].life -= BULLET_DAMAGE;
+                    self.rocks[j].sub_life(BULLET_DAMAGE);
                     info!(
                         "Niiiice man ! You just hit a nasty rock dude !!! {} life remaining",
-                        self.rocks[j].life
+                        self.rocks[j].get_life()
                     );
-                    self.bullets[i].life = 0.0;
+                    self.bullets[i].set_life(0.0);
                 }
             }
         }
@@ -211,18 +209,18 @@ impl EventHandler for AsteroidWorld {
         // Handle bullets
         for bullet in &mut self.bullets {
             bullet.update_position(time_elapsed);
-            bullet.update_life(time_elapsed);
+            bullet.sub_life(time_elapsed);
         }
-        self.bullets.retain(|bullet| return bullet.life > 0.0);
+        self.bullets.retain(|bullet| return bullet.get_life() > &0.0);
 
         // Handle rocks
         for rock in &mut self.rocks {
             rock.update_position(time_elapsed);
-            if rock.life <= 0.0 {
+            if rock.get_life() <= &0.0 {
                 rock.explode();
             }
         }
-        self.rocks.retain(|rock| return rock.life > 0.0);
+        self.rocks.retain(|rock| return rock.get_life() > &0.0);
 
         // New stage ?
         if self.rocks.len() == 0 {
@@ -248,15 +246,18 @@ impl EventHandler for AsteroidWorld {
         // Draw all bullets
         for bullet in &self.bullets {
             self.draw_object(ctx, bullet)?;
+            self.draw_hitbox(ctx, bullet)?;
         }
 
         // Draw all rocks
         for rock in &self.rocks {
             self.draw_object(ctx, rock)?;
+            self.draw_hitbox(ctx, rock)?;
         }
 
         // Draw the ship
         self.draw_object(ctx, &self.ship)?;
+        self.draw_hitbox(ctx, &self.ship)?;
 
         self.draw_texts(ctx)?;
 
