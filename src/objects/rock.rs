@@ -1,8 +1,9 @@
-use crate::{
-    constants::*,
-    objects::*,
+use crate::{constants::*, objects::*};
+use ggez::{
+    graphics,
+    graphics::{Mesh, MeshBuilder},
+    Context,
 };
-use ggez::{graphics, graphics::{MeshBuilder,Mesh}, Context};
 use rand::prelude::*;
 
 #[derive(Debug, Clone)]
@@ -21,7 +22,7 @@ pub struct Rock {
 }
 
 impl Rock {
-    pub fn new_rock(ctx: &mut Context) -> Rock {
+    pub fn new(ctx: &mut Context) -> Rock {
         let mut rng = rand::thread_rng();
 
         let angle_between_edges = TAU / ROCK_NB_EDGES as f32;
@@ -47,61 +48,28 @@ impl Rock {
             rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
         );
 
-        Self::new(
-            "A mofo asteroid".to_string(),
-            position,
-            mesh,
-            SpeedVector::new(
+        Self {
+            name: "A mofo asteroid".to_string(),
+            position: position,
+            mesh: mesh,
+            speed: SpeedVector::new(
                 rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
                 rng.gen_range(-ROCK_MAX_SPEED, ROCK_MAX_SPEED),
             ),
             // SpeedVector::new(0.0, 0.0),
-            ROCK_MAX_SPEED,
-            0.0,
-            rng.gen_range(-ROCK_MAX_ANGLE_SPEED, ROCK_MAX_ANGLE_SPEED),
-            ROCK_MAX_ANGLE_SPEED,
-            ROCK_MASS,
-            ROCK_LIFE,
-            HitBox::new(
+            max_speed: ROCK_MAX_SPEED,
+            direction: 0.0,
+            angle_speed: rng.gen_range(-ROCK_MAX_ANGLE_SPEED, ROCK_MAX_ANGLE_SPEED),
+            max_angle_speed: ROCK_MAX_ANGLE_SPEED,
+            mass: ROCK_MASS,
+            life: ROCK_LIFE,
+            hitbox: HitBox::new(
                 ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
                 ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
             ),
-        )
-    }
-
-    pub fn new(
-        name: String,
-        position: Point,
-        mesh: Mesh,
-        speed: SpeedVector,
-        max_speed: SpeedScalar,
-        direction: Direction,
-        angle_speed: SpeedAngle,
-        max_angle_speed: SpeedAngle,
-        mass: Mass,
-        life: Life,
-        hitbox: HitBox,
-    ) -> Self {
-        Self {
-            name,
-            position,
-            mesh: mesh,
-            speed,
-            max_speed,
-            direction,
-            angle_speed,
-            max_angle_speed,
-            mass,
-            life,
-            hitbox,
         }
     }
-
-    pub fn explode(&mut self) {
-        info!("KABOOOOOOM !!!!!!!");
-    }
 }
-
 
 impl Position for Rock {
     fn get_position(&self) -> &Point {
@@ -165,12 +133,20 @@ impl Collideable for Rock {
     }
 }
 
-impl Drawable for Rock{
-    fn get_mesh(&self) -> &Mesh { &self.mesh}
-    fn set_mesh(&mut self, mesh: Mesh) { self.mesh = mesh }
+impl Drawable for Rock {
+    fn get_mesh(&self) -> &Mesh {
+        &self.mesh
+    }
+    fn set_mesh(&mut self, mesh: Mesh) {
+        self.mesh = mesh
+    }
 }
 
-impl Liveable for Rock{
-    fn get_life(&self) -> &Life { &self.life}
-    fn set_life(&mut self, life: Life) { self.life = life }
+impl Liveable for Rock {
+    fn get_life(&self) -> &Life {
+        &self.life
+    }
+    fn set_life(&mut self, life: Life) {
+        self.life = life
+    }
 }

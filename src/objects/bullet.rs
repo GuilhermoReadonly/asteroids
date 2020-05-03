@@ -1,9 +1,5 @@
-use crate::{
-    constants::*,
-    objects::*,
-};
+use crate::{constants::*, objects::*};
 use ggez::{graphics::MeshBuilder, Context};
-
 
 #[derive(Debug, Clone)]
 pub struct Bullet {
@@ -21,7 +17,7 @@ pub struct Bullet {
 }
 
 impl Bullet {
-    pub fn new_bullet(ctx: &mut Context, position: Point, direction: Direction) -> Bullet {
+    pub fn new(ctx: &mut Context, position: Point, direction: Direction) -> Bullet {
         let mesh = MeshBuilder::default()
             .line(
                 &[Point::new(0.0, 0.0), Point::new(0.0, -BULLET_SIZE)],
@@ -33,54 +29,21 @@ impl Bullet {
             .build(ctx)
             .unwrap();
 
-        Self::new(
-            "I'm a freaking bullet".to_string(),
-            position,
-            mesh,
-            Self::vec_from_angle(direction) * BULLET_SPEED,
-            BULLET_SPEED,
-            direction,
-            0.0,
-            0.0,
-            BULLET_MASS,
-            BULLET_LIFE,
-            HitBox::new(1.0, 1.0),
-        )
-    }
-
-    pub fn new(
-        name: String,
-        position: Point,
-        mesh: Mesh,
-        speed: SpeedVector,
-        max_speed: SpeedScalar,
-        direction: Direction,
-        angle_speed: SpeedAngle,
-        max_angle_speed: SpeedAngle,
-        mass: Mass,
-        life: Life,
-        hitbox: HitBox,
-    ) -> Self {
         Self {
-            name,
-            position,
+            name: "I'm a freaking bullet".to_string(),
+            position: position,
             mesh: mesh,
-            speed,
-            max_speed,
-            direction,
-            angle_speed,
-            max_angle_speed,
-            mass,
-            life,
-            hitbox,
+            speed: Self::vec_from_angle(direction) * BULLET_SPEED,
+            max_speed: BULLET_SPEED,
+            direction: direction,
+            angle_speed: 0.0,
+            max_angle_speed: 0.0,
+            mass: BULLET_MASS,
+            life: BULLET_LIFE,
+            hitbox: HitBox::new(1.0, 1.0),
         }
     }
-
-    pub fn explode(&mut self) {
-        info!("KABOOOOOOM !!!!!!!");
-    }
 }
-
 
 impl Position for Bullet {
     fn get_position(&self) -> &Point {
@@ -144,12 +107,20 @@ impl Collideable for Bullet {
     }
 }
 
-impl Drawable for Bullet{
-    fn get_mesh(&self) -> &Mesh { &self.mesh}
-    fn set_mesh(&mut self, mesh: Mesh) { self.mesh = mesh }
+impl Drawable for Bullet {
+    fn get_mesh(&self) -> &Mesh {
+        &self.mesh
+    }
+    fn set_mesh(&mut self, mesh: Mesh) {
+        self.mesh = mesh
+    }
 }
 
-impl Liveable for Bullet{
-    fn get_life(&self) -> &Life { &self.life}
-    fn set_life(&mut self, life: Life) { self.life = life }
+impl Liveable for Bullet {
+    fn get_life(&self) -> &Life {
+        &self.life
+    }
+    fn set_life(&mut self, life: Life) {
+        self.life = life
+    }
 }

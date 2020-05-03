@@ -144,6 +144,6 @@ pub trait Liveable {
     fn get_life(&self) -> &Life;
     fn set_life(&mut self, life: Life);
     fn sub_life(&mut self, sub_life: Life) {
-        self.set_life( self.get_life() - sub_life);
+        self.set_life(self.get_life() - sub_life);
     }
 }

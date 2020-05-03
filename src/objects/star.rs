@@ -1,8 +1,9 @@
-use crate::{
-    constants::*,
-    objects::*,
+use crate::{constants::*, objects::*};
+use ggez::{
+    graphics::DrawMode,
+    graphics::{Mesh, MeshBuilder},
+    Context,
 };
-use ggez::{graphics::DrawMode, graphics::{MeshBuilder,Mesh}, Context};
 use rand::prelude::*;
 
 #[derive(Debug, Clone)]
@@ -10,11 +11,11 @@ pub struct Star {
     pub name: String,
     position: Point,
     direction: Direction,
-    mesh:Mesh,
+    mesh: Mesh,
 }
 
 impl Star {
-    pub fn new_star(ctx: &mut Context) -> Star {
+    pub fn new(ctx: &mut Context) -> Star {
         let mut rng = rand::thread_rng();
         let radius: f32 = rng.gen_range(STAR_RADIUS_MIN, STAR_RADIUS_MAX);
         let mesh = MeshBuilder::default()
@@ -28,36 +29,17 @@ impl Star {
             .build(ctx)
             .unwrap();
 
-        Self::new(
-            "A lone star".to_string(),
-            Point::new(
+        Self {
+            name: "A lone star".to_string(),
+            position: Point::new(
                 rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
                 rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
             ),
-            mesh,
-            0.0,
-        )
-    }
-
-    pub fn new(
-        name: String,
-        position: Point,
-        mesh: Mesh,
-        direction: Direction,
-    ) -> Self {
-        Self {
-            name,
-            position,
             mesh: mesh,
-            direction,
+            direction: 0.0,
         }
     }
-
-    pub fn explode(&mut self) {
-        info!("KABOOOOOOM !!!!!!!");
-    }
 }
-
 
 impl Position for Star {
     fn get_position(&self) -> &Point {
@@ -78,8 +60,11 @@ impl Position for Star {
     }
 }
 
-impl Drawable for Star{
-    fn get_mesh(&self) -> &Mesh { &self.mesh}
-    fn set_mesh(&mut self, mesh: Mesh) { self.mesh = mesh }
+impl Drawable for Star {
+    fn get_mesh(&self) -> &Mesh {
+        &self.mesh
+    }
+    fn set_mesh(&mut self, mesh: Mesh) {
+        self.mesh = mesh
+    }
 }
-

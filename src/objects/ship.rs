@@ -1,9 +1,9 @@
-use crate::{
-    constants::*,
-    objects::*,
+use crate::{constants::*, objects::*};
+use ggez::{
+    graphics,
+    graphics::{Mesh, MeshBuilder},
+    Context,
 };
-use ggez::{graphics, graphics::{MeshBuilder, Mesh}, Context};
-
 
 #[derive(Debug, Clone)]
 pub struct Ship {
@@ -16,12 +16,12 @@ pub struct Ship {
     angle_speed: SpeedAngle,
     max_angle_speed: SpeedAngle,
     mass: Mass,
-    pub life: Life,
+    life: Life,
     hitbox: HitBox,
 }
 
 impl Ship {
-    pub fn new_ship(ctx: &mut Context) -> Ship {
+    pub fn new(ctx: &mut Context) -> Ship {
         let mesh = MeshBuilder::default()
             .polygon(
                 graphics::DrawMode::fill(),
@@ -38,54 +38,25 @@ impl Ship {
             .build(ctx)
             .unwrap();
 
-        Self::new(
-            "Ship of the Captain".to_string(),
-            Point::new(0.0, 0.0),
-            mesh,
-            SpeedVector::new(0.0, 0.0),
-            SHIP_MAX_SPEED,
-            SHIP_INITIAL_DIRECTION,
-            0.0,
-            SHIP_MAX_ANGLE_SPEED,
-            SHIP_MASS,
-            SHIP_LIFE,
-            HitBox::new(2.0 * SHIP_SIZE_X, 2.0 * SHIP_SIZE_Y),
-        )
-    }
-
-    pub fn new(
-        name: String,
-        position: Point,
-        mesh: Mesh,
-        speed: SpeedVector,
-        max_speed: SpeedScalar,
-        direction: Direction,
-        angle_speed: SpeedAngle,
-        max_angle_speed: SpeedAngle,
-        mass: Mass,
-        life: Life,
-        hitbox: HitBox,
-    ) -> Self {
         Self {
-            name,
-            position,
+            name: "Ship of the Captain".to_string(),
+            position: Point::new(0.0, 0.0),
             mesh: mesh,
-            speed,
-            max_speed,
-            direction,
-            angle_speed,
-            max_angle_speed,
-            mass,
-            life,
-            hitbox,
+            speed: SpeedVector::new(0.0, 0.0),
+            max_speed: SHIP_MAX_SPEED,
+            direction: SHIP_INITIAL_DIRECTION,
+            angle_speed: 0.0,
+            max_angle_speed: SHIP_MAX_ANGLE_SPEED,
+            mass: SHIP_MASS,
+            life: SHIP_LIFE,
+            hitbox: HitBox::new(2.0 * SHIP_SIZE_X, 2.0 * SHIP_SIZE_Y),
         }
     }
 
     pub fn explode(&mut self) {
-        info!("KABOOOOOOM !!!!!!!");
+        info!("Ho, no...");
     }
 }
-
 
 impl Position for Ship {
     fn get_position(&self) -> &Point {
@@ -151,14 +122,20 @@ impl Collideable for Ship {
     }
 }
 
-impl Drawable for Ship{
-    fn get_mesh(&self) -> &Mesh { &self.mesh}
-    fn set_mesh(&mut self, mesh: Mesh) { self.mesh = mesh }
+impl Drawable for Ship {
+    fn get_mesh(&self) -> &Mesh {
+        &self.mesh
+    }
+    fn set_mesh(&mut self, mesh: Mesh) {
+        self.mesh = mesh
+    }
 }
 
-impl Liveable for Ship{
-    fn get_life(&self) -> &Life { &self.life}
-    fn set_life(&mut self, life: Life) { self.life = life }
+impl Liveable for Ship {
+    fn get_life(&self) -> &Life {
+        &self.life
+    }
+    fn set_life(&mut self, life: Life) {
+        self.life = life
+    }
 }
-
-

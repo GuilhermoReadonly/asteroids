@@ -8,7 +8,7 @@ use log4rs::{
 use std::error::Error;
 
 use crate::{
-    asteroids::asteroid::AsteroidWorld,
+    asteroids::AsteroidWorld,
     asteroids::constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
 };
 
@@ -22,7 +22,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     log4rs::init_file("./resources/log4rs.yml", Default::default())
         .and_then(|_| Ok(info!("The logger successfully init its stuffs...")))
         .or_else(|err| {
-            println!("For a reason, the little shit called a logger didn't init its lazy-ass from file!!! {}",err);
+            println!("For a reason, the little shit called LoGgEr didn't init its lazy-ass from file!!! {}",err);
             let stdout = ConsoleAppender::builder().build();
             let root = Root::builder().appender("stdout").build(LevelFilter::Info);
             let config = Config::builder()
@@ -32,7 +32,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             Ok(info!("But the logger successfully init its shit from code..."))
         })
         .map_err(|err: Box<dyn Error>|{
-            println!("Who need a logger anyway? {}", err);
+            println!("(ノಠДಠ)ノ彡┻━┻ {}", err);
             err
         })?;
 
