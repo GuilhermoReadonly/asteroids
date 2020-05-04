@@ -8,8 +8,8 @@ use log4rs::{
 use std::error::Error;
 
 use crate::{
-    asteroids::AsteroidWorld,
     asteroids::constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
+    asteroids::AsteroidWorld,
 };
 
 use ggez::{

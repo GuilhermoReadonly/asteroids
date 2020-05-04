@@ -35,7 +35,7 @@ impl AsteroidWorld {
         // Load/create resources here: images, fonts, sounds, etc.
         AsteroidWorld {
             ship: Ship::new(ctx),
-            rocks: vec![Rock::new(ctx)],
+            rocks: vec![Rock::new_init(ctx, ROCK_NB_EDGES, ROCK_RADIUS_INIT)],
             bullets: vec![],
             input: InputState::default(),
             time_since_last_shoot: 0.0,
@@ -107,7 +107,8 @@ impl AsteroidWorld {
         info!("Stage {} cleared", self.stage);
         self.stage += 1;
         for _ in 0..self.stage {
-            self.rocks.push(Rock::new(ctx));
+            self.rocks
+                .push(Rock::new_init(ctx, ROCK_NB_EDGES, ROCK_RADIUS_INIT));
         }
         info!("New stage with {} rocks to shoot !", self.rocks.len())
     }
@@ -126,8 +127,8 @@ impl EventHandler for AsteroidWorld {
         // Handle collisions with rocks
         for i in 0..self.rocks.len() {
             if self.ship.has_collided_with(&self.rocks[i]) {
-                self.rocks[i].sub_life(COLLISION_DAMAGE);
-                self.ship.sub_life(COLLISION_DAMAGE);
+                self.rocks[i].sub_life(ROCK_COLLISION_DAMAGE);
+                self.ship.sub_life(ROCK_COLLISION_DAMAGE);
                 let (ship_speed, rock_speed) = Ship::compute_speed_vectors_after_collision(
                     *self.ship.get_speed(),
                     *self.rocks[i].get_speed(),
@@ -177,10 +178,7 @@ impl EventHandler for AsteroidWorld {
             for j in 0..self.rocks.len() {
                 if self.bullets[i].has_collided_with(&self.rocks[j]) {
                     self.rocks[j].sub_life(BULLET_DAMAGE);
-                    info!(
-                        "Niiiice man ! You just hit a nasty rock dude !!! {} life remaining",
-                        self.rocks[j].get_life()
-                    );
+                    info!("Niiiice man ! You just hit a nasty rock dude !!!");
                     self.bullets[i].set_life(0.0);
                 }
             }
@@ -217,10 +215,16 @@ impl EventHandler for AsteroidWorld {
             .retain(|bullet| return bullet.get_life() > &0.0);
 
         // Handle rocks
+        let mut new_litle_rocks: Vec<Box<Rock>> = vec![];
         for rock in &mut self.rocks {
             rock.update_position(time_elapsed);
+            if rock.get_life() <= &0.0 && rock.get_nb_edges() > ROCK_MIN_NB_EDGES {
+                new_litle_rocks = rock.break_it(ctx);
+            }
         }
         self.rocks.retain(|rock| return rock.get_life() > &0.0);
+        let mut new_litle_rocks = new_litle_rocks.iter().map(|r| *r.clone()).collect();
+        self.rocks.append(&mut new_litle_rocks);
 
         // New stage ?
         if self.rocks.len() == 0 {
@@ -327,4 +331,3 @@ fn world_to_screen_coords(point: &Point) -> Point {
     let y = GAME_WINDOW_HEIGHT - (point.y + GAME_WINDOW_HEIGHT / 2.0);
     Point::new(x, y)
 }
-

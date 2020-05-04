@@ -19,19 +19,31 @@ pub struct Rock {
     mass: Mass,
     life: Life,
     hitbox: HitBox,
+    nb_edges: u32,
+    pub radius: f32,
 }
 
 impl Rock {
-    pub fn new(ctx: &mut Context) -> Rock {
+    pub fn new_init(ctx: &mut Context, nb_edges: u32, radius: f32) -> Rock {
+        let mut rng = rand::thread_rng();
+        let position = Point::new(
+            rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
+            rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
+        );
+        Self::new(ctx, nb_edges, radius, position)
+    }
+
+    pub fn new(ctx: &mut Context, nb_edges: u32, radius: f32, position: Point) -> Rock {
         let mut rng = rand::thread_rng();
 
-        let angle_between_edges = TAU / ROCK_NB_EDGES as f32;
+        let angle_between_edges = TAU / nb_edges as f32;
 
         let mut points: Vec<Point> = vec![];
-        for i in 0..ROCK_NB_EDGES {
-            let radius: f32 = rng.gen_range(ROCK_RADIUS_MIN, ROCK_RADIUS_MAX);
-            let x: f32 = (i as f32 * angle_between_edges).cos() * radius;
-            let y: f32 = (i as f32 * angle_between_edges).sin() * radius;
+        for i in 0..nb_edges {
+            let current_radius: f32 =
+                rng.gen_range(radius - ROCK_RADIUS_DELTA, radius + ROCK_RADIUS_DELTA);
+            let x: f32 = (i as f32 * angle_between_edges).cos() * current_radius;
+            let y: f32 = (i as f32 * angle_between_edges).sin() * current_radius;
             let point = Point::new(x, y);
             points.push(point);
         }
@@ -42,11 +54,6 @@ impl Rock {
             .to_owned()
             .build(ctx)
             .unwrap();
-
-        let position = Point::new(
-            rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
-            rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
-        );
 
         Self {
             name: "A mofo asteroid".to_string(),
@@ -63,10 +70,9 @@ impl Rock {
             max_angle_speed: ROCK_MAX_ANGLE_SPEED,
             mass: ROCK_MASS,
             life: ROCK_LIFE,
-            hitbox: HitBox::new(
-                ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
-                ROCK_RADIUS_MIN + ROCK_RADIUS_MAX,
-            ),
+            hitbox: HitBox::new(2.0 * radius, 2.0 * radius),
+            nb_edges: nb_edges,
+            radius: radius,
         }
     }
 }
@@ -148,5 +154,30 @@ impl Liveable for Rock {
     }
     fn set_life(&mut self, life: Life) {
         self.life = life
+    }
+}
+
+impl Breakable for Rock {
+    fn break_it(&self, ctx: &mut Context) -> Vec<Box<Self>> {
+        let position1 = Point::new(self.position.x + self.radius,self.position.y+ self.radius);
+        let position2 = Point::new(self.position.x- self.radius,self.position.y- self.radius);
+        let rock_1 = Self::new(
+            ctx,
+            self.get_nb_edges() - 1,
+            self.radius - ROCK_RADIUS_DECREMENT,
+            position1,
+        );
+        let rock_2 = Self::new(
+            ctx,
+            self.get_nb_edges() - 1,
+            self.radius - ROCK_RADIUS_DECREMENT,
+            position2,
+        );
+        let result = vec![Box::new(rock_1), Box::new(rock_2)];
+        result
+    }
+
+    fn get_nb_edges(&self) -> u32 {
+        self.nb_edges
     }
 }

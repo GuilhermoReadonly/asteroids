@@ -8,6 +8,7 @@ use crate::{constants::*, objects::hit_box::HitBox};
 use ggez::{
     graphics::Mesh,
     nalgebra::{Point2, Vector2},
+    Context,
 };
 use log::{debug, info};
 
@@ -146,4 +147,9 @@ pub trait Liveable {
     fn sub_life(&mut self, sub_life: Life) {
         self.set_life(self.get_life() - sub_life);
     }
+}
+
+pub trait Breakable {
+    fn break_it(&self, ctx: &mut Context) -> Vec<Box<Self>>;
+    fn get_nb_edges(&self) -> u32;
 }

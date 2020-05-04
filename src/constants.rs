@@ -61,18 +61,20 @@ pub const BULLET_MASS: f32 = 1.0;
 pub const BULLET_LIFE: f32 = 0.7;
 pub const BULLET_COLOR: Color = GAME_COLOR_RED;
 pub const BULLET_SPEED: f32 = 1000.0;
-pub const BULLET_DAMAGE: f32 = 25.0;
+pub const BULLET_DAMAGE: f32 = 100.0;
 
 // Rock constants
-pub const ROCK_RADIUS_MIN: f32 = 20.0;
-pub const ROCK_RADIUS_MAX: f32 = 30.0;
-pub const ROCK_NB_EDGES: u32 = 18; //3, 4, 7, 11, 18
+pub const ROCK_RADIUS_INIT: f32 = 7.0 * ROCK_NB_EDGES as f32;
+pub const ROCK_RADIUS_DECREMENT: f32 = 10.0;
+pub const ROCK_RADIUS_DELTA: f32 = 10.0;
+pub const ROCK_NB_EDGES: u32 = 7;
+pub const ROCK_MIN_NB_EDGES: u32 = 5;
 pub const ROCK_MASS: f32 = 500.0;
 pub const ROCK_LIFE: f32 = 100.0;
 pub const ROCK_COLOR: Color = GAME_COLOR_GREEN;
 pub const ROCK_MAX_SPEED: f32 = 100.0;
 pub const ROCK_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
-pub const COLLISION_DAMAGE: f32 = 20.0;
+pub const ROCK_COLLISION_DAMAGE: f32 = 20.0;
 
 // Star constants
 pub const STAR_NUMBER: usize = 100;
