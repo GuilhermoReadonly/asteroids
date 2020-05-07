@@ -31,6 +31,8 @@ pub const GAME_LINE_WIDTH: f32 = 1.0;
 pub const GAME_TEXT_Y_OFFSET: f32 = 15.0;
 /// Color white
 pub const GAME_COLOR_WHITE: Color = Color::new(1.0, 1.0, 1.0, 1.0);
+/// Color black
+pub const GAME_COLOR_BLACK: Color = Color::new(0.0, 0.0, 0.0, 1.0);
 /// Color green
 pub const GAME_COLOR_GREEN: Color = Color::new(0.0, 1.0, 0.0, 1.0);
 /// Color red

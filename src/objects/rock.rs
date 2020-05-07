@@ -49,7 +49,13 @@ impl Rock {
         }
 
         let mesh = MeshBuilder::default()
-            .polygon(graphics::DrawMode::fill(), &points[..], ROCK_COLOR)
+            .polygon(graphics::DrawMode::fill(), &points[..], GAME_COLOR_BLACK)
+            .unwrap()
+            .polygon(
+                graphics::DrawMode::stroke(GAME_LINE_WIDTH),
+                &points[..],
+                ROCK_COLOR,
+            )
             .unwrap()
             .to_owned()
             .build(ctx)
@@ -159,8 +165,8 @@ impl Liveable for Rock {
 
 impl Breakable for Rock {
     fn break_it(&self, ctx: &mut Context) -> Vec<Box<Self>> {
-        let position1 = Point::new(self.position.x + self.radius,self.position.y+ self.radius);
-        let position2 = Point::new(self.position.x- self.radius,self.position.y- self.radius);
+        let position1 = Point::new(self.position.x + self.radius, self.position.y + self.radius);
+        let position2 = Point::new(self.position.x - self.radius, self.position.y - self.radius);
         let rock_1 = Self::new(
             ctx,
             self.get_nb_edges() - 1,
