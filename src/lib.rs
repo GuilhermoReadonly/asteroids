@@ -130,15 +130,12 @@ impl EventHandler for AsteroidWorld {
                 self.rocks[i].sub_life(ROCK_COLLISION_DAMAGE);
                 self.ship.sub_life(ROCK_COLLISION_DAMAGE);
                 let (ship_speed, rock_speed) = Ship::compute_speed_vectors_after_collision(
-                    *self.ship.get_speed(),
-                    *self.rocks[i].get_speed(),
-                    *self.ship.get_mass(),
-                    *self.rocks[i].get_mass(),
-                    PositionVector::new(self.ship.get_position().x, self.ship.get_position().y),
-                    PositionVector::new(
-                        self.rocks[i].get_position().x,
-                        self.rocks[i].get_position().y,
-                    ),
+                    self.ship.get_speed(),
+                    self.rocks[i].get_speed(),
+                    self.ship.get_mass(),
+                    self.rocks[i].get_mass(),
+                    &self.ship.get_position().coords,
+                    &self.rocks[i].get_position().coords,
                 );
                 self.ship.set_speed(ship_speed);
                 self.rocks[i].set_speed(rock_speed);
@@ -154,18 +151,12 @@ impl EventHandler for AsteroidWorld {
                     debug!("Colision between asteroid detected !!!");
 
                     let (rock1_speed, rock2_speed) = Rock::compute_speed_vectors_after_collision(
-                        *self.rocks[i].get_speed(),
-                        *self.rocks[j].get_speed(),
-                        *self.rocks[i].get_mass(),
-                        *self.rocks[j].get_mass(),
-                        PositionVector::new(
-                            self.rocks[i].get_position().x,
-                            self.rocks[i].get_position().y,
-                        ),
-                        PositionVector::new(
-                            self.rocks[j].get_position().x,
-                            self.rocks[j].get_position().y,
-                        ),
+                        self.rocks[i].get_speed(),
+                        self.rocks[j].get_speed(),
+                        self.rocks[i].get_mass(),
+                        self.rocks[j].get_mass(),
+                        &self.rocks[i].get_position().coords,
+                        &self.rocks[j].get_position().coords,
                     );
                     self.rocks[i].set_speed(rock1_speed);
                     self.rocks[j].set_speed(rock2_speed);

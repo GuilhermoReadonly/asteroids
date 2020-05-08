@@ -22,15 +22,18 @@ pub struct Ship {
 
 impl Ship {
     pub fn new(ctx: &mut Context) -> Ship {
+        let points = [
+            Point::new(SHIP_SIZE_X, SHIP_SIZE_Y),
+            Point::new(0.0, -SHIP_SIZE_Y),
+            Point::new(-SHIP_SIZE_X, SHIP_SIZE_Y),
+            Point::new(0.0, 0.0),
+        ];
         let mesh = MeshBuilder::default()
+            .polygon(graphics::DrawMode::fill(), &points, GAME_COLOR_BLACK)
+            .unwrap()
             .polygon(
-                graphics::DrawMode::fill(),
-                &[
-                    Point::new(SHIP_SIZE_X, SHIP_SIZE_Y),
-                    Point::new(0.0, -SHIP_SIZE_Y),
-                    Point::new(-SHIP_SIZE_X, SHIP_SIZE_Y),
-                    Point::new(0.0, 0.0),
-                ],
+                graphics::DrawMode::stroke(GAME_LINE_WIDTH),
+                &points[..],
                 SHIP_COLOR,
             )
             .unwrap()

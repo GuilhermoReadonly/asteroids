@@ -30,10 +30,10 @@ impl Rock {
             rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
             rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
         );
-        Self::new(ctx, nb_edges, radius, position)
+        Self::new(ctx, nb_edges, radius, position, ROCK_MASS)
     }
 
-    pub fn new(ctx: &mut Context, nb_edges: u32, radius: f32, position: Point) -> Rock {
+    pub fn new(ctx: &mut Context, nb_edges: u32, radius: f32, position: Point, mass: Mass) -> Rock {
         let mut rng = rand::thread_rng();
 
         let angle_between_edges = TAU / nb_edges as f32;
@@ -74,7 +74,7 @@ impl Rock {
             direction: 0.0,
             angle_speed: rng.gen_range(-ROCK_MAX_ANGLE_SPEED, ROCK_MAX_ANGLE_SPEED),
             max_angle_speed: ROCK_MAX_ANGLE_SPEED,
-            mass: ROCK_MASS,
+            mass: mass,
             life: ROCK_LIFE,
             hitbox: HitBox::new(2.0 * radius, 2.0 * radius),
             nb_edges: nb_edges,
@@ -172,12 +172,14 @@ impl Breakable for Rock {
             self.get_nb_edges() - 1,
             self.radius - ROCK_RADIUS_DECREMENT,
             position1,
+            self.mass - ROCK_MASS_DECREMENT,
         );
         let rock_2 = Self::new(
             ctx,
             self.get_nb_edges() - 1,
             self.radius - ROCK_RADIUS_DECREMENT,
             position2,
+            self.mass - ROCK_MASS_DECREMENT,
         );
         let result = vec![Box::new(rock_1), Box::new(rock_2)];
         result

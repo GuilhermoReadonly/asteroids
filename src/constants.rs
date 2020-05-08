@@ -46,7 +46,7 @@ pub const GAME_COLOR_BLUE: Color = Color::new(0.0, 0.0, 1.0, 1.0);
 pub const SHIP_SIZE_X: f32 = 7.0;
 pub const SHIP_SIZE_Y: f32 = 7.0;
 pub const SHIP_MASS: f32 = 30.0;
-pub const SHIP_LIFE: f32 = 100.0;
+pub const SHIP_LIFE: f32 = 500.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
 pub const SHIP_COLOR: Color = GAME_COLOR_GREEN;
 pub const SHIP_THRUST: f32 = 5000.0;
@@ -66,12 +66,13 @@ pub const BULLET_SPEED: f32 = 1000.0;
 pub const BULLET_DAMAGE: f32 = 100.0;
 
 // Rock constants
-pub const ROCK_RADIUS_INIT: f32 = 7.0 * ROCK_NB_EDGES as f32;
+pub const ROCK_RADIUS_INIT: f32 = 4.0 * ROCK_NB_EDGES as f32;
 pub const ROCK_RADIUS_DECREMENT: f32 = 10.0;
 pub const ROCK_RADIUS_DELTA: f32 = 10.0;
-pub const ROCK_NB_EDGES: u32 = 7;
-pub const ROCK_MIN_NB_EDGES: u32 = 5;
+pub const ROCK_NB_EDGES: u32 = 10;
+pub const ROCK_MIN_NB_EDGES: u32 = 8;
 pub const ROCK_MASS: f32 = 500.0;
+pub const ROCK_MASS_DECREMENT: f32 = 225.0;
 pub const ROCK_LIFE: f32 = 100.0;
 pub const ROCK_COLOR: Color = GAME_COLOR_GREEN;
 pub const ROCK_MAX_SPEED: f32 = 100.0;

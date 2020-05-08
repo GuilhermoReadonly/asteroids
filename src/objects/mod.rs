@@ -119,12 +119,12 @@ pub trait Collideable: Speed {
     }
 
     fn compute_speed_vectors_after_collision(
-        v1: SpeedVector,
-        v2: SpeedVector,
-        m1: f32,
-        m2: f32,
-        x1: PositionVector,
-        x2: PositionVector,
+        v1: &SpeedVector,
+        v2: &SpeedVector,
+        m1: &f32,
+        m2: &f32,
+        x1: &PositionVector,
+        x2: &PositionVector,
     ) -> (SpeedVector, SpeedVector) {
         let speed1: SpeedVector = v1
             - (2.0 * m2) / (m1 + m2) * ((v1 - v2).dot(&(x1 - x2))) / ((x1 - x2).dot(&(x1 - x2)))
