@@ -1,4 +1,4 @@
-use crate::{constants::*, objects::*};
+use crate::{constants::*, inputs::InputState, objects::*};
 use ggez::{
     graphics,
     graphics::{Mesh, MeshBuilder},
@@ -18,6 +18,7 @@ pub struct Ship {
     mass: Mass,
     life: Life,
     hitbox: HitBox,
+    input: InputState,
 }
 
 impl Ship {
@@ -53,6 +54,7 @@ impl Ship {
             mass: SHIP_MASS,
             life: SHIP_LIFE,
             hitbox: HitBox::new(2.0 * SHIP_SIZE_X, 2.0 * SHIP_SIZE_Y),
+            input: InputState::default(),
         }
     }
 
@@ -114,7 +116,11 @@ impl Speed for Ship {
     }
 }
 
-impl Playable for Ship {}
+impl Playable for Ship {
+    fn get_inputs(&mut self) -> &mut InputState {
+        &mut self.input
+    }
+}
 
 impl Collideable for Ship {
     fn get_hitbox(&self) -> &HitBox {

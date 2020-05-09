@@ -50,12 +50,12 @@ pub const SHIP_LIFE: f32 = 500.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
 pub const SHIP_COLOR: Color = GAME_COLOR_GREEN;
 pub const SHIP_THRUST: f32 = 5000.0;
-pub const SHIP_TURN_THRUST: f32 = 100.0 * TAU;
+pub const SHIP_TURN_THRUST: f32 = 50.0 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
 pub const SHIP_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
 pub const SHIP_RELOAD_TIME: f32 = 0.2;
-pub const SHIP_DESCELERATION: f32 = 0.7;
-pub const SHIP_ANGLE_DESCELERATION: f32 = 3.5;
+pub const SHIP_DESCELERATION: f32 = 1.5;
+pub const SHIP_ANGLE_DESCELERATION: f32 = 10.0;
 
 // Bullet constants
 pub const BULLET_SIZE: f32 = 60.0;

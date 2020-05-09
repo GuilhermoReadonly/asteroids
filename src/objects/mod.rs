@@ -4,7 +4,11 @@ pub mod rock;
 pub mod ship;
 pub mod star;
 
-use crate::{constants::*, objects::hit_box::HitBox};
+use crate::{
+    constants::*,
+    inputs::{InputState, XDirection::*, YDirection::*},
+    objects::hit_box::HitBox,
+};
 use ggez::{
     graphics::Mesh,
     nalgebra::{Point2, Vector2},
@@ -71,12 +75,18 @@ pub trait Speed: Position {
 }
 
 pub trait Playable: Speed {
+    fn get_inputs(&mut self) -> &mut InputState;
+
     fn update_speeds(&mut self, dt: f32) {
-        // Apply descelerations to ship
-        self.set_speed(self.get_speed() - self.get_speed() * dt * SHIP_DESCELERATION);
-        self.set_angle_speed(
-            self.get_angle_speed() - self.get_angle_speed() * dt * SHIP_ANGLE_DESCELERATION,
-        );
+        // Apply descelerations to ship if not already accelerating or turning
+        if self.get_inputs().yaxis != Forward {
+            self.set_speed(self.get_speed() - self.get_speed() * dt * SHIP_DESCELERATION);
+        }
+        if self.get_inputs().xaxis == XCenter {
+            self.set_angle_speed(
+                self.get_angle_speed() - self.get_angle_speed() * dt * SHIP_ANGLE_DESCELERATION,
+            );
+        }
     }
 
     fn accelerate(&mut self, f: Force, dt: f32) {

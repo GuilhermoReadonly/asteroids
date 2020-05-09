@@ -38,15 +38,15 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Make a Context and an EventLoop.
     let window_setup = WindowSetup::default()
-    .title(GAME_NAME)
-    .samples(NumSamples::Zero)
-    .vsync(true);
+        .title(GAME_NAME)
+        .samples(NumSamples::Zero)
+        .vsync(true);
     let window_mode = WindowMode::default().dimensions(GAME_WINDOW_WIDTH, GAME_WINDOW_HEIGHT);
     let (mut ctx, mut event_loop) = ContextBuilder::new(GAME_NAME, GAME_AUTHOR)
-    .window_setup(window_setup)
-    .window_mode(window_mode)
-    .build()
-    .unwrap();
+        .window_setup(window_setup)
+        .window_mode(window_mode)
+        .build()
+        .unwrap();
 
     // Create an instance of your event handler.
     // Usually, you should provide it with the Context object
@@ -55,10 +55,9 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Run!
     event::run(&mut ctx, &mut event_loop, &mut asteroid_game)
-    .map(|_|info!("It was freaking epic my dude, see ya around !"))
-    .map_err(|e|{
-         error!("Oh my man, the shit has severly hit the fan: {}", e);
-         e.into()
-    })
-
+        .map(|_| info!("It was freaking epic my dude, see ya around !"))
+        .map_err(|e| {
+            error!("Oh my man, the shit has severly hit the fan: {}", e);
+            e.into()
+        })
 }

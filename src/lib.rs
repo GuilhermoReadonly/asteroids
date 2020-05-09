@@ -4,7 +4,7 @@ pub mod objects;
 
 use crate::{
     constants::*,
-    inputs::{InputState, XDirection::*, YDirection::*},
+    inputs::{XDirection::*, YDirection::*},
     objects::{bullet::*, rock::*, ship::*, star::*, *},
 };
 use ggez::{
@@ -20,7 +20,6 @@ pub struct AsteroidWorld {
     pub ship: Ship,
     pub rocks: Vec<Rock>,
     pub bullets: Vec<Bullet>,
-    pub input: InputState,
     pub time_since_last_shoot: f32,
     pub stars: Vec<Star>,
     pub stage: u32,
@@ -37,7 +36,6 @@ impl AsteroidWorld {
             ship: Ship::new(ctx),
             rocks: vec![Rock::new_init(ctx, ROCK_NB_EDGES, ROCK_RADIUS_INIT)],
             bullets: vec![],
-            input: InputState::default(),
             time_since_last_shoot: 0.0,
             stars: stars,
             stage: 1,
@@ -92,8 +90,13 @@ impl AsteroidWorld {
         )?;
         self.draw_text(
             ctx,
-            format!("FPS: {:.0}", &timer::fps(ctx)),
+            format!("{} rocks to destroy", self.rocks.len()),
             2.0 * GAME_TEXT_Y_OFFSET,
+        )?;
+        self.draw_text(
+            ctx,
+            format!("FPS: {:.0}", &timer::fps(ctx)),
+            3.0 * GAME_TEXT_Y_OFFSET,
         )
     }
 
@@ -176,7 +179,7 @@ impl EventHandler for AsteroidWorld {
         }
 
         // Handle shooting
-        if self.input.fire && self.time_since_last_shoot >= SHIP_RELOAD_TIME {
+        if self.ship.get_inputs().fire && self.time_since_last_shoot >= SHIP_RELOAD_TIME {
             self.shoot(ctx);
             self.time_since_last_shoot = 0.0;
         } else {
@@ -184,12 +187,12 @@ impl EventHandler for AsteroidWorld {
         };
 
         // Handle ship
-        match self.input.yaxis {
+        match self.ship.get_inputs().yaxis {
             Forward => self.ship.accelerate(SHIP_THRUST, time_elapsed),
             Backward => self.ship.accelerate(-SHIP_THRUST, time_elapsed),
             _ => (),
         };
-        match self.input.xaxis {
+        match self.ship.get_inputs().xaxis {
             Right => self.ship.turn(SHIP_TURN_THRUST, time_elapsed),
             Left => self.ship.turn(-SHIP_TURN_THRUST, time_elapsed),
             _ => (),
@@ -270,19 +273,19 @@ impl EventHandler for AsteroidWorld {
     ) {
         match keycode {
             KeyCode::Z => {
-                self.input.yaxis = Forward;
+                self.ship.get_inputs().yaxis = Forward;
             }
             KeyCode::S => {
-                self.input.yaxis = Backward;
+                self.ship.get_inputs().yaxis = Backward;
             }
             KeyCode::Q => {
-                self.input.xaxis = Left;
+                self.ship.get_inputs().xaxis = Left;
             }
             KeyCode::D => {
-                self.input.xaxis = Right;
+                self.ship.get_inputs().xaxis = Right;
             }
             KeyCode::Space => {
-                self.input.fire = true;
+                self.ship.get_inputs().fire = true;
             }
             KeyCode::P => {
                 let img = graphics::screenshot(ctx).expect("Could not take screenshot");
@@ -300,13 +303,13 @@ impl EventHandler for AsteroidWorld {
     fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymod: KeyMods) {
         match keycode {
             KeyCode::Z | KeyCode::S => {
-                self.input.yaxis = YCenter;
+                self.ship.get_inputs().yaxis = YCenter;
             }
             KeyCode::Q | KeyCode::D => {
-                self.input.xaxis = XCenter;
+                self.ship.get_inputs().xaxis = XCenter;
             }
             KeyCode::Space => {
-                self.input.fire = false;
+                self.ship.get_inputs().fire = false;
             }
             _ => (),
         }
