@@ -8,24 +8,10 @@ use crate::{
     constants::*,
     inputs::{InputState, XDirection::*, YDirection::*},
     objects::hit_box::HitBox,
+    *,
 };
-use ggez::{
-    graphics::Mesh,
-    nalgebra::{Point2, Vector2},
-    Context,
-};
+use ggez::{graphics::Mesh, nalgebra::Vector2, Context};
 use log::{debug, info};
-
-pub type SpeedVector = Vector2<f32>;
-pub type SpeedScalar = f32;
-pub type SpeedAngle = f32;
-pub type PositionVector = Vector2<f32>;
-pub type Point = Point2<f32>;
-pub type Direction = f32;
-pub type DirectionVector = Vector2<f32>;
-pub type Mass = f32;
-pub type Force = f32;
-pub type Life = f32;
 
 pub trait Position {
     fn get_position(&self) -> &Point;

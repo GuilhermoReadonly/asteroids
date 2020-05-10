@@ -7,9 +7,9 @@ use log4rs::{
 };
 use std::error::Error;
 
-use crate::{
-    asteroids::constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
-    asteroids::AsteroidWorld,
+use crate::asteroids::{
+    constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
+    MainState,
 };
 
 use ggez::{
@@ -51,7 +51,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Create an instance of your event handler.
     // Usually, you should provide it with the Context object
     // so it can load resources like images during setup.
-    let mut asteroid_game = AsteroidWorld::new(&mut ctx);
+    let mut asteroid_game = MainState::new();
 
     // Run!
     event::run(&mut ctx, &mut event_loop, &mut asteroid_game)

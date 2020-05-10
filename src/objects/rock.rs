@@ -1,4 +1,4 @@
-use crate::{constants::*, objects::*};
+use crate::{constants::*, objects::*, *};
 use ggez::{
     graphics,
     graphics::{Mesh, MeshBuilder},
