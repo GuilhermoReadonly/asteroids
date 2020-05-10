@@ -29,7 +29,7 @@ pub struct MainState {
 
 impl MainState {
     pub fn new() -> MainState {
-        info!("New MainState");
+        info!("Let the party rocks !");
         MainState {
             state: Box::new(StartScreen::new()),
         }
@@ -61,7 +61,7 @@ impl event::EventHandler for MainState {
         keymod: event::KeyMods,
         repeat: bool,
     ) {
-        self.state.key_down_event(ctx, keycode, keymod,repeat);
+        self.state.key_down_event(ctx, keycode, keymod, repeat);
     }
 
     fn key_up_event(&mut self, ctx: &mut Context, keycode: event::KeyCode, keymod: event::KeyMods) {

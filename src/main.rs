@@ -7,14 +7,11 @@ use log4rs::{
 };
 use std::error::Error;
 
-use crate::asteroids::{
-    constants::{GAME_AUTHOR, GAME_NAME, GAME_WINDOW_HEIGHT, GAME_WINDOW_WIDTH},
-    MainState,
-};
+use crate::asteroids::{constants::*, MainState};
 
 use ggez::{
     conf::{NumSamples, WindowMode, WindowSetup},
-    event, ContextBuilder,
+    event, graphics, ContextBuilder,
 };
 
 fn main() -> Result<(), Box<dyn Error>> {
@@ -52,6 +49,14 @@ fn main() -> Result<(), Box<dyn Error>> {
     // Usually, you should provide it with the Context object
     // so it can load resources like images during setup.
     let mut asteroid_game = MainState::new();
+
+    let rect = graphics::Rect::new(
+        -GAME_MAX_WIDTH,
+        -GAME_MAX_HEIGHT,
+        GAME_WINDOW_WIDTH,
+        GAME_WINDOW_HEIGHT,
+    );
+    graphics::set_screen_coordinates(&mut ctx, rect)?;
 
     // Run!
     event::run(&mut ctx, &mut event_loop, &mut asteroid_game)

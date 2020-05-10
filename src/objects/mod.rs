@@ -25,7 +25,7 @@ pub trait Position {
     /// given angle (in radians)
     fn vec_from_angle(angle: f32) -> Vector2<f32> {
         let vx = angle.sin();
-        let vy = angle.cos();
+        let vy = -angle.cos();
         Vector2::new(vx, vy)
     }
 }

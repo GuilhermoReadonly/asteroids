@@ -13,7 +13,7 @@ use ggez::{
 use log::{debug, info};
 
 #[derive(Clone)]
-pub enum NextState{
+pub enum NextState {
     Continue,
     Exit,
     Pause,
@@ -50,7 +50,7 @@ impl GameScreen {
     fn draw_object(&self, ctx: &mut Context, obj: &impl Drawable) {
         let obj_mesh = obj.get_mesh();
         let drawparams = graphics::DrawParam::new()
-            .dest(world_to_screen_coords(&obj.get_position()))
+            .dest(*obj.get_position())
             .rotation(*obj.get_direction());
         graphics::draw(ctx, obj_mesh, drawparams).unwrap();
     }
@@ -75,32 +75,41 @@ impl GameScreen {
                 .to_owned()
                 .build(ctx)
                 .unwrap();
-            let drawparams = DrawParam::new().dest(world_to_screen_coords(&obj.get_position()));
+            let drawparams = DrawParam::new().dest(*obj.get_position());
             graphics::draw(ctx, &hitbox, drawparams).unwrap();
         };
     }
 
     fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) {
         let display = Text::new(txt);
-        graphics::draw(ctx, &display, (Point::new(0.0, y_offset), graphics::WHITE)).unwrap()
+        graphics::draw(
+            ctx,
+            &display,
+            (Point::new(-GAME_MAX_WIDTH, y_offset), graphics::WHITE),
+        )
+        .unwrap()
     }
 
     fn draw_texts(&self, ctx: &mut Context) {
-        self.draw_text(ctx, format!("Current stage: {}", self.stage), 0.0);
+        self.draw_text(
+            ctx,
+            format!("Current stage: {}", self.stage),
+            -GAME_MAX_HEIGHT,
+        );
         self.draw_text(
             ctx,
             format!("Life: {}/{}", self.ship.get_life(), SHIP_LIFE),
-            GAME_TEXT_Y_OFFSET,
+            -GAME_MAX_HEIGHT + GAME_TEXT_Y_OFFSET,
         );
         self.draw_text(
             ctx,
             format!("{} rocks to destroy", self.rocks.len()),
-            2.0 * GAME_TEXT_Y_OFFSET,
+            -GAME_MAX_HEIGHT + 2.0 * GAME_TEXT_Y_OFFSET,
         );
         self.draw_text(
             ctx,
             format!("FPS: {:.0}", &timer::fps(ctx)),
-            3.0 * GAME_TEXT_Y_OFFSET,
+            -GAME_MAX_HEIGHT + 3.0 * GAME_TEXT_Y_OFFSET,
         );
     }
 
@@ -285,7 +294,7 @@ impl State for GameScreen {
             KeyCode::Space => {
                 self.ship.get_inputs().fire = true;
             }
-            KeyCode::P => {
+            KeyCode::Return => {
                 info!("Stop for a moment dude.");
                 self.next_state = NextState::Pause;
             }
@@ -315,24 +324,13 @@ impl State for GameScreen {
 
 impl Transition for GameScreen {
     fn transition(&mut self, _ctx: &mut Context) -> Option<Box<dyn StateWithTransition>> {
-        match self.next_state{
+        match self.next_state {
             NextState::Exit => Some(Box::new(StartScreen::new())),
             NextState::Pause => {
                 self.next_state = NextState::Continue;
                 Some(Box::new(StartScreen::new_with_game(self.clone())))
-            },
-            _ => None
+            }
+            _ => None,
         }
-    
     }
-}
-
-/// Translates the world coordinate system, which
-/// has Y pointing up and the origin at the center,
-/// to the screen coordinate system, which has Y
-/// pointing downward and the origin at the top-left,
-fn world_to_screen_coords(point: &Point) -> Point {
-    let x = point.x + GAME_WINDOW_WIDTH / 2.0;
-    let y = GAME_WINDOW_HEIGHT - (point.y + GAME_WINDOW_HEIGHT / 2.0);
-    Point::new(x, y)
 }
