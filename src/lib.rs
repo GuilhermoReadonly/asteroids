@@ -3,7 +3,7 @@ pub mod inputs;
 pub mod objects;
 pub mod state;
 
-use crate::state::*;
+use crate::{state::*, constants::*};
 use ggez::{
     event, graphics,
     nalgebra::{Point2, Vector2},
@@ -38,7 +38,9 @@ impl MainState {
 
 impl event::EventHandler for MainState {
     fn update(&mut self, ctx: &mut Context) -> GameResult<()> {
-        self.state.update(ctx);
+        while ggez::timer::check_update_time(ctx, GAME_FPS) {
+            self.state.update(ctx);
+        }
         if let Some(new_state) = self.state.transition(ctx) {
             self.state = new_state
         };

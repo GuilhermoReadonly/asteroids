@@ -140,7 +140,7 @@ impl StateWithTransition for GameScreen {}
 
 impl State for GameScreen {
     fn update(&mut self, ctx: &mut Context) {
-        let time_elapsed = timer::delta(ctx).as_secs_f32();
+        let time_elapsed = 1.0/GAME_FPS as f32; //timer::delta(ctx).as_secs_f32();
 
         // Handle collisions with rocks
         for i in 0..self.rocks.len() {

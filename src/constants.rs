@@ -16,7 +16,7 @@ pub const GAME_NAME: &str = "⭐ Asteroids 🚀";
 /// Name of the author
 pub const GAME_AUTHOR: &str = "718";
 /// Frames rate in frames.s⁻¹
-pub const _GAME_FPS: u32 = 120;
+pub const GAME_FPS: u32 = 120;
 /// Height of the window in px
 pub const GAME_WINDOW_HEIGHT: f32 = 800.0;
 /// Width of the window in px
