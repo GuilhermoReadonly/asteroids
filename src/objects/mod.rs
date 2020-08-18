@@ -45,15 +45,16 @@ pub trait Speed: Position {
     fn set_mass(&mut self, mass: Mass);
 
     fn update_position(&mut self, dt: f32) {
+        // check for game limits reached and switch position in mirror if so
+        let mut pos = *self.get_position();
+        if pos.x > GAME_MAX_WIDTH || pos.x < -GAME_MAX_WIDTH {
+            pos.x = pos.x - 2.0 * GAME_MAX_WIDTH * pos.x.signum()
+        }
+        if pos.y > GAME_MAX_HEIGHT || pos.y < -GAME_MAX_HEIGHT {
+            pos.y = pos.y - 2.0 * GAME_MAX_HEIGHT * pos.y.signum()
+        }
         // speed
-        self.set_position(self.get_position() + self.get_speed() * (dt));
-
-        if self.get_position().x > GAME_MAX_WIDTH || self.get_position().x < -GAME_MAX_WIDTH {
-            self.get_position_mut().x = -self.get_position().x;
-        }
-        if self.get_position().y > GAME_MAX_HEIGHT || self.get_position().y < -GAME_MAX_HEIGHT {
-            self.get_position_mut().y = -self.get_position().y;
-        }
+        self.set_position(pos + self.get_speed() * (dt));
 
         // angular speed
         self.set_direction(self.get_direction() + self.get_angle_speed() * (dt));
@@ -146,6 +147,8 @@ pub trait Liveable {
 }
 
 pub trait Breakable {
-    fn break_it(&self, ctx: &mut Context) -> Vec<Box<Self>>;
+    fn break_it(&self, ctx: &mut Context) -> Vec<Self>
+    where
+        Self: std::marker::Sized;
     fn get_nb_edges(&self) -> u32;
 }

@@ -47,7 +47,7 @@ impl State for StartScreen {
         graphics::draw(
             ctx,
             &start_text,
-            (Point::new(-text_width / 2.0, -100.0), GAME_COLOR_WHITE),
+            (Point::new(-text_width / 2.0, -100.0), GAME_TEXT_COLOR),
         )
         .unwrap();
 
@@ -57,7 +57,7 @@ impl State for StartScreen {
         graphics::draw(
             ctx,
             &ctrl_text,
-            (Point::new(-text_width / 2.0, 50.0), GAME_COLOR_WHITE),
+            (Point::new(-text_width / 2.0, 50.0), GAME_TEXT_COLOR),
         )
         .unwrap();
         let mut ctrl_text = Text::new("Pause in game : Enter");
@@ -66,7 +66,7 @@ impl State for StartScreen {
         graphics::draw(
             ctx,
             &ctrl_text,
-            (Point::new(-text_width / 2.0, 100.0), GAME_COLOR_WHITE),
+            (Point::new(-text_width / 2.0, 100.0), GAME_TEXT_COLOR),
         )
         .unwrap();
     }

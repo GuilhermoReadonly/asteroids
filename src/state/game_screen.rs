@@ -85,7 +85,7 @@ impl GameScreen {
         graphics::draw(
             ctx,
             &display,
-            (Point::new(-GAME_MAX_WIDTH, y_offset), graphics::WHITE),
+            (Point::new(-GAME_MAX_WIDTH, y_offset), GAME_TEXT_COLOR),
         )
         .unwrap()
     }
@@ -140,7 +140,7 @@ impl StateWithTransition for GameScreen {}
 
 impl State for GameScreen {
     fn update(&mut self, ctx: &mut Context) {
-        let time_elapsed = 1.0/GAME_FPS as f32; //timer::delta(ctx).as_secs_f32();
+        let time_elapsed = 1.0 / GAME_FPS as f32; //timer::delta(ctx).as_secs_f32();
 
         // Handle collisions with rocks
         for i in 0..self.rocks.len() {
@@ -224,15 +224,14 @@ impl State for GameScreen {
             .retain(|bullet| return bullet.get_life() > &0.0);
 
         // Handle rocks
-        let mut new_litle_rocks: Vec<Box<Rock>> = vec![];
+        let mut new_litle_rocks: Vec<Rock> = vec![];
         for rock in &mut self.rocks {
             rock.update_position(time_elapsed);
             if rock.get_life() <= &0.0 && rock.get_nb_edges() > ROCK_MIN_NB_EDGES {
-                new_litle_rocks = rock.break_it(ctx);
+                new_litle_rocks.append(&mut rock.break_it(ctx));
             }
         }
         self.rocks.retain(|rock| return rock.get_life() > &0.0);
-        let mut new_litle_rocks = new_litle_rocks.iter().map(|r| *r.clone()).collect();
         self.rocks.append(&mut new_litle_rocks);
 
         // New stage ?

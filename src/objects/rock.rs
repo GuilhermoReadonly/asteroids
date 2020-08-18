@@ -164,7 +164,7 @@ impl Liveable for Rock {
 }
 
 impl Breakable for Rock {
-    fn break_it(&self, ctx: &mut Context) -> Vec<Box<Self>> {
+    fn break_it(&self, ctx: &mut Context) -> Vec<Self> {
         let position1 = Point::new(self.position.x + self.radius, self.position.y + self.radius);
         let position2 = Point::new(self.position.x - self.radius, self.position.y - self.radius);
         let rock_1 = Self::new(
@@ -181,7 +181,7 @@ impl Breakable for Rock {
             position2,
             self.mass - ROCK_MASS_DECREMENT,
         );
-        let result = vec![Box::new(rock_1), Box::new(rock_2)];
+        let result = vec![rock_1, rock_2];
         result
     }
 

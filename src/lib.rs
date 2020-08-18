@@ -3,7 +3,7 @@ pub mod inputs;
 pub mod objects;
 pub mod state;
 
-use crate::{state::*, constants::*};
+use crate::{constants::*, state::*};
 use ggez::{
     event, graphics,
     nalgebra::{Point2, Vector2},
