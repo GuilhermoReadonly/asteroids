@@ -49,7 +49,7 @@ impl event::EventHandler for MainState {
 
     fn draw(&mut self, ctx: &mut Context) -> GameResult<()> {
         graphics::clear(ctx, graphics::BLACK);
-        self.state.draw(ctx);
+        self.state.draw(ctx)?;
         graphics::present(ctx)?;
         Ok(())
     }

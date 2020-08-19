@@ -33,7 +33,7 @@ impl StateWithTransition for StartScreen {}
 impl State for StartScreen {
     fn update(&mut self, _ctx: &mut Context) {}
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut Context) -> GameResult<()> {
         let mut start_text = Text::new(format!(
             "Press Space or Enter to {}.",
             if self.game.is_none() {
@@ -48,8 +48,7 @@ impl State for StartScreen {
             ctx,
             &start_text,
             (Point::new(-text_width / 2.0, -100.0), GAME_TEXT_COLOR),
-        )
-        .unwrap();
+        )?;
 
         let mut ctrl_text = Text::new("Controls : Z, S, Q, D, Space.");
         ctrl_text.set_font(Font::default(), Scale::uniform(20.0));
@@ -58,8 +57,7 @@ impl State for StartScreen {
             ctx,
             &ctrl_text,
             (Point::new(-text_width / 2.0, 50.0), GAME_TEXT_COLOR),
-        )
-        .unwrap();
+        )?;
         let mut ctrl_text = Text::new("Pause in game : Enter");
         ctrl_text.set_font(Font::default(), Scale::uniform(20.0));
         let text_width = ctrl_text.width(ctx) as f32;
@@ -67,8 +65,8 @@ impl State for StartScreen {
             ctx,
             &ctrl_text,
             (Point::new(-text_width / 2.0, 100.0), GAME_TEXT_COLOR),
-        )
-        .unwrap();
+        )?;
+        Ok(())
     }
 
     fn key_down_event(&mut self, ctx: &mut Context, keycode: KeyCode, _: KeyMods, _: bool) {

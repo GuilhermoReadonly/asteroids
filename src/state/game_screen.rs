@@ -47,15 +47,15 @@ impl GameScreen {
         }
     }
 
-    fn draw_object(&self, ctx: &mut Context, obj: &impl Drawable) {
+    fn draw_object(&self, ctx: &mut Context, obj: &impl Drawable) -> GameResult<()> {
         let obj_mesh = obj.get_mesh();
         let drawparams = graphics::DrawParam::new()
             .dest(*obj.get_position())
             .rotation(*obj.get_direction());
-        graphics::draw(ctx, obj_mesh, drawparams).unwrap();
+        graphics::draw(ctx, obj_mesh, drawparams)
     }
 
-    fn draw_hitbox(&self, ctx: &mut Context, obj: &impl Collideable) {
+    fn draw_hitbox(&self, ctx: &mut Context, obj: &impl Collideable) -> GameResult<()> {
         if GAME_SHOW_HIT_BOX {
             let hitbox = MeshBuilder::default()
                 .polygon(
@@ -70,47 +70,46 @@ impl GameScreen {
                         Point::new(-obj.get_hitbox().width / 2.0, obj.get_hitbox().height / 2.0),
                     ],
                     GAME_HIT_BOX_COLOR,
-                )
-                .unwrap()
+                )?
                 .to_owned()
-                .build(ctx)
-                .unwrap();
+                .build(ctx)?;
             let drawparams = DrawParam::new().dest(*obj.get_position());
-            graphics::draw(ctx, &hitbox, drawparams).unwrap();
+            graphics::draw(ctx, &hitbox, drawparams)?;
         };
+        Ok(())
     }
 
-    fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) {
+    fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) -> GameResult<()> {
         let display = Text::new(txt);
         graphics::draw(
             ctx,
             &display,
             (Point::new(-GAME_MAX_WIDTH, y_offset), GAME_TEXT_COLOR),
         )
-        .unwrap()
     }
 
-    fn draw_texts(&self, ctx: &mut Context) {
+    fn draw_texts(&self, ctx: &mut Context) -> GameResult<()> {
         self.draw_text(
             ctx,
             format!("Current stage: {}", self.stage),
             -GAME_MAX_HEIGHT,
-        );
+        )?;
         self.draw_text(
             ctx,
             format!("Life: {}/{}", self.ship.get_life(), SHIP_LIFE),
             -GAME_MAX_HEIGHT + GAME_TEXT_Y_OFFSET,
-        );
+        )?;
         self.draw_text(
             ctx,
             format!("{} rocks to destroy", self.rocks.len()),
             -GAME_MAX_HEIGHT + 2.0 * GAME_TEXT_Y_OFFSET,
-        );
+        )?;
         self.draw_text(
             ctx,
             format!("FPS: {:.0}", &timer::fps(ctx)),
             -GAME_MAX_HEIGHT + 3.0 * GAME_TEXT_Y_OFFSET,
-        );
+        )?;
+        Ok(())
     }
 
     pub fn shoot(&mut self, ctx: &mut Context) {
@@ -245,29 +244,29 @@ impl State for GameScreen {
         }
     }
 
-    fn draw(&self, ctx: &mut Context) {
+    fn draw(&self, ctx: &mut Context) -> GameResult<()> {
         // Draw all the stars
         for star in &self.stars {
-            self.draw_object(ctx, star);
+            self.draw_object(ctx, star)?;
         }
 
         // Draw all bullets
         for bullet in &self.bullets {
-            self.draw_object(ctx, bullet);
-            self.draw_hitbox(ctx, bullet);
+            self.draw_object(ctx, bullet)?;
+            self.draw_hitbox(ctx, bullet)?;
         }
 
         // Draw all rocks
         for rock in &self.rocks {
-            self.draw_object(ctx, rock);
-            self.draw_hitbox(ctx, rock);
+            self.draw_object(ctx, rock)?;
+            self.draw_hitbox(ctx, rock)?;
         }
 
         // Draw the ship
-        self.draw_object(ctx, &self.ship);
-        self.draw_hitbox(ctx, &self.ship);
+        self.draw_object(ctx, &self.ship)?;
+        self.draw_hitbox(ctx, &self.ship)?;
 
-        self.draw_texts(ctx);
+        self.draw_texts(ctx)
     }
 
     fn key_down_event(

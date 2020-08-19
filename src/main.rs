@@ -42,8 +42,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let (mut ctx, mut event_loop) = ContextBuilder::new(GAME_NAME, GAME_AUTHOR)
         .window_setup(window_setup)
         .window_mode(window_mode)
-        .build()
-        .unwrap();
+        .build()?;
 
     // Create an instance of your event handler.
     // Usually, you should provide it with the Context object

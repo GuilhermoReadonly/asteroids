@@ -6,14 +6,14 @@ pub use game_screen::GameScreen;
 
 use ggez::{
     event::{KeyCode, KeyMods},
-    Context,
+    Context, GameResult,
 };
 
 pub trait StateWithTransition: State + Transition {}
 
 pub trait State {
     fn update(&mut self, ctx: &mut Context);
-    fn draw(&self, ctx: &mut Context);
+    fn draw(&self, ctx: &mut Context) -> GameResult<()>;
     fn key_down_event(
         &mut self,
         _ctx: &mut Context,
