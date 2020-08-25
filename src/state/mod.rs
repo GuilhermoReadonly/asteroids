@@ -1,7 +1,9 @@
+mod credits_screen;
 mod game_over_screen;
 mod game_screen;
 mod start_screen;
 
+pub use credits_screen::CreditsScreen;
 pub use game_over_screen::GameOverScreen;
 pub use game_screen::GameScreen;
 pub use start_screen::StartScreen;

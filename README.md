@@ -17,7 +17,7 @@ So nothing fancy, just an old fashioned asteroids game.
     * [ ] Keyboard
     * [ ] Sounds on/off
   * [x] Start screen
-  * [ ] Credits
+  * [x] Credits
 * [ ] Sounds effects (Pewpew)
 * [ ] Animations:
   * [ ] Bullets hits

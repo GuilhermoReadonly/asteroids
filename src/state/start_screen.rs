@@ -7,22 +7,29 @@ use ggez::{
 
 use crate::{constants::*, state::*, *};
 
+#[derive(Clone)]
+pub enum NextState {
+    Continue,
+    Play,
+    Credits,
+}
+
 pub struct StartScreen {
-    pub ready: bool,
+    pub next_state: NextState,
     pub game: Option<GameScreen>,
 }
 
 impl StartScreen {
     pub fn new() -> StartScreen {
         StartScreen {
-            ready: false,
+            next_state: NextState::Continue,
             game: None,
         }
     }
 
     pub fn new_with_game(game: GameScreen) -> StartScreen {
         StartScreen {
-            ready: false,
+            next_state: NextState::Continue,
             game: Some(game),
         }
     }
@@ -72,7 +79,10 @@ impl State for StartScreen {
     fn key_down_event(&mut self, ctx: &mut Context, keycode: KeyCode, _: KeyMods, _: bool) {
         match keycode {
             KeyCode::Space | KeyCode::Return => {
-                self.ready = true;
+                self.next_state = NextState::Play;
+            }
+            KeyCode::F7 => {
+                self.next_state = NextState::Credits;
             }
             KeyCode::Escape => {
                 event::quit(ctx);
@@ -84,16 +94,20 @@ impl State for StartScreen {
 
 impl Transition for StartScreen {
     fn transition(&mut self, ctx: &mut Context) -> Option<Box<dyn StateWithTransition>> {
-        match (self.ready, self.game.clone()) {
-            (false, _) => None,
-            (true, None) => {
+        match (self.next_state.clone(), self.game.clone()) {
+            (NextState::Credits, _) => {
+                info!("Hooo, you want to know me better ?");
+                Some(Box::new(CreditsScreen::new()))
+            }
+            (NextState::Play, None) => {
                 info!("Let's break some rocks !!!");
                 Some(Box::new(GameScreen::new(ctx)))
             }
-            (true, Some(game)) => {
+            (NextState::Play, Some(game)) => {
                 info!("Where were we at already ?");
                 Some(Box::new(game))
             }
+            (_, _) => None,
         }
     }
 }
