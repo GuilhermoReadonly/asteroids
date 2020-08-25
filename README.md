@@ -12,7 +12,7 @@ So nothing fancy, just an old fashioned asteroids game.
 * [x] Refactor the codebase (it is a mess)
 * [ ] Improve spawn (check if space is clear before spawning)
 * [ ] Add screens:
-  * [ ] Game over
+  * [x] Game over
   * [ ] Settings:
     * [ ] Keyboard
     * [ ] Sounds on/off

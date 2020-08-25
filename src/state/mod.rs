@@ -1,8 +1,10 @@
-mod start_screen;
-pub use start_screen::StartScreen;
-
+mod game_over_screen;
 mod game_screen;
+mod start_screen;
+
+pub use game_over_screen::GameOverScreen;
 pub use game_screen::GameScreen;
+pub use start_screen::StartScreen;
 
 use ggez::{
     event::{KeyCode, KeyMods},

@@ -6,7 +6,7 @@ use crate::{
     state::*,
 };
 use ggez::{
-    event, graphics,
+    graphics,
     graphics::{DrawParam, MeshBuilder, Text},
     timer, Context,
 };
@@ -17,6 +17,7 @@ pub enum NextState {
     Continue,
     Exit,
     Pause,
+    GameOver,
 }
 
 #[derive(Clone)]
@@ -128,10 +129,10 @@ impl GameScreen {
         info!("New stage with {} rocks to shoot !", self.rocks.len())
     }
 
-    pub fn game_over(&mut self, ctx: &mut Context) {
+    pub fn game_over(&mut self, _ctx: &mut Context) {
         self.ship.explode();
         info!("Oups, you dead man !");
-        event::quit(ctx);
+        self.next_state = NextState::GameOver;
     }
 }
 
@@ -328,6 +329,7 @@ impl Transition for GameScreen {
                 self.next_state = NextState::Continue;
                 Some(Box::new(StartScreen::new_with_game(self.clone())))
             }
+            NextState::GameOver => Some(Box::new(GameOverScreen::new(self.stage))),
             _ => None,
         }
     }
