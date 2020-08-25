@@ -278,16 +278,16 @@ impl State for GameScreen {
         _repeat: bool,
     ) {
         match keycode {
-            KeyCode::Z => {
+            KeyCode::Z | KeyCode::Up => {
                 self.ship.get_inputs().yaxis = Forward;
             }
-            KeyCode::S => {
+            KeyCode::S | KeyCode::Down => {
                 self.ship.get_inputs().yaxis = Backward;
             }
-            KeyCode::Q => {
+            KeyCode::Q | KeyCode::Left => {
                 self.ship.get_inputs().xaxis = Left;
             }
-            KeyCode::D => {
+            KeyCode::D | KeyCode::Right => {
                 self.ship.get_inputs().xaxis = Right;
             }
             KeyCode::Space => {
@@ -307,10 +307,10 @@ impl State for GameScreen {
 
     fn key_up_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _keymod: KeyMods) {
         match keycode {
-            KeyCode::Z | KeyCode::S => {
+            KeyCode::Z | KeyCode::S | KeyCode::Up | KeyCode::Down => {
                 self.ship.get_inputs().yaxis = YCenter;
             }
-            KeyCode::Q | KeyCode::D => {
+            KeyCode::Q | KeyCode::D | KeyCode::Right | KeyCode::Left => {
                 self.ship.get_inputs().xaxis = XCenter;
             }
             KeyCode::Space => {
