@@ -15,10 +15,10 @@ pub const GAME_HIT_BOX_COLOR: Color = Color::new(1.0, 0.0, 0.0, 1.0);
 pub const GAME_NAME: &str = "⭐ Asteroids 🚀";
 /// Name of the author
 pub const GAME_AUTHOR: &str = "718";
-/// Name of the author
+/// email of the author
 pub const GAME_AUTHOR_EMAIL: &str = "guilhem.radonde@gmail.com";
 /// Name of testers
-pub const GAME_TESTERS: [&str; 2] = ["V@V", "Silyam"];
+pub const GAME_TESTERS: [&str; 4] = ["Lilou", "V@V", "Sam", "Silyam"];
 /// Frames rate in frames.s⁻¹
 pub const GAME_FPS: u32 = 120;
 /// Height of the window in px

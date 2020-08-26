@@ -50,21 +50,25 @@ impl State for CreditsScreen {
             0.0,
         )?;
 
-        Self::draw_text(ctx, format!("{}.", GAME_TESTERS.join(" and ")), 20.0, 30.0)?;
+        let mut offset: f32 = 0.0;
+        for name in GAME_TESTERS.iter() {
+            Self::draw_text(ctx, format!("{}", *name), 20.0, 30.0 + offset)?;
+            offset += 20.0
+        }
 
         Self::draw_text(
             ctx,
             "If you want to insult me about this crap you can do so at :".to_string(),
             10.0,
-            100.0,
+            300.0,
         )?;
 
-        Self::draw_text(ctx, format!("{}.", GAME_AUTHOR_EMAIL), 10.0, 110.0)
+        Self::draw_text(ctx, format!("{}.", GAME_AUTHOR_EMAIL), 10.0, 310.0)
     }
 
     fn key_down_event(&mut self, _ctx: &mut Context, keycode: KeyCode, _: KeyMods, _: bool) {
         match keycode {
-            KeyCode::Space | KeyCode::Return | KeyCode::Escape => {
+            KeyCode::Return | KeyCode::Escape | KeyCode::F7 => {
                 self.next_state = true;
             }
             _ => (),

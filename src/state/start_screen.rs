@@ -42,7 +42,7 @@ impl State for StartScreen {
 
     fn draw(&self, ctx: &mut Context) -> GameResult<()> {
         let mut start_text = Text::new(format!(
-            "Press Space or Enter to {}.",
+            "Press Enter to {}, Esc to quit.",
             if self.game.is_none() {
                 "start"
             } else {
@@ -78,7 +78,7 @@ impl State for StartScreen {
 
     fn key_down_event(&mut self, ctx: &mut Context, keycode: KeyCode, _: KeyMods, _: bool) {
         match keycode {
-            KeyCode::Space | KeyCode::Return => {
+            KeyCode::Return => {
                 self.next_state = NextState::Play;
             }
             KeyCode::F7 => {

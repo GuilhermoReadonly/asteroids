@@ -82,14 +82,16 @@ impl GameScreen {
 
     fn draw_text(&self, ctx: &mut Context, txt: String, y_offset: f32) -> GameResult<()> {
         let display = Text::new(txt);
-        graphics::draw(
-            ctx,
-            &display,
-            (Point::new(-GAME_MAX_WIDTH, y_offset), GAME_TEXT_COLOR),
-        )
+        let params = DrawParam::default()
+            .dest(Point::new(-GAME_MAX_WIDTH, y_offset))
+            .color(GAME_TEXT_COLOR);
+
+        graphics::draw(ctx, &display, params)
     }
 
     fn draw_texts(&self, ctx: &mut Context) -> GameResult<()> {
+        // Bugfix : This empty draw_text() call is because sometime the first text is placed in the middle of the screen
+        self.draw_text(ctx, "".to_string(), -GAME_MAX_HEIGHT)?;
         self.draw_text(
             ctx,
             format!("Current stage: {}", self.stage),

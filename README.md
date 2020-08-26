@@ -11,6 +11,7 @@ So nothing fancy, just an old fashioned asteroids game.
 * [x] Improve physics
 * [x] Refactor the codebase (it is a mess)
 * [ ] Improve spawn (check if space is clear before spawning)
+* [ ] Improve rocks split
 * [ ] Add screens:
   * [x] Game over
   * [ ] Settings:
@@ -29,7 +30,7 @@ So nothing fancy, just an old fashioned asteroids game.
 * [ ] WASM version playable in the browser
 
 
-# Builds and stuff
+# Builds
 
 ## Stuff to have installed before build
 
@@ -79,3 +80,8 @@ Build:
 cargo build --release --target=x86_64-apple-darwin
 ```
 
+# Stuffs
+Count LoC in the project:
+```
+find ./src/ -name '*.rs' | xargs wc -l
+```
