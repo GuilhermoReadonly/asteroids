@@ -10,7 +10,7 @@ So nothing fancy, just an old fashioned asteroids game.
   * [ ] Part two use Gilbert–Johnson–Keerthi distance algorithm: https://en.wikipedia.org/wiki/Gilbert%E2%80%93Johnson%E2%80%93Keerthi_distance_algorithm
 * [x] Improve physics
 * [x] Refactor the codebase (it is a mess)
-* [ ] Improve spawn (check if space is clear before spawning)
+* [x] Improve spawn (check if space is clear before spawning)
 * [ ] Improve rocks split
 * [ ] Add screens:
   * [x] Game over

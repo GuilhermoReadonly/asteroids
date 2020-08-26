@@ -36,13 +36,21 @@ impl GameScreen {
         for _ in 0..STAR_NUMBER {
             stars.push(Star::new(ctx))
         }
+        let ship = Ship::new(ctx);
+        let ship_copy = ship.clone();
         // Load/create resources here: images, fonts, sounds, etc.
         GameScreen {
-            ship: Ship::new(ctx),
-            rocks: vec![Rock::new_init(ctx, ROCK_NB_EDGES, ROCK_RADIUS_INIT)],
+            ship,
+            rocks: vec![Rock::new_init(
+                ctx,
+                ROCK_NB_EDGES,
+                ROCK_RADIUS_INIT,
+                &ship_copy,
+                &vec![],
+            )],
             bullets: vec![],
             time_since_last_shoot: 0.0,
-            stars: stars,
+            stars,
             stage: 1,
             next_state: NextState::Continue,
         }
@@ -125,8 +133,13 @@ impl GameScreen {
         info!("Stage {} cleared", self.stage);
         self.stage += 1;
         for _ in 0..self.stage {
-            self.rocks
-                .push(Rock::new_init(ctx, ROCK_NB_EDGES, ROCK_RADIUS_INIT));
+            self.rocks.push(Rock::new_init(
+                ctx,
+                ROCK_NB_EDGES,
+                ROCK_RADIUS_INIT,
+                &self.ship,
+                &self.rocks,
+            ));
         }
         info!("New stage with {} rocks to shoot !", self.rocks.len())
     }

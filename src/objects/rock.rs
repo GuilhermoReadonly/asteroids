@@ -1,9 +1,13 @@
-use crate::{constants::*, objects::*, *};
+use crate::{
+    constants::*,
+    objects::{ship::Ship, *},
+};
 use ggez::{
     graphics,
     graphics::{Mesh, MeshBuilder},
     Context,
 };
+use log::{debug, warn};
 use rand::prelude::*;
 
 #[derive(Debug, Clone)]
@@ -24,13 +28,40 @@ pub struct Rock {
 }
 
 impl Rock {
-    pub fn new_init(ctx: &mut Context, nb_edges: u32, radius: f32) -> Rock {
+    pub fn new_init(
+        ctx: &mut Context,
+        nb_edges: u32,
+        radius: f32,
+        ship: &Ship,
+        rocks: &Vec<Rock>,
+    ) -> Rock {
         let mut rng = rand::thread_rng();
-        let position = Point::new(
-            rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
-            rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
-        );
-        Self::new(ctx, nb_edges, radius, position, ROCK_MASS)
+
+        // Detect if a ship or another rock is there and try several time before spawning a new rock
+        let mut nb_try = 7;
+        loop {
+            let position = Point::new(
+                rng.gen_range(-GAME_MAX_WIDTH, GAME_MAX_WIDTH),
+                rng.gen_range(-GAME_MAX_HEIGHT, GAME_MAX_HEIGHT),
+            );
+
+            let new_rock = Self::new(ctx, nb_edges, radius, position, ROCK_MASS);
+
+            let has_collided_ship = new_rock.has_collided_with(ship);
+            let has_collided_rock = rocks
+                .iter()
+                .find(|&rock| new_rock.has_collided_with(rock))
+                .is_some();
+            if nb_try <= 0 {
+                warn!("New rock collision: too much tryies done");
+                break new_rock;
+            } else if has_collided_rock || has_collided_ship {
+                nb_try -= 1;
+                debug!("New rock collision detected");
+            } else {
+                break new_rock;
+            }
+        }
     }
 
     pub fn new(ctx: &mut Context, nb_edges: u32, radius: f32, position: Point, mass: Mass) -> Rock {

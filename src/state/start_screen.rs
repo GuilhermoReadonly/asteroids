@@ -78,7 +78,7 @@ impl State for StartScreen {
 
     fn key_down_event(&mut self, ctx: &mut Context, keycode: KeyCode, _: KeyMods, _: bool) {
         match keycode {
-            KeyCode::Return => {
+            KeyCode::Return | KeyCode::Space => {
                 self.next_state = NextState::Play;
             }
             KeyCode::F7 => {
