@@ -5,8 +5,8 @@ authors = []
 edition = "2018"
 
 [dependencies]
-log = "0.4.8"
-log4rs = "0.12"
+log = "0.4.11"
+log4rs = "0.13.0"
 ggez = "0.5.1"
 rand = "0.7"
 

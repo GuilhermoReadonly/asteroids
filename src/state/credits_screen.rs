@@ -38,6 +38,13 @@ impl State for CreditsScreen {
     fn draw(&self, ctx: &mut Context) -> GameResult<()> {
         Self::draw_text(
             ctx,
+            "Credits".to_string(),
+            80.0,
+            -300.0,
+        )?;
+
+        Self::draw_text(
+            ctx,
             format!("This stupid game was lazily created by {}.", GAME_AUTHOR),
             20.0,
             -100.0,
