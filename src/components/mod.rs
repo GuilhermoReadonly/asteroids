@@ -1,19 +1,7 @@
-use bevy::math::Vec3;
+use bevy::math::Vec2;
 
-pub struct Paddle {
-    pub speed: f32,
-}
+pub struct Velocity(pub Vec2);
 
-pub struct Ball {
-    pub velocity: Vec3,
-}
+pub struct Rotation(pub f32);
 
-pub struct Scoreboard {
-    pub score: usize,
-}
-
-pub enum Collider {
-    Solid,
-    Scorable,
-    Paddle,
-}
+pub struct Ship {}
