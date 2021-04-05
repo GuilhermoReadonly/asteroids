@@ -4,6 +4,7 @@ stdenv.mkDerivation {
   name = "rust-env";
   nativeBuildInputs = [
     rustup
+    vulkan-tools
 
     # Example Build-time Additional Dependencies
     pkg-config
@@ -14,6 +15,17 @@ stdenv.mkDerivation {
   buildInputs = [
     # Example Run-time Additional Dependencies
     openssl
+
+    lutris
+    pkgconfig
+    vulkan-headers
+    vulkan-loader
+    vulkan-tools
+    vulkan-validation-layers
+    x11
+    xorg.libXcursor
+    xorg.libXi
+    xorg.libXrandr
   ];
 
 LD_LIBRARY_PATH = stdenv.lib.makeLibraryPath [

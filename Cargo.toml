@@ -4,11 +4,19 @@ version = "0.1.0"
 authors = []
 edition = "2018"
 
+[[bin]]
+name = "asteroids"
+path = "src/main.rs"
+
+[lib]
+name = "asteroids_lib"
+path = "src/lib.rs"
+
 [dependencies]
 log = "0.4.11"
-log4rs = "0.13.0"
-ggez = "0.5.1"
-rand = "0.7"
+log4rs = "1.0.0"
+bevy = "0.4.0"
+rand = "0.8.3"
 
 # [target.x86_64-pc-windows-gnu]
 # linker = "x86_64-w64-mingw32-gcc"
