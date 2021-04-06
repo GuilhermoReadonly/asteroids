@@ -9,7 +9,6 @@ pub fn input_system(
     mut query: Query<(&Ship, &mut Velocity, &mut Rotation)>,
 ) {
     for (_ship, mut velocity, mut rotation) in query.iter_mut() {
-        
         if keyboard_input.pressed(KeyCode::Left) {
             rotation.0 += std::f32::consts::TAU * 0.01;
         }
@@ -17,7 +16,7 @@ pub fn input_system(
             rotation.0 -= std::f32::consts::TAU * 0.01;
         }
 
-        let rotation = rotation.0 + TAU / 4.0 ;
+        let rotation = rotation.0 + TAU / 4.0;
         if keyboard_input.pressed(KeyCode::Up) {
             velocity.0 += Vec2::new(rotation.cos(), rotation.sin());
         }

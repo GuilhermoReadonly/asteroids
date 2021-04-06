@@ -2,13 +2,15 @@ use std::error::Error;
 
 use bevy::prelude::*;
 use bevy_prototype_lyon::prelude::*;
-use components::{Rotation, Ship, Velocity};
-use constants::{SHIP_SIZE_X, SHIP_SIZE_Y};
+use components::{Rotation, Velocity};
+use entities::ShipEntity;
 use systems::{input_system, rotation_system, velocity_system};
 
 mod components;
 #[allow(dead_code)]
 mod constants;
+#[allow(unused)]
+mod entities;
 mod systems;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -25,34 +27,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(mut commands: &mut Commands, materials: ResMut<Assets<ColorMaterial>>) {
     info!("Setup all we need to play...");
     // Add the game's entities to our world
 
-    let ship = shapes::Polygon {
-        points: vec![
-            Vec2::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
-            Vec2::new(0.0, SHIP_SIZE_Y),
-            Vec2::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
-            Vec2::new(0.0, 0.0),
-        ],
-        closed: true,
-    };
-
-    commands
-        // cameras
+    // cameras
+    commands = commands
         .spawn(Camera2dBundle::default())
-        .spawn(CameraUiBundle::default())
-        // ship
-        .spawn(GeometryBuilder::build_as(
-            &ship,
-            materials.add(ColorMaterial::color(Color::GREEN)),
-            TessellationMode::Stroke(StrokeOptions::default()),
-            Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-        ))
-        .with(Ship {})
-        .with(Velocity(Vec2::new(0.0, 0.0)))
-        .with(Rotation(0.0));
+        .spawn(CameraUiBundle::default());
+
+    // ship
+    ShipEntity::new(Velocity(Vec2::new(0.0, 0.0)), Rotation(0.0)).spawn_ship(commands, materials);
 
     info!("Setup ready !!!");
 }
