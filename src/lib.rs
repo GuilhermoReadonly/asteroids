@@ -31,9 +31,9 @@ fn setup(commands: &mut Commands, mut materials: ResMut<Assets<ColorMaterial>>) 
 
     let ship = shapes::Polygon {
         points: vec![
-            Vec2::new(SHIP_SIZE_X, SHIP_SIZE_Y),
-            Vec2::new(0.0, -SHIP_SIZE_Y),
-            Vec2::new(-SHIP_SIZE_X, SHIP_SIZE_Y),
+            Vec2::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
+            Vec2::new(0.0, SHIP_SIZE_Y),
+            Vec2::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
             Vec2::new(0.0, 0.0),
         ],
         closed: true,
