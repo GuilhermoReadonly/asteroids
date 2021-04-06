@@ -1,13 +1,8 @@
 use bevy::{
-    ecs::{Commands, ResMut},
     math::{Vec2, Vec3},
     prelude::*,
     prelude::{Assets, Color, Transform},
     sprite::ColorMaterial,
-};
-use bevy_prototype_lyon::{
-    prelude::{GeometryBuilder, StrokeOptions, TessellationMode},
-    shapes,
 };
 
 use crate::{
@@ -35,24 +30,21 @@ impl<'a> ShipEntity {
         self,
         commands: &'a mut Commands,
         mut materials: ResMut<Assets<ColorMaterial>>,
-    ) -> &'a mut Commands {
-        let ship = shapes::Polygon {
-            points: vec![
-                Vec2::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
-                Vec2::new(0.0, SHIP_SIZE_Y),
-                Vec2::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
-                Vec2::new(0.0, 0.0),
-            ],
-            closed: true,
-        };
+    ) {
+        let ship = vec![
+            Vec2::new(SHIP_SIZE_X, -SHIP_SIZE_Y),
+            Vec2::new(0.0, SHIP_SIZE_Y),
+            Vec2::new(-SHIP_SIZE_X, -SHIP_SIZE_Y),
+            Vec2::new(0.0, 0.0),
+        ];
 
         commands
-            .spawn(GeometryBuilder::build_as(
-                &ship,
-                materials.add(ColorMaterial::color(Color::GREEN)),
-                TessellationMode::Stroke(StrokeOptions::default()),
-                Transform::from_translation(Vec3::new(0.0, 0.0, 0.0)),
-            ))
-            .with_bundle(self)
+            .spawn_bundle(SpriteBundle {
+                material: materials.add(Color::rgb(0.0, 0.1, 0.0).into()),
+                transform: Transform::from_xyz(0.0, 0.0, 0.0),
+                sprite: Sprite::new(Vec2::new(30.0, 30.0)),
+                ..Default::default()
+            })
+            .insert_bundle(self);
     }
 }

@@ -38,6 +38,6 @@ pub fn rotation_system(mut query: Query<(&Rotation, &mut Transform)>) {
     for (rotation, mut transform) in query.iter_mut() {
         let transform_rotation = &mut transform.rotation;
 
-        *transform_rotation = Quat::from_axis_angle(Vec3::unit_z(), rotation.0);
+        *transform_rotation = Quat::from_axis_angle(Vec3::Z, rotation.0);
     }
 }

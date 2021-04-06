@@ -1,7 +1,6 @@
 use std::error::Error;
 
 use bevy::prelude::*;
-use bevy_prototype_lyon::prelude::*;
 use components::{Rotation, Velocity};
 use entities::ShipEntity;
 use systems::{input_system, rotation_system, velocity_system};
@@ -16,8 +15,7 @@ mod systems;
 pub fn run() -> Result<(), Box<dyn Error>> {
     App::build()
         .add_plugins(DefaultPlugins)
-        .add_plugin(ShapePlugin)
-        .add_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .add_startup_system(setup.system())
         .add_system(input_system.system())
         .add_system(velocity_system.system())
@@ -27,17 +25,17 @@ pub fn run() -> Result<(), Box<dyn Error>> {
     Ok(())
 }
 
-fn setup(mut commands: &mut Commands, materials: ResMut<Assets<ColorMaterial>>) {
+fn setup(mut commands: Commands, materials: ResMut<Assets<ColorMaterial>>) {
     info!("Setup all we need to play...");
     // Add the game's entities to our world
 
     // cameras
-    commands = commands
-        .spawn(Camera2dBundle::default())
-        .spawn(CameraUiBundle::default());
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(UiCameraBundle::default());
 
     // ship
-    ShipEntity::new(Velocity(Vec2::new(0.0, 0.0)), Rotation(0.0)).spawn_ship(commands, materials);
+    ShipEntity::new(Velocity(Vec2::new(0.0, 0.0)), Rotation(0.0))
+        .spawn_ship(&mut commands, materials);
 
     info!("Setup ready !!!");
 }
