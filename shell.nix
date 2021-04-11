@@ -1,41 +1,19 @@
-with import <nixpkgs> {};
+{ pkgs ? import <nixpkgs> {}
+, unstable ? import <unstable> {} }:
 
-stdenv.mkDerivation {
-  name = "rust-env";
-  nativeBuildInputs = [
-    rustup
-    vulkan-tools
-
-    # Example Build-time Additional Dependencies
-    pkg-config
-    systemd.dev
-    alsaLib
-    xorg.libX11
-  ];
+pkgs.mkShell {
   buildInputs = [
-    # Example Run-time Additional Dependencies
-    openssl
-
-    lutris
-    pkgconfig
-    vulkan-headers
-    vulkan-loader
-    vulkan-tools
-    vulkan-validation-layers
-    x11
-    xorg.libXcursor
-    xorg.libXi
-    xorg.libXrandr
+    pkgs.alsaLib
+    pkgs.libudev
+    pkgs.lutris
+    pkgs.pkg-config
+    pkgs.vulkan-headers
+    pkgs.vulkan-loader
+    pkgs.vulkan-tools
+    unstable.vulkan-validation-layers
+    pkgs.xorg.libX11
+    pkgs.xorg.libXcursor
+    pkgs.xorg.libXi
+    pkgs.xorg.libXrandr
   ];
-
-LD_LIBRARY_PATH = stdenv.lib.makeLibraryPath [
-    xorg.libX11
-    xorg.libXcursor
-    xorg.libXrandr
-    xorg.libXi
-    libglvnd
-  ];
-  
-  # Set Environment Variables
-  RUST_BACKTRACE = 1;
 }
