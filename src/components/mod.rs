@@ -1,10 +1,10 @@
-use bevy::math::Vec2;
+use bevy::math::Vec3;
 
 #[derive(Debug, Clone)]
-pub struct Velocity(pub Vec2);
+pub struct Velocity(pub Vec3);
 
 #[derive(Debug, Clone)]
-pub struct Rotation(pub f32);
+pub struct AngularVelocity(pub f32);
 
 #[derive(Debug, Clone)]
 pub struct Ship;

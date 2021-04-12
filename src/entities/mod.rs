@@ -1,5 +1,8 @@
 mod ship;
-pub use ship::ShipEntity;
+pub use ship::*;
 
 mod bullet;
-pub use bullet::BulletEntity;
+pub use bullet::*;
+
+mod rock;
+pub use rock::*;

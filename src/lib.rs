@@ -1,10 +1,10 @@
-use std::{error::Error, f32::consts::TAU};
+use std::error::Error;
 
 use bevy::prelude::*;
 use bevy_prototype_lyon::plugin::ShapePlugin;
-use components::{Rotation, Velocity};
+use components::*;
 use constants::*;
-use entities::ShipEntity;
+use entities::*;
 use systems::*;
 
 mod components;
@@ -44,9 +44,10 @@ impl Plugin for AsteroidsPlugin {
             .add_system(movement_system.system())
             .add_system(firing_system.system())
             .add_system(velocity_system.system())
-            .add_system(rotation_system.system())
+            .add_system(angular_velocity_system.system())
             .add_system(time_to_live_system.system())
-            .add_system(time_to_fire_system.system());
+            .add_system(time_to_fire_system.system())
+            .add_system(offscreen_system.system());
     }
 }
 
@@ -59,7 +60,10 @@ fn setup(mut commands: Commands) {
     commands.spawn_bundle(UiCameraBundle::default());
 
     // ship
-    ShipEntity::new(Velocity(Vec2::new(0.0, 0.0)), Rotation(TAU / 4.0)).spawn_ship(&mut commands);
+    ShipEntity::new(Velocity(Vec3::new(0.0, 0.0, 0.0))).spawn_ship(&mut commands);
+
+    // 1st rock
+    RockEntity::new().spawn_rock(&mut commands);
 
     info!("Setup ready !!!");
 }

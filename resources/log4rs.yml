@@ -1,5 +1,5 @@
-# Scan this file for changes every 30 seconds
-refresh_rate: 30 seconds
+# Scan this file for changes every x seconds
+refresh_rate: 5 seconds
 
 appenders:
   # An appender named "stdout" that writes to stdout
@@ -15,5 +15,5 @@ root:
 loggers:
   # Raise the maximum log level for the game
   asteroids:
-    level: info
+    level: debug
     
