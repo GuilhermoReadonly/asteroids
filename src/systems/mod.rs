@@ -1,30 +1,9 @@
-use std::f32::consts::TAU;
-
 use bevy::prelude::*;
 
-use crate::components::{Rotation, Ship, Velocity};
+use crate::components::*;
 
-pub fn input_system(
-    keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Ship, &mut Velocity, &mut Rotation)>,
-) {
-    for (_ship, mut velocity, mut rotation) in query.iter_mut() {
-        if keyboard_input.pressed(KeyCode::Left) {
-            rotation.0 += std::f32::consts::TAU * 0.01;
-        }
-        if keyboard_input.pressed(KeyCode::Right) {
-            rotation.0 -= std::f32::consts::TAU * 0.01;
-        }
-
-        let rotation = rotation.0 + TAU / 4.0;
-        if keyboard_input.pressed(KeyCode::Up) {
-            velocity.0 += Vec2::new(rotation.cos(), rotation.sin());
-        }
-        if keyboard_input.pressed(KeyCode::Down) {
-            velocity.0 -= Vec2::new(rotation.cos(), rotation.sin());
-        }
-    }
-}
+mod ship;
+pub use ship::*;
 
 pub fn velocity_system(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
     for (velocity, mut transform) in query.iter_mut() {
@@ -39,5 +18,27 @@ pub fn rotation_system(mut query: Query<(&Rotation, &mut Transform)>) {
         let transform_rotation = &mut transform.rotation;
 
         *transform_rotation = Quat::from_axis_angle(Vec3::Z, rotation.0);
+    }
+}
+
+pub fn time_to_live_system(
+    time: Res<Time>,
+    mut query: Query<(Entity, &mut TimeToLive)>,
+    mut commands: Commands,
+) {
+    for (entity, mut time_to_live) in query.iter_mut() {
+        time_to_live.0 = time_to_live.0 - time.delta_seconds();
+
+        if time_to_live.0 <= 0.0 {
+            commands.entity(entity).despawn();
+        }
+    }
+}
+
+pub fn time_to_fire_system(time: Res<Time>, mut query: Query<(&mut TimeToFire,)>) {
+    for (mut time_to_fire,) in query.iter_mut() {
+        if time_to_fire.0 > 0.0 {
+            time_to_fire.0 = time_to_fire.0 - time.delta_seconds();
+        }
     }
 }

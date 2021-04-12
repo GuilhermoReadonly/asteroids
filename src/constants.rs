@@ -43,7 +43,7 @@ pub const SHIP_ANGLE_DESCELERATION: f32 = 10.0;
 // Bullet constants
 pub const BULLET_SIZE: f32 = 60.0;
 pub const BULLET_MASS: f32 = 1.0;
-pub const BULLET_LIFE: f32 = 0.7;
+pub const BULLET_LIFE: f32 = 0.4;
 pub const BULLET_SPEED: f32 = 1000.0;
 pub const BULLET_DAMAGE: f32 = 100.0;
 
