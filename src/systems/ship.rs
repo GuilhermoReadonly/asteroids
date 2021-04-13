@@ -6,9 +6,9 @@ use crate::{components::*, constants::*, entities::BulletEntity};
 
 pub fn movement_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Ship, &mut Velocity, &mut Transform)>,
+    mut query: Query<(&Player, &mut Velocity, &mut Transform)>,
 ) {
-    for (_ship, mut velocity, mut transform) in query.iter_mut() {
+    for (_player, mut velocity, mut transform) in query.iter_mut() {
         if keyboard_input.pressed(KeyCode::Left) {
             debug!("Left");
             transform.rotate(Quat::from_rotation_z(TAU * 0.01));
@@ -32,7 +32,7 @@ pub fn movement_system(
 
 pub fn firing_system(
     keyboard_input: Res<Input<KeyCode>>,
-    mut query: Query<(&Ship, &Transform, &mut TimeToFire)>,
+    mut query: Query<(&Player, &Transform, &mut TimeToFire)>,
     mut commands: Commands,
 ) {
     for (_ship, transform, mut time_to_fire) in query.iter_mut() {

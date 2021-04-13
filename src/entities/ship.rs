@@ -12,7 +12,7 @@ use crate::{components::*, constants::*};
 
 #[derive(Bundle)]
 pub struct ShipEntity {
-    ship: Ship,
+    player: Player,
     velocity: Velocity,
     time_to_fire: TimeToFire,
 }
@@ -20,7 +20,7 @@ pub struct ShipEntity {
 impl<'a> ShipEntity {
     pub fn new(velocity: Velocity) -> Self {
         Self {
-            ship: Ship {},
+            player: Player {},
             velocity,
             time_to_fire: TimeToFire(SHIP_RELOAD_TIME),
         }

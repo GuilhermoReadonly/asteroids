@@ -7,7 +7,7 @@ pub struct Velocity(pub Vec3);
 pub struct AngularVelocity(pub f32);
 
 #[derive(Debug, Clone)]
-pub struct Ship;
+pub struct Player;
 
 #[derive(Debug, Clone)]
 pub struct Bullet;
