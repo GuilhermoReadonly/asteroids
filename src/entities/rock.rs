@@ -9,12 +9,19 @@ use bevy::{
 use bevy_prototype_lyon::prelude::*;
 use rand::Rng;
 
-use crate::{components::*, constants::*};
+use crate::{
+    components::{Size, *},
+    constants::*,
+};
 
 #[derive(Bundle)]
 pub struct RockEntity {
+    rock: Rock,
     velocity: Velocity,
     angular_velocity: AngularVelocity,
+    life: Life,
+    collideable: Collideable,
+    size: Size,
 }
 
 impl<'a> RockEntity {
@@ -28,8 +35,15 @@ impl<'a> RockEntity {
         let angular_velocity =
             AngularVelocity(rng.gen_range(-ROCK_MAX_ANGLE_SPEED..ROCK_MAX_ANGLE_SPEED));
         Self {
+            rock: Rock,
             velocity,
             angular_velocity,
+            life: Life(ROCK_LIFE),
+            collideable: Collideable,
+            size: Size {
+                x: 2. * ROCK_RADIUS_INIT,
+                y: 2. * ROCK_RADIUS_INIT,
+            },
         }
     }
 

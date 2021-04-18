@@ -8,21 +8,33 @@ use bevy::{
 };
 use bevy_prototype_lyon::prelude::*;
 
-use crate::{components::*, constants::*};
+use crate::{
+    components::{Size, *},
+    constants::*,
+};
 
 #[derive(Bundle)]
 pub struct ShipEntity {
     player: Player,
     velocity: Velocity,
     time_to_fire: TimeToFire,
+    life: Life,
+    collideable: Collideable,
+    size: Size,
 }
 
 impl<'a> ShipEntity {
     pub fn new(velocity: Velocity) -> Self {
         Self {
-            player: Player {},
+            player: Player,
             velocity,
             time_to_fire: TimeToFire(SHIP_RELOAD_TIME),
+            life: Life(SHIP_LIFE),
+            collideable: Collideable,
+            size: Size {
+                x: 2. * SHIP_SIZE_X,
+                y: 2. * SHIP_SIZE_Y,
+            },
         }
     }
 

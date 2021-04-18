@@ -6,13 +6,18 @@ use bevy::{
 };
 use bevy_prototype_lyon::prelude::*;
 
-use crate::{components::*, constants::*};
+use crate::{
+    components::{Size, *},
+    constants::*,
+};
 
 #[derive(Bundle)]
 pub struct BulletEntity {
     bullet: Bullet,
     velocity: Velocity,
     time_to_live: TimeToLive,
+    collideable: Collideable,
+    size: Size,
 }
 
 impl<'a> BulletEntity {
@@ -21,6 +26,8 @@ impl<'a> BulletEntity {
             bullet: Bullet {},
             velocity: Velocity(BULLET_SPEED * Vec3::new(1.0, 0.0, 0.0)),
             time_to_live: TimeToLive(BULLET_LIFE),
+            collideable: Collideable,
+            size: Size { x: 1., y: 1. },
         }
     }
 

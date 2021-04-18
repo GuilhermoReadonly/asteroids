@@ -47,7 +47,10 @@ impl Plugin for AsteroidsPlugin {
             .add_system(angular_velocity_system.system())
             .add_system(time_to_live_system.system())
             .add_system(time_to_fire_system.system())
-            .add_system(offscreen_system.system());
+            .add_system(offscreen_system.system())
+            .add_system(life_system.system())
+            .add_system(collision_player_rock_system.system())
+            .add_system(collision_bullet_rock_system.system());
     }
 }
 

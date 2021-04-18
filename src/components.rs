@@ -13,7 +13,22 @@ pub struct Player;
 pub struct Bullet;
 
 #[derive(Debug, Clone)]
+pub struct Rock;
+
+#[derive(Debug, Clone)]
 pub struct TimeToLive(pub f32);
 
 #[derive(Debug, Clone)]
 pub struct TimeToFire(pub f32);
+
+#[derive(Debug, Clone)]
+pub struct Life(pub f32);
+
+#[derive(Debug, Clone)]
+pub struct Collideable;
+
+#[derive(Debug, Clone)]
+pub struct Size {
+    pub x: f32,
+    pub y: f32,
+}
