@@ -5,6 +5,7 @@ use bevy_prototype_lyon::plugin::ShapePlugin;
 use components::*;
 use constants::*;
 use entities::*;
+use resources::*;
 use systems::*;
 
 mod components;
@@ -12,6 +13,7 @@ mod components;
 mod constants;
 #[allow(unused)]
 mod entities;
+mod resources;
 mod systems;
 
 pub fn run() -> Result<(), Box<dyn Error>> {
@@ -40,7 +42,8 @@ pub fn run() -> Result<(), Box<dyn Error>> {
 pub struct AsteroidsPlugin;
 impl Plugin for AsteroidsPlugin {
     fn build(&self, app: &mut AppBuilder) {
-        app.add_startup_system(setup.system())
+        app.init_resource::<Game>()
+            .add_startup_system(setup.system())
             .add_system(movement_system.system())
             .add_system(firing_system.system())
             .add_system(velocity_system.system())
@@ -50,12 +53,16 @@ impl Plugin for AsteroidsPlugin {
             .add_system(offscreen_system.system())
             .add_system(life_system.system())
             .add_system(collision_player_rock_system.system())
-            .add_system(collision_bullet_rock_system.system());
+            .add_system(collision_bullet_rock_system.system())
+            .add_system(new_stage_system.system());
     }
 }
 
-fn setup(mut commands: Commands) {
+fn setup(mut commands: Commands, mut game: ResMut<Game>) {
     info!("Setup all we need to play...");
+
+    game.rocks_destroyed = 0;
+    game.stage = 1;
     // Add the game's entities to our world
 
     // cameras

@@ -5,7 +5,8 @@ use bevy::prelude::*;
 use crate::{
     components::{Size, *},
     constants::*,
-    entities::BulletEntity,
+    entities::{BulletEntity, RockEntity},
+    resources::*,
 };
 
 pub fn movement_system(
@@ -109,9 +110,18 @@ pub fn time_to_fire_system(time: Res<Time>, mut query: Query<(&mut TimeToFire,)>
     }
 }
 
-pub fn life_system(mut query: Query<(Entity, &Life)>, mut commands: Commands) {
-    for (entity, life) in query.iter_mut() {
+pub fn life_system(
+    mut game: ResMut<Game>,
+    mut query: Query<(Entity, &Life, Option<&Rock>)>,
+    mut commands: Commands,
+) {
+    for (entity, life, maybe_rock) in query.iter_mut() {
         if life.0 <= 0.0 {
+            if maybe_rock.is_some() {
+                game.rocks_destroyed += 1;
+                info!("Total rock destroyed: {}", game.rocks_destroyed);
+            }
+
             commands.entity(entity).despawn();
         }
     }
@@ -132,16 +142,10 @@ pub fn collision_player_rock_system(
 ) {
     for (player_entity, _, _, player_transform, player_size) in player_query.iter() {
         for (rock_entity, _, _, rock_transform, rock_size) in rock_query.iter() {
-            let player_position = player_transform.translation;
-            let rock_position = rock_transform.translation;
+            let player_position = &player_transform.translation;
+            let rock_position = &rock_transform.translation;
 
-            let has_collided =                                                              // p
-                player_position.x + player_size.x / 2.0 > rock_position.x - rock_size.x / 2.0 && // l
-                player_position.x - player_size.x / 2.0 < rock_position.x + rock_size.x / 2.0 && // o
-                player_position.y + player_size.y / 2.0 > rock_position.y - rock_size.y / 2.0 && // p
-                player_position.y - player_size.y / 2.0 < rock_position.y + rock_size.y / 2.0;
-
-            if has_collided {
+            if has_collided(player_position, player_size, rock_position, rock_size) {
                 info!("Player has collided with rock ");
                 {
                     let mut player_life: Mut<Life> = life_query
@@ -180,16 +184,10 @@ pub fn collision_bullet_rock_system(
 ) {
     for (bullet_entity, _, _, bullet_transform, bullet_size) in bullet_query.iter() {
         for (rock_entity, _, _, rock_transform, rock_size) in rock_query.iter() {
-            let bullet_position = bullet_transform.translation;
-            let rock_position = rock_transform.translation;
+            let bullet_position = &bullet_transform.translation;
+            let rock_position = &rock_transform.translation;
 
-            let has_collided =                                                              // p
-                bullet_position.x + bullet_size.x / 2.0 > rock_position.x - rock_size.x / 2.0 && // l
-                bullet_position.x - bullet_size.x / 2.0 < rock_position.x + rock_size.x / 2.0 && // o
-                bullet_position.y + bullet_size.y / 2.0 > rock_position.y - rock_size.y / 2.0 && // p
-                bullet_position.y - bullet_size.y / 2.0 < rock_position.y + rock_size.y / 2.0;
-
-            if has_collided {
+            if has_collided(bullet_position, bullet_size, rock_position, rock_size) {
                 info!("Bullet has collided with rock ");
                 {
                     commands.entity(bullet_entity).despawn();
@@ -204,6 +202,23 @@ pub fn collision_bullet_rock_system(
                     info!("Rock life is now {}", rock_life.0);
                 }
             }
+        }
+    }
+}
+
+fn has_collided(position1: &Vec3, size1: &Size, position2: &Vec3, size2: &Size) -> bool {
+    position1.x + size1.x / 2.0 > position2.x - size2.x / 2.0 && // p
+    position1.x - size1.x / 2.0 < position2.x + size2.x / 2.0 && // l
+    position1.y + size1.y / 2.0 > position2.y - size2.y / 2.0 && // o
+    position1.y - size1.y / 2.0 < position2.y + size2.y / 2.0    // p
+}
+
+pub fn new_stage_system(mut game: ResMut<Game>, query: Query<(&Rock,)>, mut commands: Commands) {
+    if query.iter().count() == 0 {
+        game.stage += 1;
+
+        for _ in 0..game.stage {
+            RockEntity::new().spawn_rock(&mut commands);
         }
     }
 }
