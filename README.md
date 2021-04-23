@@ -68,16 +68,18 @@ Build:
 cargo build --release --target=x86_64-pc-windows-gnu
 ```
 
-### Mac (work in progress)
+### WASM
 Prepare environment:
 ```
-rustup target add x86_64-apple-darwin
+rustup target add wasm32-unknown-unknown
+cargo install wasm-bindgen-cli
 ```
 
 Build:
 
 ```
-cargo build --release --target=x86_64-apple-darwin
+cargo build --target wasm32-unknown-unknown --features web --release
+wasm-bindgen --out-dir web --target web target/wasm32-unknown-unknown/release/asteroids.wasm 
 ```
 
 # Stuffs

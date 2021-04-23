@@ -4,6 +4,7 @@
 pkgs.mkShell {
   buildInputs = [
     pkgs.alsaLib
+    pkgs.openssl
     pkgs.libudev
     pkgs.lutris
     pkgs.pkg-config

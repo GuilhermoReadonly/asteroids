@@ -12,11 +12,33 @@ path = "src/main.rs"
 name = "asteroids_lib"
 path = "src/lib.rs"
 
+[features]
+# default = [
+#   "bevy/bevy_gltf",
+#   "bevy/bevy_winit",
+#   "bevy/render",
+#   "bevy/x11",
+#   "bevy/png",
+# ]
+
+default = [
+  "bevy/bevy_gilrs",
+  "bevy/bevy_gltf",
+  "bevy/bevy_winit",
+  "bevy/render",
+  "bevy/x11",
+]
+
+native = [
+  "bevy/bevy_wgpu",
+]
+web = ["bevy_webgl2"]
+
 [dependencies]
 log = "0.4.11"
-log4rs = "1.0.0"
-bevy = "0.5.0"
 rand = "0.8.3"
+bevy = { version = "0.5.0", default-features = false }
+bevy_webgl2 = { version = "0.5.0", optional = true }
 bevy_prototype_lyon = "0.3.0"
 
 # [target.x86_64-pc-windows-gnu]

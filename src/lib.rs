@@ -19,8 +19,8 @@ mod systems;
 pub fn run() -> Result<(), Box<dyn Error>> {
     info!("Let the party rocks !");
 
-    App::build()
-        .insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
+    let mut app = App::build();
+    app.insert_resource(ClearColor(Color::rgb(0.0, 0.0, 0.0)))
         .insert_resource(WindowDescriptor {
             title: GAME_NAME.to_string(),
             width: GAME_WINDOW_WIDTH,
@@ -31,8 +31,11 @@ pub fn run() -> Result<(), Box<dyn Error>> {
         })
         .add_plugin(AsteroidsPlugin)
         .add_plugins(DefaultPlugins)
-        .add_plugin(ShapePlugin)
-        .run();
+        .add_plugin(ShapePlugin);
+        #[cfg(target_arch = "wasm32")]
+    app.add_plugin(bevy_webgl2::WebGL2Plugin);
+    
+    app.run();
 
     info!("It was freaking epic my dude, see ya around !");
 
