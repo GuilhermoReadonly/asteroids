@@ -2,3 +2,5 @@
 **/*.rs.bk
 .vscode
 build_and_deploy.sh
+wasm
+/.git
