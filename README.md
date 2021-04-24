@@ -8,17 +8,17 @@ So nothing fancy, just an old fashioned asteroids game.
 * [ ] Improve hitbox
   * [x] Part one use simple rectangles
   * [ ] Part two use Gilbert–Johnson–Keerthi distance algorithm: https://en.wikipedia.org/wiki/Gilbert%E2%80%93Johnson%E2%80%93Keerthi_distance_algorithm
-* [x] Improve physics
+* [ ] Improve physics
 * [x] Refactor the codebase (it is a mess)
-* [x] Improve spawn (check if space is clear before spawning)
+* [ ] Improve spawn (check if space is clear before spawning)
 * [ ] Improve rocks split
 * [ ] Add screens:
-  * [x] Game over
+  * [ ] Game over
   * [ ] Settings:
     * [ ] Keyboard
     * [ ] Sounds on/off
-  * [x] Start screen
-  * [x] Credits
+  * [ ] Start screen
+  * [ ] Credits
 * [ ] Sounds effects (Pewpew)
 * [ ] Animations:
   * [ ] Bullets hits
@@ -27,7 +27,7 @@ So nothing fancy, just an old fashioned asteroids game.
 * [ ] Add saucers
 * [ ] Increase world size and stay centred on the player ship
 * [ ] Multiplayer mode
-* [ ] WASM version playable in the browser
+* [x] WASM version playable in the browser
 
 
 # Builds
@@ -41,13 +41,13 @@ https://www.rust-lang.org/tools/install
 ## Build & Run
 
 ```
-cargo run --release
+cargo run --release --features native
 ```
 
 ## Build
 
 ```
-cargo build --release
+cargo build --release --features native
 ```
 
 The executable file is generated in the ```./target/release/``` folder.
@@ -65,7 +65,7 @@ rustup target add x86_64-pc-windows-gnu
 Build:
 
 ```
-cargo build --release --target=x86_64-pc-windows-gnu
+cargo build --release --target=x86_64-pc-windows-gnu --features native
 ```
 
 ### WASM

@@ -1,4 +1,4 @@
 /target
 **/*.rs.bk
 .vscode
-build_and_deploy.sh
+build.rs
