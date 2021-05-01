@@ -1,5 +1,7 @@
 use std::f32::consts::TAU;
 
+use bevy::prelude::Color;
+
 // Game constants
 /// Show hitbox of objects
 pub const GAME_SHOW_HIT_BOX: bool = false;
@@ -25,6 +27,8 @@ pub const GAME_MAX_WIDTH: f32 = GAME_WINDOW_WIDTH / 2.0;
 pub const GAME_LINE_WIDTH: f32 = 1.0;
 /// Y offset between each line of text diplayed
 pub const GAME_TEXT_Y_OFFSET: f32 = 15.0;
+/// Font to use for text
+pub const GAME_FONT: &str = "fonts/DroidSans.ttf";
 
 // Ship constants
 pub const SHIP_SIZE_X: f32 = 7.0;
@@ -64,3 +68,7 @@ pub const ROCK_COLLISION_DAMAGE: f32 = 20.0;
 pub const STAR_NUMBER: usize = 100;
 pub const STAR_RADIUS_MIN: f32 = 0.5;
 pub const STAR_RADIUS_MAX: f32 = 1.5;
+
+// Colors
+pub const GREEN: Color = Color::rgb(0., 1., 0.);
+pub const BLACK: Color = Color::rgb(0., 0., 0.);

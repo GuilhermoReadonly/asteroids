@@ -5,9 +5,35 @@ use bevy::prelude::*;
 use crate::{
     components::{Size, *},
     constants::*,
-    entities::{BulletEntity, RockEntity},
+    entities::{BulletEntity, RockEntity, ShipEntity},
     resources::*,
 };
+
+pub fn setup_game(mut commands: Commands, mut game: ResMut<Game>, mut query: Query<(Entity,)>) {
+    info!("Setup all we need to play...");
+
+    game.rocks_destroyed = 0;
+    game.stage = 1;
+
+    // Remove entities from the menu screen
+    for (entity,) in query.iter_mut() {
+        commands.entity(entity).despawn();
+    }
+
+    // Add the game's entities to our world
+
+    // cameras
+    commands.spawn_bundle(OrthographicCameraBundle::new_2d());
+    commands.spawn_bundle(UiCameraBundle::default());
+
+    // ship
+    ShipEntity::new(Velocity(Vec3::new(0.0, 0.0, 0.0))).spawn_ship(&mut commands);
+
+    // 1st rock
+    RockEntity::new().spawn_rock(&mut commands);
+
+    info!("Setup ready !!!");
+}
 
 pub fn movement_system(
     keyboard_input: Res<Input<KeyCode>>,
@@ -210,13 +236,13 @@ fn has_collided(position1: &Vec3, size1: &Size, position2: &Vec3, size2: &Size) 
     position1.x + size1.x / 2.0 > position2.x - size2.x / 2.0 && // p
     position1.x - size1.x / 2.0 < position2.x + size2.x / 2.0 && // l
     position1.y + size1.y / 2.0 > position2.y - size2.y / 2.0 && // o
-    position1.y - size1.y / 2.0 < position2.y + size2.y / 2.0    // p
+    position1.y - size1.y / 2.0 < position2.y + size2.y / 2.0 // p
 }
 
 pub fn new_stage_system(mut game: ResMut<Game>, query: Query<(&Rock,)>, mut commands: Commands) {
     if query.iter().count() == 0 {
         game.stage += 1;
-
+        info!("New stage {}", game.stage);
         for _ in 0..game.stage {
             RockEntity::new().spawn_rock(&mut commands);
         }
