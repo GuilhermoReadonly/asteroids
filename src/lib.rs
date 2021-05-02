@@ -67,29 +67,31 @@ impl Plugin for AsteroidsPlugin {
     fn build(&self, app: &mut AppBuilder) {
         app.init_resource::<ColorMaterials>()
             .init_resource::<Game>()
+            .add_system(velocity_system.system())
+            .add_system(angular_velocity_system.system())
+            .add_system(offscreen_system.system())
             .add_state(AppState::Menu)
             .add_system_set(SystemSet::on_enter(AppState::Menu).with_system(setup_menu.system()))
-            .add_system_set(
-                SystemSet::on_update(AppState::Menu)
-                    .with_system(menu_system.system())
-                    .with_system(velocity_system.system())
-                    .with_system(angular_velocity_system.system())
-                    .with_system(offscreen_system.system()),
-            )
+            .add_system_set(SystemSet::on_update(AppState::Menu).with_system(menu_system.system()))
             .add_system_set(SystemSet::on_enter(AppState::InGame).with_system(setup_game.system()))
             .add_system_set(
                 SystemSet::on_update(AppState::InGame)
                     .with_system(movement_system.system())
                     .with_system(firing_system.system())
-                    .with_system(velocity_system.system())
-                    .with_system(angular_velocity_system.system())
                     .with_system(time_to_live_system.system())
                     .with_system(time_to_fire_system.system())
-                    .with_system(offscreen_system.system())
                     .with_system(life_system.system())
                     .with_system(collision_player_rock_system.system())
                     .with_system(collision_bullet_rock_system.system())
-                    .with_system(new_stage_system.system()),
+                    .with_system(new_stage_system.system())
+                    .with_system(game_over_system.system()),
+            )
+            .add_system_set(
+                SystemSet::on_enter(AppState::GameOver).with_system(setup_game_over.system()),
+            )
+            .add_system_set(
+                SystemSet::on_update(AppState::GameOver)
+                    .with_system(return_to_menu_system.system()),
             );
     }
 }

@@ -52,6 +52,19 @@ cargo build --release --features native
 
 The executable file is generated in the ```./target/release/``` folder.
 
+## Docker
+
+### Build
+
+```
+docker build -t asteroids .
+```
+
+### Serve
+```
+docker run -ti -p 80:80 asteroids
+```
+
 
 ## Cross compillation target build
 

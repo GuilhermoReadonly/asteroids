@@ -1,14 +1,13 @@
 use bevy::prelude::*;
-use rand::Rng;
 
-use crate::{constants::*, entities::RockEntity, AppState, ColorMaterials};
+use crate::{constants::*, AppState, ColorMaterials};
 
-pub fn setup_menu(
+pub fn setup_game_over(
     mut commands: Commands,
     asset_server: Res<AssetServer>,
     button_materials: Res<ColorMaterials>,
 ) {
-    info!("Setup all the menu...");
+    info!("Setup all the game over screen...");
     // cameras
     commands.spawn_bundle(OrthographicCameraBundle::new_2d());
     commands.spawn_bundle(UiCameraBundle::default());
@@ -44,7 +43,7 @@ pub fn setup_menu(
                 .with_children(|parent| {
                     parent.spawn_bundle(TextBundle {
                         text: Text::with_section(
-                            "Start",
+                            "Game Over",
                             TextStyle {
                                 font: asset_server.load(GAME_FONT),
                                 font_size: 40.0,
@@ -57,17 +56,10 @@ pub fn setup_menu(
                 });
         });
 
-    // spawn some rocks in the background
-    let mut rng = rand::thread_rng();
-    for i in 1..rng.gen_range(2..7) {
-        info!("Spawn a little rock {}", i);
-        RockEntity::new().spawn_rock(&mut commands);
-    }
-
     info!("Setup ready !!!");
 }
 
-pub fn menu_system(
+pub fn return_to_menu_system(
     mut commands: Commands,
     mut state: ResMut<State<AppState>>,
     button_bg_materials: Res<ColorMaterials>,
@@ -91,7 +83,7 @@ pub fn menu_system(
                 }
 
                 *interaction = Interaction::None;
-                state.set(AppState::InGame).unwrap();
+                state.set(AppState::Menu).unwrap();
             }
             Interaction::Hovered => {
                 text.sections[0].style.color = BLACK;

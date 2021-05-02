@@ -7,6 +7,7 @@ use crate::{
     constants::*,
     entities::{BulletEntity, RockEntity, ShipEntity},
     resources::*,
+    AppState,
 };
 
 pub fn setup_game(mut commands: Commands, mut game: ResMut<Game>, mut query: Query<(Entity,)>) {
@@ -78,39 +79,6 @@ pub fn firing_system(
                 time_to_fire.0 = SHIP_RELOAD_TIME;
             }
         }
-    }
-}
-
-pub fn velocity_system(time: Res<Time>, mut query: Query<(&Velocity, &mut Transform)>) {
-    for (velocity, mut transform) in query.iter_mut() {
-        let translation = &mut transform.translation;
-
-        *translation += time.delta_seconds() * velocity.0;
-    }
-}
-
-pub fn angular_velocity_system(
-    time: Res<Time>,
-    mut query: Query<(&AngularVelocity, &mut Transform)>,
-) {
-    for (angular_velocity, mut transform) in query.iter_mut() {
-        transform.rotate(Quat::from_rotation_z(
-            time.delta_seconds() * angular_velocity.0,
-        ));
-    }
-}
-
-pub fn offscreen_system(mut query: Query<(&mut Transform,)>) {
-    for (mut transform,) in query.iter_mut() {
-        let mut pos = transform.translation;
-
-        if pos.x > GAME_MAX_WIDTH || pos.x < -GAME_MAX_WIDTH {
-            pos.x = pos.x - 2.0 * GAME_MAX_WIDTH * pos.x.signum()
-        }
-        if pos.y > GAME_MAX_HEIGHT || pos.y < -GAME_MAX_HEIGHT {
-            pos.y = pos.y - 2.0 * GAME_MAX_HEIGHT * pos.y.signum()
-        }
-        transform.translation = pos;
     }
 }
 
@@ -245,6 +213,14 @@ pub fn new_stage_system(mut game: ResMut<Game>, query: Query<(&Rock,)>, mut comm
         info!("New stage {}", game.stage);
         for _ in 0..game.stage {
             RockEntity::new().spawn_rock(&mut commands);
+        }
+    }
+}
+
+pub fn game_over_system(mut state: ResMut<State<AppState>>, query: Query<(&Player, &Life)>) {
+    for (_, life) in query.iter() {
+        if life.0 <= 0. {
+            state.set(AppState::GameOver).unwrap();
         }
     }
 }

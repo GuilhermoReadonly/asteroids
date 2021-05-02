@@ -34,13 +34,13 @@ pub const GAME_FONT: &str = "fonts/DroidSans.ttf";
 pub const SHIP_SIZE_X: f32 = 7.0;
 pub const SHIP_SIZE_Y: f32 = 7.0;
 pub const SHIP_MASS: f32 = 30.0;
-pub const SHIP_LIFE: f32 = 500.0;
+pub const SHIP_LIFE: f32 = 20.0;
 pub const SHIP_INITIAL_DIRECTION: f32 = 0.0;
 pub const SHIP_THRUST: f32 = 1.0;
 pub const SHIP_TURN_THRUST: f32 = 50.0 * TAU;
 pub const SHIP_MAX_SPEED: f32 = 500.0;
 pub const SHIP_MAX_ANGLE_SPEED: f32 = 1.0 * TAU;
-pub const SHIP_RELOAD_TIME: f32 = 0.2;
+pub const SHIP_RELOAD_TIME: f32 = 1.;
 pub const SHIP_DESCELERATION: f32 = 1.5;
 pub const SHIP_ANGLE_DESCELERATION: f32 = 10.0;
 
